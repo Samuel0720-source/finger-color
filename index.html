@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finger Color</title>
+  </head>
+  <body>
+    <h1>Finger Color Recovery</h1>
+    <div id="stage">
+      <video id="video" playsinline muted></video>
+      <canvas id="overlay"></canvas>
+    </div>
+    <p id="status">Press Start Camera</p>
+    <div id="controls">
+      <button id="btn-camera">Start Camera</button>
+      <button id="btn-record" disabled>Start Recording</button>
+      <button id="btn-warm" disabled>Warm Start</button>
+      <input id="temp-input" type="number" step="0.1" placeholder="Finger temp (°C)" />
+      <button id="btn-temp" disabled>Log Temp</button>
+      <button id="btn-csv" disabled>Save CSV</button>
+    </div>
+    <pre id="readout"></pre>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
