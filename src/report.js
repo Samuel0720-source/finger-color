@@ -71,6 +71,22 @@ export function makeReport(info) {
   doc.text(info.headline, LEFT + 6, y + 20);
   y += 34;
 
+  if (info.photos && (info.photos.normal || info.photos.cold)) {
+    heading('Photos');
+    const w = 82;
+    const h = w * info.photos.ratio;
+    ensureSpace(h + 10);
+    if (info.photos.normal) doc.addImage(info.photos.normal, 'JPEG', LEFT, y, w, h);
+    if (info.photos.cold) doc.addImage(info.photos.cold, 'JPEG', LEFT + 88, y, w, h);
+    y += h + 5;
+    doc.setFontSize(9);
+    doc.setTextColor(100, 116, 139);
+    doc.text('Normal color', LEFT, y);
+    doc.text('Back from the cold', LEFT + 88, y);
+    y += 8;
+    doc.setFontSize(10);
+  }
+
   if (info.pattern) {
     heading('Color pattern');
     doc.setTextColor(15, 23, 42);
@@ -130,3 +146,4 @@ export function makeReport(info) {
 
   doc.save(info.name + '_report.pdf');
 }
+
