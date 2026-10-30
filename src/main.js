@@ -25,6 +25,13 @@ let cardPos = null;
 let lastSample = 0;
 let warmLogged = false;
 
+window.onerror = (msg) => {
+  statusEl.textContent = 'Error: ' + msg;
+};
+window.onunhandledrejection = (e) => {
+  statusEl.textContent = 'Error: ' + e.reason;
+};
+
 btnCamera.onclick = async () => {
   btnCamera.disabled = true;
   statusEl.textContent = 'Loading camera and hand model...';
@@ -53,18 +60,22 @@ overlay.onclick = (e) => {
 };
 
 function loop(now) {
-  wctx.drawImage(video, 0, 0);
-  octx.clearRect(0, 0, overlay.width, overlay.height);
-  const spots = findFingertips(video, now);
+  try {
+    wctx.drawImage(video, 0, 0);
+    octx.clearRect(0, 0, overlay.width, overlay.height);
+    const spots = findFingertips(video, now);
 
-  if (cardPos) drawBox(cardPos.x, cardPos.y, CARD_BOX, 'yellow');
-  if (spots) {
-    for (const p of Object.values(spots)) drawBox(p.x, p.y, p.size, 'lime');
-  }
+    if (cardPos) drawBox(cardPos.x, cardPos.y, CARD_BOX, 'yellow');
+    if (spots) {
+      for (const p of Object.values(spots)) drawBox(p.x, p.y, p.size, 'lime');
+    }
 
-  if (spots && now - lastSample > SAMPLE_EVERY_MS) {
-    lastSample = now;
-    sample(spots);
+    if (spots && now - lastSample > SAMPLE_EVERY_MS) {
+      lastSample = now;
+      sample(spots);
+    }
+  } catch (e) {
+    statusEl.textContent = 'Loop error: ' + e.message;
   }
   requestAnimationFrame(loop);
 }
