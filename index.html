@@ -3,24 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finger Color</title>
+    <title>Finger Color Recovery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <h1>Finger Color Recovery</h1>
-    <div id="stage">
-      <video id="video" playsinline muted></video>
-      <canvas id="overlay"></canvas>
-    </div>
-    <p id="status">Press Start Camera</p>
-    <div id="controls">
-      <button id="btn-camera">Start Camera</button>
-      <button id="btn-record" disabled>Start Recording</button>
-      <button id="btn-warm" disabled>Warm Start</button>
-      <input id="temp-input" type="number" step="0.1" placeholder="Finger temp (°C)" />
-      <button id="btn-temp" disabled>Log Temp</button>
-      <button id="btn-csv" disabled>Save CSV</button>
-    </div>
-    <pre id="readout"></pre>
+    <header class="hero">
+      <p class="eyebrow">Hand health research tool</p>
+      <h1>Finger Color Recovery</h1>
+      <p class="subtitle">See how fast your fingertips return to their normal color after being in the cold.</p>
+      <p class="disclaimer">Personal research tool. Not a medical device. It does not diagnose any condition.</p>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <div id="stage">
+          <video id="video" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div id="timer" class="timer hidden">00:00</div>
+        </div>
+        <p id="status" class="status">Press Start Camera to begin.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="step">1</span> Set up</h2>
+        <p class="hint">Rest your hand palm up under a steady light. If you have a grey card, tap it on the video (optional).</p>
+        <div class="actions">
+          <button id="btn-camera" class="btn btn-primary">Start Camera</button>
+          <button id="btn-baseline" class="btn btn-secondary" disabled>Save My Normal Color</button>
+        </div>
+        <p id="baseline-info" class="hint">No normal color saved yet.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="step">2</span> Record</h2>
+        <p class="hint">Start recording, then press "I'm Back in the Warm" the moment you sit down after the cold.</p>
+        <div class="actions">
+          <button id="btn-record" class="btn btn-primary" disabled>Start Recording</button>
+          <button id="btn-warm" class="btn btn-warm" disabled>I'm Back in the Warm</button>
+        </div>
+        <div class="temp-row">
+          <input id="temp-input" type="number" step="0.1" inputmode="decimal" placeholder="Middle finger temp (°C)" />
+          <button id="btn-temp" class="btn btn-secondary" disabled>Log Temp</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="step">3</span> Your fingers right now</h2>
+        <div id="fingers" class="finger-grid"></div>
+        <div class="chart-box"><canvas id="chart"></canvas></div>
+        <p class="hint">Change score: 0 means the same as your normal color. Above 3 is a difference most people can see.</p>
+      </section>
+
+      <section class="card">
+        <h2><span class="step">4</span> Results</h2>
+        <div id="result" class="result muted">Finish a recording to see your results here.</div>
+        <div class="actions single">
+          <button id="btn-pdf" class="btn btn-primary" disabled>Download PDF Report</button>
+        </div>
+        <button id="btn-csv" class="btn-link" disabled>Download raw data (CSV, for research)</button>
+      </section>
+    </main>
+
+    <footer class="footer">Built as a student research project.</footer>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

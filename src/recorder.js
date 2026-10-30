@@ -16,16 +16,24 @@ export function isRecording() {
   return startTime !== null;
 }
 
-function elapsedSeconds() {
-  return ((performance.now() - startTime) / 1000).toFixed(2);
+export function elapsed() {
+  return startTime === null ? 0 : (performance.now() - startTime) / 1000;
+}
+
+export function getRows() {
+  return rows;
+}
+
+export function getEvents() {
+  return events;
 }
 
 export function addRow(row) {
-  rows.push({ t: elapsedSeconds(), ...row });
+  rows.push({ t: elapsed().toFixed(2), ...row });
 }
 
 export function addEvent(type, value = '') {
-  events.push({ t: elapsedSeconds(), type, value });
+  events.push({ t: elapsed().toFixed(2), type, value });
 }
 
 function toCSV(list) {
