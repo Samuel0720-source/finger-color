@@ -40,11 +40,12 @@ export function renderFingers(container, views) {
       if (!change) {
         return `<div class="finger">
           <span class="finger-name">${NAMES[name]}</span>
-          <span class="finger-label muted">Save your normal color first</span>
+          <span class="finger-label muted">&mdash;</span>
+          <span class="finger-score">Waiting</span>
         </div>`;
       }
       const width = Math.min(100, (change.score / BAR_FULL_SCORE) * 100);
-      return `<div class="finger tone-${TONES[change.label]}">
+      return `<div class="finger tone-${TONES[change.label]}" data-label="${change.label}">
         <span class="finger-name">${NAMES[name]}</span>
         <span class="finger-label">${change.label}</span>
         <div class="bar"><div class="bar-fill" style="width: ${width}%"></div></div>

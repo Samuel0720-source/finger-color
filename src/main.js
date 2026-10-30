@@ -6,7 +6,6 @@ import * as rec from './recorder.js';
 import { describeChange, renderFingers } from './plain.js';
 import { createChart, addPoint, resetChart, chartImage } from './livechart.js';
 import { computeRecovery } from './recovery.js';
-import { makeReport } from './report.js';
 
 const CARD_BOX = 40;
 const SAMPLE_EVERY_MS = 1000;
@@ -33,6 +32,8 @@ const btnWarm = $('btn-warm');
 const btnTemp = $('btn-temp');
 const btnPdf = $('btn-pdf');
 const btnCsv = $('btn-csv');
+const stage = $('stage');
+const stageEmpty = $('stage-empty');
 
 let cardPos = null;
 let lastSample = 0;
@@ -42,6 +43,7 @@ let timerId = null;
 let lastResult = null;
 let recordedSeconds = 0;
 let usedCard = false;
+let wakeLock = null;
 
 window.onerror = (msg) => {
   statusEl.textContent = 'Error: ' + msg;
@@ -58,21 +60,36 @@ renderFingers(fingersEl, FINGERS.map((name) => ({ name, change: null })));
 
 btnCamera.onclick = async () => {
   btnCamera.disabled = true;
-  statusEl.textContent = 'Loading camera and hand model...';
+  statusEl.textContent = 'Opening camera...';
+  let lockMsg;
   try {
     const track = await startCamera(video);
-    const lockMsg = await tryLockCamera(track);
-    await loadHandModel();
-    work.width = overlay.width = video.videoWidth;
-    work.height = overlay.height = video.videoHeight;
-    statusEl.textContent = lockMsg + '. Show your palm to the camera.';
-    btnBaseline.disabled = false;
-    btnRecord.disabled = false;
-    requestAnimationFrame(loop);
+    lockMsg = await tryLockCamera(track);
   } catch (e) {
-    statusEl.textContent = 'Camera error: ' + e.message;
+    statusEl.textContent = `Could not open the camera (${e.message}). Allow camera access and try again.`;
     btnCamera.disabled = false;
+    return;
   }
+
+  stage.classList.add('is-live');
+  stageEmpty.classList.add('hidden');
+  statusEl.textContent = 'Loading hand model...';
+  try {
+    await loadHandModel();
+  } catch (e) {
+    statusEl.textContent = `Could not load the hand model (${e.message}). Check your internet and try again.`;
+    btnCamera.disabled = false;
+    return;
+  }
+
+  work.width = overlay.width = video.videoWidth;
+  work.height = overlay.height = video.videoHeight;
+  statusEl.textContent = lockMsg + '. Show your palm to the camera.';
+  markStep(1, 'active');
+  btnCamera.textContent = 'Camera On';
+  btnBaseline.disabled = false;
+  btnRecord.disabled = false;
+  requestAnimationFrame(loop);
 };
 
 overlay.onclick = (e) => {
@@ -109,6 +126,7 @@ function loop(now) {
 
 function sample(spots) {
   const palmPixel = averageRGB(wctx, spots.palm.x, spots.palm.y, spots.palm.size);
+  if (!palmPixel) return;
   const palmLab = linearToLab(toLinear(palmPixel));
   const card = cardPos ? averageRGB(wctx, cardPos.x, cardPos.y, CARD_BOX) : null;
 
@@ -116,6 +134,7 @@ function sample(spots) {
   for (const name of FINGERS) {
     const p = spots[name];
     const pixel = averageRGB(wctx, p.x, p.y, p.size);
+    if (!pixel) return; // A fingertip is outside the picture. Skip this sample.
     const raw = linearToLab(toLinear(pixel));
     current[name] = {
       raw,
@@ -200,13 +219,16 @@ function collectBaseline(current) {
   baselineBuffer = null;
   btnBaseline.disabled = false;
   updateBaselineInfo();
-  statusEl.textContent = 'Normal color saved.';
+  statusEl.textContent = 'Normal color saved. You can start recording.';
 }
 
 function loadBaseline() {
   try {
     const text = localStorage.getItem(BASELINE_KEY);
-    return text ? JSON.parse(text) : null;
+    const value = text ? JSON.parse(text) : null;
+    // A baseline saved by an older version of the app has a different shape. Ignore it.
+    const valid = value && value.fingers && FINGERS.every((f) => value.fingers[f]) && Number.isFinite(value.noise);
+    return valid ? value : null;
   } catch {
     return null;
   }
@@ -227,6 +249,7 @@ function updateBaselineInfo() {
   }
   const when = new Date(baseline.savedAt).toLocaleString();
   baselineInfo.textContent = `Normal color saved ${when}. Save it again if the light or place changes.`;
+  markStep(1, 'done');
 }
 
 // ---------- Recording ----------
@@ -239,6 +262,10 @@ function startRecording() {
     if (!ok) return;
   }
   rec.startRecording();
+  // Save the noise level with the data so the Python analysis uses the same number as the app.
+  if (baseline) rec.addEvent('baseline_noise', baseline.noise.toFixed(4));
+  keepScreenOn();
+  markStep(2, 'active');
   resetChart();
   lastResult = null;
   btnRecord.textContent = 'Stop Recording';
@@ -257,7 +284,14 @@ function startRecording() {
 function stopRecording() {
   recordedSeconds = rec.elapsed();
   usedCard = cardPos !== null;
+  lastResult = baseline ? computeRecovery(rec.getRows(), rec.getEvents(), baseline.noise) : null;
+  // Save the app's answer in the events file so the Python analysis can check it gets the same number.
+  if (lastResult && lastResult.ok) {
+    rec.addEvent('app_recovery_sec', lastResult.recoverySec === null ? '' : lastResult.recoverySec.toFixed(2));
+  }
   rec.stopRecording();
+  releaseScreen();
+  markStep(2, 'done');
   clearInterval(timerId);
   timerEl.classList.add('hidden');
   btnRecord.textContent = 'Start Recording';
@@ -265,9 +299,9 @@ function stopRecording() {
   btnWarm.disabled = true;
   btnTemp.disabled = true;
   btnCsv.disabled = false;
-  lastResult = baseline ? computeRecovery(rec.getRows(), rec.getEvents(), baseline.noise) : null;
   showResult(lastResult);
-  btnPdf.disabled = !lastResult;
+  btnPdf.disabled = !(lastResult && lastResult.ok);
+  if (lastResult && lastResult.ok) markStep(4, 'done');
   statusEl.textContent = 'Recording stopped.';
 }
 
@@ -331,9 +365,21 @@ function fingerSummary(rows, finger, tWarm) {
   return { name: finger, peak: Math.max(...scores), endScore: Number(last.change_score), endLabel: last.label };
 }
 
-btnPdf.onclick = () => {
-  const name = prompt('Report name', todayName('recovery'));
-  if (!name) return;
+btnPdf.onclick = async () => {
+  const name = todayName('recovery');
+  btnPdf.disabled = true;
+  btnPdf.textContent = 'Making PDF...';
+  // jsPDF is big, so it is only downloaded when someone asks for a report.
+  try {
+    const { makeReport } = await import('./report.js');
+    buildReport(makeReport, name);
+  } finally {
+    btnPdf.disabled = false;
+    btnPdf.textContent = 'Download PDF Report';
+  }
+};
+
+function buildReport(makeReport, name) {
   const rows = rec.getRows();
   const events = rec.getEvents();
   const warm = events.find((e) => e.type === 'warm_start');
@@ -351,21 +397,42 @@ btnPdf.onclick = () => {
       .filter((e) => e.type === 'finger_temp_c')
       .map((e) => ({ min: (Number(e.t) - tWarm) / 60, value: e.value })),
   });
-};
+}
 
-btnCsv.onclick = () => {
-  const name = prompt('File name', todayName('recovery'));
-  if (name) rec.downloadCSV(name);
-};
+// prompt() is blocked inside some in-app browsers (Instagram, KakaoTalk), so files are named automatically.
+btnCsv.onclick = () => rec.downloadCSV(todayName('recovery'));
 
 function todayName(prefix) {
   const d = new Date();
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   const dd = String(d.getDate()).padStart(2, '0');
-  return `${prefix}_${d.getFullYear()}${mm}${dd}`;
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mi = String(d.getMinutes()).padStart(2, '0');
+  return `${prefix}_${d.getFullYear()}${mm}${dd}_${hh}${mi}`;
 }
 
 // ---------- Helpers ----------
+
+// Shows which step the user is on: '' (not yet), 'active' (now), 'done' (finished).
+function markStep(n, state) {
+  const el = document.querySelector(`[data-step="${n}"]`);
+  if (!el || (state === 'active' && el.dataset.state === 'done')) return;
+  el.dataset.state = state;
+}
+
+// A phone that goes to sleep stops the camera, which ruins a 10-minute recording.
+async function keepScreenOn() {
+  try {
+    if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+  } catch {
+    // Not supported or denied. The recording still works if the user keeps the screen on.
+  }
+}
+
+function releaseScreen() {
+  if (wakeLock) wakeLock.release().catch(() => {});
+  wakeLock = null;
+}
 
 function drawBox(x, y, size, color) {
   octx.strokeStyle = color;

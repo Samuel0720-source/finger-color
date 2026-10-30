@@ -8,6 +8,11 @@ const FINGER_COLORS = {
   pinky: '#ec4899',
 };
 const MAX_POINTS = 1800;
+const MUTED = '#64748b';
+const GRID = 'rgba(100, 116, 139, 0.15)';
+
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+Chart.defaults.font.size = 12;
 
 let chart = null;
 
@@ -31,11 +36,24 @@ export function createChart(canvas) {
       animation: false,
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
       scales: {
-        x: { title: { display: true, text: 'Minutes' }, ticks: { maxTicksLimit: 6 } },
-        y: { beginAtZero: true, title: { display: true, text: 'Change score' } },
+        x: {
+          title: { display: true, text: 'Minutes', color: MUTED },
+          ticks: { maxTicksLimit: 6, color: MUTED },
+          grid: { display: false },
+        },
+        y: {
+          beginAtZero: true,
+          suggestedMax: 10,
+          title: { display: true, text: 'Change score', color: MUTED },
+          ticks: { color: MUTED },
+          grid: { color: GRID },
+        },
       },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true, color: MUTED } },
+      },
     },
   });
 }
