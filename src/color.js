@@ -1,9 +1,16 @@
 export function averageRGB(ctx, cx, cy, size) {
+  // Clamp the box to the canvas. Pixels outside the canvas come back as
+  // transparent black (0, 0, 0), which would make the color look darker.
   const half = Math.floor(size / 2);
-  const x = Math.max(0, Math.round(cx - half));
-  const y = Math.max(0, Math.round(cy - half));
-  const data = ctx.getImageData(x, y, size, size).data;
+  const x0 = Math.max(0, Math.round(cx - half));
+  const y0 = Math.max(0, Math.round(cy - half));
+  const x1 = Math.min(ctx.canvas.width, Math.round(cx - half) + size);
+  const y1 = Math.min(ctx.canvas.height, Math.round(cy - half) + size);
+  const w = x1 - x0;
+  const h = y1 - y0;
+  if (w <= 0 || h <= 0) return null;
 
+  const data = ctx.getImageData(x0, y0, w, h).data;
   let r = 0;
   let g = 0;
   let b = 0;
@@ -60,10 +67,3 @@ export function linearToLab(lin) {
     b: 200 * (fy - fz),
   };
 }
-
-
-
-
-
-
-

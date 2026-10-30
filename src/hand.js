@@ -1,24 +1,33 @@
-import {FilesetResolver, HandLandmarker} from '@mediapipe/tasks-vision';
+import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
-const MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+const MODEL_URL =
+  'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
 
 let landmarker = null;
 
-export async function loadHandModel(){
-    const vision = await FilesetResolver.forVisionTasks('/wasm');
-    landmarker = await HandLandmarker.createFromOptions(vision, {baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU'},
+export async function loadHandModel() {
+  const vision = await FilesetResolver.forVisionTasks('/wasm');
+  const options = (delegate) => ({
+    baseOptions: { modelAssetPath: MODEL_URL, delegate },
     runningMode: 'VIDEO',
-    numHands: 1,});
+    numHands: 1,
+  });
+  try {
+    landmarker = await HandLandmarker.createFromOptions(vision, options('GPU'));
+  } catch {
+    // Some phones and older laptops have no usable GPU in the browser. The CPU is slower but works.
+    landmarker = await HandLandmarker.createFromOptions(vision, options('CPU'));
+  }
 }
 
+// [tip landmark, joint just below the tip]
 const FINGERS = {
-    thumb: [4,3],
-    index: [8,7],
-    middle: [12, 11],
-    ring: [16, 15],
-    pinky: [20,19], 
-
-}
+  thumb: [4, 3],
+  index: [8, 7],
+  middle: [12, 11],
+  ring: [16, 15],
+  pinky: [20, 19],
+};
 
 export function findFingertips(videoEl, timeMs) {
   if (!landmarker) return null;

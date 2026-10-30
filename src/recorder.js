@@ -49,11 +49,15 @@ function saveFile(text, filename) {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  // Revoking right away can cancel the download in Safari and Firefox, so wait a moment.
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 export function downloadCSV(name) {
   saveFile(toCSV(rows), name + '_data.csv');
-  saveFile(toCSV(events), name + '_events.csv');
+  // Browsers may block a second download that starts at the same instant.
+  setTimeout(() => saveFile(toCSV(events), name + '_events.csv'), 400);
 }

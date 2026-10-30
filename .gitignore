@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Recordings are personal health data. Keep them on your computer, not on GitHub.
+analysis/*.csv
+analysis/*_plot.png

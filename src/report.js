@@ -30,7 +30,7 @@ export function makeReport(info) {
     doc.setFontSize(10);
   };
 
-  doc.setFillColor(37, 99, 235);
+  doc.setFillColor(15, 118, 110);
   doc.rect(0, 0, 210, 8, 'F');
 
   doc.setFont('helvetica', 'bold');
@@ -60,14 +60,14 @@ export function makeReport(info) {
   }
   y += 4;
 
-  doc.setFillColor(239, 246, 255);
+  doc.setFillColor(231, 244, 242);
   doc.roundedRect(LEFT, y, WIDTH, 26, 3, 3, 'F');
   doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
   doc.text('Middle finger: time to return to normal color', LEFT + 6, y + 9);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
-  doc.setTextColor(37, 99, 235);
+  doc.setTextColor(15, 118, 110);
   doc.text(info.headline, LEFT + 6, y + 20);
   y += 34;
 
