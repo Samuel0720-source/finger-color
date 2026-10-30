@@ -14,6 +14,7 @@ const work = document.createElement('canvas');
 const wctx = work.getContext('2d', { willReadFrequently: true });
 const statusEl = document.getElementById('status');
 const readout = document.getElementById('readout');
+const btnCamera = document.getElementById('btn-camera');
 const btnRecord = document.getElementById('btn-record');
 const btnWarm = document.getElementById('btn-warm');
 const btnTemp = document.getElementById('btn-temp');
@@ -22,16 +23,24 @@ const tempInput = document.getElementById('temp-input');
 
 let cardPos = null;
 let lastSample = 0;
+let warmLogged = false;
 
-document.getElementById('btn-camera').onclick = async () => {
+btnCamera.onclick = async () => {
+  btnCamera.disabled = true;
   statusEl.textContent = 'Loading camera and hand model...';
-  const track = await startCamera(video);
-  const lockMsg = await tryLockCamera(track);
-  await loadHandModel();
-  work.width = overlay.width = video.videoWidth;
-  work.height = overlay.height = video.videoHeight;
-  statusEl.textContent = lockMsg + ' / Tap the grey card on screen once';
-  requestAnimationFrame(loop);
+  try {
+    const track = await startCamera(video);
+    const lockMsg = await tryLockCamera(track);
+    await loadHandModel();
+    work.width = overlay.width = video.videoWidth;
+    work.height = overlay.height = video.videoHeight;
+    statusEl.textContent = lockMsg + ' / Tap the grey card (optional)';
+    btnRecord.disabled = false;
+    requestAnimationFrame(loop);
+  } catch (e) {
+    statusEl.textContent = 'Camera error: ' + e.message;
+    btnCamera.disabled = false;
+  }
 };
 
 overlay.onclick = (e) => {
@@ -41,7 +50,6 @@ overlay.onclick = (e) => {
     y: (e.clientY - rect.top) * (overlay.height / rect.height),
   };
   statusEl.textContent = 'Grey card position saved';
-  btnRecord.disabled = false;
 };
 
 function loop(now) {
@@ -54,7 +62,7 @@ function loop(now) {
     for (const p of Object.values(spots)) drawBox(p.x, p.y, p.size, 'lime');
   }
 
-  if (spots && cardPos && now - lastSample > SAMPLE_EVERY_MS) {
+  if (spots && now - lastSample > SAMPLE_EVERY_MS) {
     lastSample = now;
     sample(spots);
   }
@@ -62,14 +70,23 @@ function loop(now) {
 }
 
 function sample(spots) {
-  const card = averageRGB(wctx, cardPos.x, cardPos.y, CARD_BOX);
+  const palmPixel = averageRGB(wctx, spots.palm.x, spots.palm.y, spots.palm.size);
+  const palmLab = linearToLab(toLinear(palmPixel));
+  const card = cardPos ? averageRGB(wctx, cardPos.x, cardPos.y, CARD_BOX) : null;
+
   let text = rec.isRecording() ? '[RECORDING]\n' : '';
+  text += card ? 'Mode: grey card + palm\n' : 'Mode: palm reference only\n';
 
   for (const [name, p] of Object.entries(spots)) {
     const pixel = averageRGB(wctx, p.x, p.y, p.size);
     const raw = linearToLab(toLinear(pixel));
-    const lab = linearToLab(correctWithCard(pixel, card));
-    text += `${name}: L ${lab.L.toFixed(1)}  a ${lab.a.toFixed(1)}  b ${lab.b.toFixed(1)}\n`;
+    const lab = card ? linearToLab(correctWithCard(pixel, card)) : null;
+
+    const dL = raw.L - palmLab.L;
+    const da = raw.a - palmLab.a;
+    const db = raw.b - palmLab.b;
+
+    text += `${name}: dL ${dL.toFixed(1)}  da ${da.toFixed(1)}  db ${db.toFixed(1)}\n`;
 
     if (rec.isRecording()) {
       rec.addRow({
@@ -77,12 +94,15 @@ function sample(spots) {
         raw_L: raw.L.toFixed(2),
         raw_a: raw.a.toFixed(2),
         raw_b: raw.b.toFixed(2),
-        L: lab.L.toFixed(2),
-        a: lab.a.toFixed(2),
-        b: lab.b.toFixed(2),
-        card_r: card.r.toFixed(1),
-        card_g: card.g.toFixed(1),
-        card_b: card.b.toFixed(1),
+        L: lab ? lab.L.toFixed(2) : '',
+        a: lab ? lab.a.toFixed(2) : '',
+        b: lab ? lab.b.toFixed(2) : '',
+        palm_dL: dL.toFixed(2),
+        palm_da: da.toFixed(2),
+        palm_db: db.toFixed(2),
+        card_r: card ? card.r.toFixed(1) : '',
+        card_g: card ? card.g.toFixed(1) : '',
+        card_b: card ? card.b.toFixed(1) : '',
       });
     }
   }
@@ -98,6 +118,7 @@ function drawBox(x, y, size, color) {
 btnRecord.onclick = () => {
   if (!rec.isRecording()) {
     rec.startRecording();
+    warmLogged = false;
     btnRecord.textContent = 'Stop Recording';
     btnWarm.disabled = false;
     btnTemp.disabled = false;
@@ -113,6 +134,7 @@ btnRecord.onclick = () => {
 
 btnWarm.onclick = () => {
   rec.addEvent('warm_start');
+  warmLogged = true;
   statusEl.textContent = 'Warm start time logged';
 };
 
@@ -124,6 +146,10 @@ btnTemp.onclick = () => {
 };
 
 btnCsv.onclick = () => {
-  const name = prompt('Session name (e.g. baseline_1103)') || 'session';
+  const name = prompt('Session name (e.g. recovery_20261103)') || 'session';
+  if (name.startsWith('recovery') && !warmLogged) {
+    const ok = confirm('No Warm Start was logged. Recovery time will be wrong. Save anyway?');
+    if (!ok) return;
+  }
   rec.downloadCSV(name);
 };
