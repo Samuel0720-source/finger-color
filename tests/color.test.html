@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Conversion Tests</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 24px;
+      background: #fafafa;
+      color: #222;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+    p.note {
+      color: #555;
+      margin-top: 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 1000px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    th {
+      background: #eee;
+      text-align: center;
+    }
+    td.name {
+      text-align: left;
+      font-weight: 600;
+    }
+    td.swatch-cell {
+      text-align: center;
+    }
+    .swatch {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #999;
+      vertical-align: middle;
+    }
+    tr.pass td {
+      background: #d7f5d7;
+    }
+    tr.fail td {
+      background: #f8d0d0;
+    }
+    td.bad {
+      color: #b00000;
+      font-weight: 700;
+    }
+    #summary {
+      margin-top: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    #summary.pass {
+      color: #1a7f1a;
+    }
+    #summary.fail {
+      color: #b00000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Color Conversion Tests: sRGB → Linear → CIELAB</h1>
+  <p class="note">
+    Tolerance: a row passes only if |actual − expected| ≤ 0.5 for L, a, and b.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Color</th>
+        <th>Swatch</th>
+        <th>Input (R, G, B)</th>
+        <th>Linear (r, g, b)</th>
+        <th>Actual L</th>
+        <th>Expected L</th>
+        <th>Actual a</th>
+        <th>Expected a</th>
+        <th>Actual b</th>
+        <th>Expected b</th>
+        <th>Max |diff|</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody id="results"></tbody>
+  </table>
+
+  <div id="summary">
+    Loading... If this message does not change, the module failed to load.
+    Make sure you opened this page through the Vite dev server (not file://)
+    and check the browser console.
+  </div>
+
+  <script type="module">
+    import { toLinear, linearToLab } from '/src/color.js';
+
+    // Largest allowed difference between actual and expected values.
+    const TOLERANCE = 0.5;
+
+    // Each test case: an sRGB input (0-255) and the expected CIELAB result (D65).
+    const testCases = [
+      {
+        name: 'White',
+        input: { r: 255, g: 255, b: 255 },
+        expected: { L: 100, a: 0, b: 0 },
+      },
+      {
+        name: 'Black',
+        input: { r: 0, g: 0, b: 0 },
+        expected: { L: 0, a: 0, b: 0 },
+      },
+      {
+        name: 'Pure red',
+        input: { r: 255, g: 0, b: 0 },
+        expected: { L: 53.2, a: 80.1, b: 67.2 },
+      },
+    ];
+
+    // Format a number to a fixed number of decimals.
+    const fmt = (value, digits = 2) => value.toFixed(digits);
+
+    // Create a table cell with text and optional class names.
+    function makeCell(text, className = '') {
+      const td = document.createElement('td');
+      td.textContent = text;
+      if (className) td.className = className;
+      return td;
+    }
+
+    const tbody = document.getElementById('results');
+    let passedCount = 0;
+
+    for (const test of testCases) {
+      // Step 1: sRGB (0-255) -> linear light (0-1).
+      const linear = toLinear(test.input);
+      // Step 2: linear RGB -> CIELAB.
+      const lab = linearToLab(linear);
+
+      // Absolute difference for each channel.
+      const diffL = Math.abs(lab.L - test.expected.L);
+      const diffA = Math.abs(lab.a - test.expected.a);
+      const diffB = Math.abs(lab.b - test.expected.b);
+      const maxDiff = Math.max(diffL, diffA, diffB);
+
+      const passed = maxDiff <= TOLERANCE;
+      if (passed) passedCount++;
+
+      // Log full-precision values for debugging.
+      console.log(test.name, { input: test.input, linear, lab, expected: test.expected });
+
+      const row = document.createElement('tr');
+      row.className = passed ? 'pass' : 'fail';
+
+      row.appendChild(makeCell(test.name, 'name'));
+
+      const swatchCell = makeCell('', 'swatch-cell');
+      const swatch = document.createElement('span');
+      swatch.className = 'swatch';
+      swatch.style.background = `rgb(${test.input.r}, ${test.input.g}, ${test.input.b})`;
+      swatchCell.appendChild(swatch);
+      row.appendChild(swatchCell);
+
+      row.appendChild(makeCell(`${test.input.r}, ${test.input.g}, ${test.input.b}`));
+      row.appendChild(makeCell(`${fmt(linear.r, 4)}, ${fmt(linear.g, 4)}, ${fmt(linear.b, 4)}`));
+
+      row.appendChild(makeCell(fmt(lab.L), diffL > TOLERANCE ? 'bad' : ''));
+      row.appendChild(makeCell(fmt(test.expected.L)));
+      row.appendChild(makeCell(fmt(lab.a), diffA > TOLERANCE ? 'bad' : ''));
+      row.appendChild(makeCell(fmt(test.expected.a)));
+      row.appendChild(makeCell(fmt(lab.b), diffB > TOLERANCE ? 'bad' : ''));
+      row.appendChild(makeCell(fmt(test.expected.b)));
+
+      row.appendChild(makeCell(fmt(maxDiff, 3)));
+      row.appendChild(makeCell(passed ? 'PASS' : 'FAIL'));
+
+      tbody.appendChild(row);
+    }
+
+    const summary = document.getElementById('summary');
+    const allPassed = passedCount === testCases.length;
+    summary.textContent = `${passedCount} / ${testCases.length} tests passed`;
+    summary.className = allPassed ? 'pass' : 'fail';
+  </script>
+</body>
+</html>
