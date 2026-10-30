@@ -1,0 +1,53 @@
+import {FilesetResolver, HandLandmarker} from '@mediapipe/tasks-vision';
+
+const MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+
+let landmarker = null;
+
+export async function loadHandModel(){
+    const vision = await FilesetResolver.forVisionTasks('/wasm');
+    landmarker = await HandLandmarker.createFromOptions(vision, {baseOptions: { modelAssetPath: MODEL_URL, delegate: 'GPU'},
+    runningMode: 'VIDEO',
+    numHands: 1,});
+}
+
+const FINGERS = {
+    thumb: [4,3],
+    index: [8,7],
+    middle: [12, 11],
+    ring: [16, 15],
+    pinky: [20,19], 
+
+}
+
+export function findFingertips(videoEl, timeMs) {
+  if (!landmarker) return null;
+  const result = landmarker.detectForVideo(videoEl, timeMs);
+  if (!result.landmarks || result.landmarks.length === 0) return null;
+
+  const pts = result.landmarks[0];
+  const w = videoEl.videoWidth;
+  const h = videoEl.videoHeight;
+  const spots = {};
+
+  for (const [name, [tipIdx, jointIdx]] of Object.entries(FINGERS)) {
+    const tip = pts[tipIdx];
+    const joint = pts[jointIdx];
+    const dx = (tip.x - joint.x) * w;
+    const dy = (tip.y - joint.y) * h;
+    spots[name] = {
+      x: ((tip.x + joint.x) / 2) * w,
+      y: ((tip.y + joint.y) / 2) * h,
+      size: Math.max(6, Math.round(Math.hypot(dx, dy) * 0.6)),
+    };
+  }
+
+  const wrist = pts[0];
+  const knuckle = pts[9];
+  spots.palm = {
+    x: ((wrist.x + knuckle.x) / 2) * w,
+    y: ((wrist.y + knuckle.y) / 2) * h,
+    size: 30,
+  };
+  return spots;
+}
