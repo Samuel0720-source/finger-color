@@ -1,18 +1,8 @@
-import Chart from 'chart.js/auto';
+import { Chart, lineStyle, MUTED } from './chart-theme.js';
+import { NORMAL_LIMIT } from './plain.js';
 
-const FINGER_COLORS = {
-  thumb: '#f59e0b',
-  index: '#10b981',
-  middle: '#2563eb',
-  ring: '#8b5cf6',
-  pinky: '#ec4899',
-};
+const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const MAX_POINTS = 1800;
-const MUTED = '#64748b';
-const GRID = 'rgba(100, 116, 139, 0.15)';
-
-Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
-Chart.defaults.font.size = 12;
 
 let chart = null;
 
@@ -20,39 +10,47 @@ export function createChart(canvas) {
   chart = new Chart(canvas, {
     type: 'line',
     data: {
-      labels: [],
-      datasets: Object.entries(FINGER_COLORS).map(([name, color]) => ({
-        label: name[0].toUpperCase() + name.slice(1),
-        data: [],
-        borderColor: color,
-        backgroundColor: color,
-        borderWidth: 2,
-        pointRadius: 0,
-        tension: 0.3,
-        spanGaps: true,
-      })),
+      datasets: [
+        ...FINGERS.map((name) => ({
+          label: name[0].toUpperCase() + name.slice(1),
+          data: [],
+          spanGaps: true,
+          ...lineStyle(name === 'middle'),
+        })),
+        {
+          label: 'Visible change',
+          data: [],
+          borderColor: MUTED,
+          borderWidth: 1,
+          borderDash: [4, 4],
+          pointRadius: 0,
+          order: 2,
+        },
+      ],
     },
     options: {
       animation: false,
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
+      parsing: false,
+      interaction: { mode: 'nearest', axis: 'x', intersect: false },
       scales: {
         x: {
-          title: { display: true, text: 'Minutes', color: MUTED },
-          ticks: { maxTicksLimit: 6, color: MUTED },
+          type: 'linear',
+          min: 0,
+          suggestedMax: 5,
+          title: { display: true, text: 'Minutes since recording started' },
+          ticks: { maxTicksLimit: 7, callback: (v) => Number(v).toFixed(0) },
           grid: { display: false },
         },
         y: {
           beginAtZero: true,
           suggestedMax: 10,
-          title: { display: true, text: 'Change score', color: MUTED },
-          ticks: { color: MUTED },
-          grid: { color: GRID },
+          title: { display: true, text: 'Color change from normal' },
         },
       },
       plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true, color: MUTED } },
+        legend: { position: 'bottom', labels: { boxWidth: 8, boxHeight: 8, usePointStyle: true } },
       },
     },
   });
@@ -60,18 +58,20 @@ export function createChart(canvas) {
 
 export function addPoint(seconds, scores) {
   if (!chart) return;
-  chart.data.labels.push((seconds / 60).toFixed(1));
-  chart.data.datasets.forEach((dataset, i) => dataset.data.push(scores[i]));
-  if (chart.data.labels.length > MAX_POINTS) {
-    chart.data.labels.shift();
-    chart.data.datasets.forEach((dataset) => dataset.data.shift());
+  const x = seconds / 60;
+  FINGERS.forEach((_, i) => chart.data.datasets[i].data.push({ x, y: scores[i] }));
+  chart.data.datasets[FINGERS.length].data = [
+    { x: 0, y: NORMAL_LIMIT },
+    { x: Math.max(5, x), y: NORMAL_LIMIT },
+  ];
+  if (chart.data.datasets[0].data.length > MAX_POINTS) {
+    FINGERS.forEach((_, i) => chart.data.datasets[i].data.shift());
   }
   chart.update('none');
 }
 
 export function resetChart() {
   if (!chart) return;
-  chart.data.labels = [];
   chart.data.datasets.forEach((dataset) => (dataset.data = []));
   chart.update('none');
 }

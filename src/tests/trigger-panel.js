@@ -1,4 +1,4 @@
-import Chart from 'chart.js/auto';
+import { Chart, lineStyle, ALERT } from '../chart-theme.js';
 import { PIP, pipAngles } from '../angles.js';
 import { FINGER_CHAINS, drawChain, drawDot } from '../draw.js';
 import { summarizeFinger, OPEN_ANGLE, CLOSED_ANGLE } from './trigger-test.js';
@@ -6,7 +6,6 @@ import { downloadRows } from '../recorder.js';
 import { saveSession } from '../history.js';
 
 const FINGERS = Object.keys(PIP); // index, middle, ring, pinky
-const COLORS = { index: '#10b981', middle: '#2563eb', ring: '#8b5cf6', pinky: '#ec4899' };
 const NAMES = { index: 'Index', middle: 'Middle', ring: 'Ring', pinky: 'Pinky' };
 const TARGET_CYCLES = 10;
 const MAX_MS = 60000;
@@ -32,15 +31,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   const chart = new Chart($('trig-chart'), {
     type: 'line',
     data: {
-      datasets: FINGERS.map((f) => ({
-        label: NAMES[f],
-        data: [],
-        borderColor: COLORS[f],
-        backgroundColor: COLORS[f],
-        borderWidth: 2,
-        pointRadius: 0,
-        tension: 0.2,
-      })),
+      datasets: FINGERS.map((f) => ({ label: NAMES[f], data: [], ...lineStyle(f === 'middle') })),
     },
     options: {
       animation: false,
@@ -49,7 +40,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
       parsing: false,
       scales: {
         x: { type: 'linear', title: { display: true, text: 'Seconds' }, grid: { display: false } },
-        y: { suggestedMin: 60, suggestedMax: 180, title: { display: true, text: 'Middle joint angle (°)' } },
+        y: { suggestedMin: 60, suggestedMax: 180, title: { display: true, text: 'Middle joint angle (degrees)' } },
       },
       plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8 } } },
     },
@@ -77,11 +68,11 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     t0 = performance.now();
     chart.data.datasets.forEach((d) => (d.data = []));
     chart.update('none');
-    btnStart.textContent = 'Stop Test';
+    btnStart.textContent = 'Stop test';
     btnStart.classList.add('btn-recording');
     btnCsv.disabled = true;
     resultEl.className = 'result muted';
-    resultEl.textContent = 'Testing... make a fist slowly, then open fully. Repeat.';
+    resultEl.textContent = 'Testing. Your result appears here when the 10 cycles are done.';
     setBusy(true);
     setStatus(`Make a fist and open it ${TARGET_CYCLES} times. Keep your whole hand in view.`);
   }
@@ -89,7 +80,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   function stop() {
     running = false;
     setBusy(false);
-    btnStart.textContent = 'Start Test';
+    btnStart.textContent = 'Start test';
     btnStart.classList.remove('btn-recording');
     if (samples.length < 30) {
       resultEl.className = 'result muted';
@@ -119,15 +110,15 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     }).join('');
     const note =
       total === 0
-        ? 'No catching was found. Every finger opened smoothly.'
-        : 'A catch means the finger stopped partway, then snapped open. If this happens often or hurts, talk to a clinician.';
+        ? 'Every finger opened smoothly. No catching found.'
+        : 'A catch is when a finger stops partway, then snaps open. If it happens often or hurts, show this result to a clinician.';
     resultEl.className = 'result';
     resultEl.innerHTML = `
       <div class="result-label">Catches found</div>
       <div class="result-big">${total}</div>
       <p class="result-note">${note}</p>
       <table class="mini-table">
-        <thead><tr><th>Finger</th><th>Cycles</th><th>Range</th><th>Fastest opening</th><th>Catches</th></tr></thead>
+        <thead><tr><th>Finger</th><th>Fist cycles</th><th>Bend range</th><th>Fastest opening</th><th>Catches</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
   }
@@ -136,11 +127,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     chart.data.datasets = FINGERS.map((f) => ({
       label: NAMES[f],
       data: perFinger[f].smoothed.map((a, i) => ({ x: times[i] / 1000, y: a })),
-      borderColor: COLORS[f],
-      backgroundColor: COLORS[f],
-      borderWidth: 2,
-      pointRadius: 0,
-      tension: 0.2,
+      ...lineStyle(f === 'middle'),
     }));
     const marks = FINGERS.flatMap((f) => perFinger[f].catches.map((c) => ({ x: c.t / 1000, y: c.angle })));
     if (marks.length) {
@@ -150,7 +137,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
         data: marks,
         pointRadius: 7,
         pointStyle: 'crossRot',
-        borderColor: '#b91c1c',
+        borderColor: ALERT,
+        order: -1,
         borderWidth: 3,
       });
     }
@@ -172,7 +160,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     }
 
     if (!running) {
-      liveEl.textContent = `Middle finger joint: ${angles.middle.toFixed(0)}°`;
+      liveEl.textContent = `Middle finger joint ${angles.middle.toFixed(0)}°. Make a fist to see it change.`;
       return;
     }
 
@@ -185,7 +173,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
       bent = false;
       cycles++;
     }
-    liveEl.textContent = `Middle finger joint: ${angles.middle.toFixed(0)}° · Cycles ${cycles} / ${TARGET_CYCLES}`;
+    liveEl.textContent = `Cycle ${Math.min(cycles + 1, TARGET_CYCLES)} of ${TARGET_CYCLES}. Middle joint ${angles.middle.toFixed(0)}°`;
 
     if (now - lastChart > CHART_EVERY_MS) {
       lastChart = now;
@@ -200,6 +188,11 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   return {
     enable() {
       btnStart.disabled = false;
+      liveEl.textContent = 'Show your hand to the camera.';
+    },
+    disable() {
+      btnStart.disabled = true;
+      liveEl.textContent = 'Start the camera first.';
     },
     isRunning: () => running,
     onFrame,
