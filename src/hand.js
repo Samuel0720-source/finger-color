@@ -29,16 +29,20 @@ const FINGERS = {
   pinky: [20, 19],
 };
 
-export function findFingertips(videoEl, timeMs) {
+// Runs the hand model ONCE for this video frame.
+// MediaPipe needs a new, larger timestamp on every call, so never call this twice for the same frame.
+//   image: 21 points, x and y as a fraction of the picture (0 to 1). Use for drawing and color boxes.
+//   world: 21 points in meters around the hand's center. Use for angles and distances (no stretching).
+export function detectHand(videoEl, timeMs) {
   if (!landmarker) return null;
   const result = landmarker.detectForVideo(videoEl, timeMs);
   if (!result.landmarks || result.landmarks.length === 0) return null;
+  return { image: result.landmarks[0], world: result.worldLandmarks[0] };
+}
 
-  const pts = result.landmarks[0];
-  const w = videoEl.videoWidth;
-  const h = videoEl.videoHeight;
+// Color sampling boxes (in pixels) for each fingertip and the palm.
+export function fingertipSpots(pts, w, h) {
   const spots = {};
-
   for (const [name, [tipIdx, jointIdx]] of Object.entries(FINGERS)) {
     const tip = pts[tipIdx];
     const joint = pts[jointIdx];

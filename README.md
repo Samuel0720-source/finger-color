@@ -2,7 +2,15 @@
 
 **Live app:** https://finger-color.vercel.app
 
-A browser app that measures how fast your fingertips return to their normal color after cold exposure, using only a phone camera. It was built as a first step toward low-cost, at-home tracking of cold-induced color changes in the fingers (as seen in Raynaud's phenomenon).
+A browser app with three hand tests that need only a phone camera:
+
+| Test | What it measures | Related condition (screening idea only) |
+| --- | --- | --- |
+| Color recovery | Time for fingertips to return to normal color after cold | Raynaud's phenomenon |
+| Finger catching | Middle-joint angle of each finger while making a fist; finds a stop-then-snap | Trigger finger |
+| Thumb tapping | Thumb-index taps in 10 s, speed and rhythm steadiness (CV) | Reduced dexterity, e.g. carpal tunnel syndrome |
+
+It installs to the home screen as a web app (PWA) and keeps a history of results in the browser.
 
 > Personal research tool. Not a medical device. It does not diagnose any condition.
 
@@ -16,6 +24,14 @@ A browser app that measures how fast your fingertips return to their normal colo
 6. **Reports.** A one-page PDF report (chart, per-finger table, temperature log) and raw CSV files for research.
 
 Everything runs on the device. Video is never uploaded.
+
+### Finger catching
+
+MediaPipe also returns **world landmarks**: 3D points in meters. The angle at each finger's middle (PIP) joint is computed from the 3D vectors to the joints on either side (`src/angles.js`). A catch is a window of at least 150 ms where the angle moves less than 8° (mid-range, 100–165°), followed by a gain of at least 25° within 120 ms (`src/tests/trigger-test.js`). A window is used instead of frame-to-frame speed because the model wobbles a few degrees every frame: a frame-to-frame rule never saw the finger as "stopped" in testing.
+
+### Thumb tapping
+
+The thumb-tip to index-tip distance is divided by hand size (wrist to middle knuckle), so camera distance does not matter. Two limits (touch below 0.15, release above 0.30) stop small wobbles from counting as extra taps (`src/tests/tap-test.js`).
 
 ## Tech
 
@@ -41,6 +57,15 @@ src/
   recorder.js   stores rows and events, exports CSV
   livechart.js  live Chart.js chart
   report.js     PDF report
+  angles.js     3D joint angles
+  draw.js       draws the hand on the video
+  history.js    saves finished tests in this browser
+  history-panel.js  history chart, table and CSV
+  tests/
+    trigger-test.js   catch detection math
+    trigger-panel.js  finger catching screen
+    tap-test.js       tap counting math
+    tap-panel.js      thumb tapping screen
 analysis/
   analyze.py    one session → recovery time, plot, temperature correlation
   summarize.py  all sessions → summary.csv (--check compares with the app)

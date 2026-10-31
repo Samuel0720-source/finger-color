@@ -1,11 +1,15 @@
 import './style.css';
 import { startCamera, tryLockCamera } from './camera.js';
-import { loadHandModel, findFingertips } from './hand.js';
+import { loadHandModel, detectHand, fingertipSpots } from './hand.js';
 import { averageRGB, toLinear, correctWithCard, linearToLab } from './color.js';
 import * as rec from './recorder.js';
 import { describeChange, renderFingers } from './plain.js';
 import { createChart, addPoint, resetChart, chartImage } from './livechart.js';
 import { computeRecovery } from './recovery.js';
+import { saveSession } from './history.js';
+import { createHistoryPanel } from './history-panel.js';
+import { createTriggerPanel } from './tests/trigger-panel.js';
+import { createTapPanel } from './tests/tap-panel.js';
 
 const CARD_BOX = 40;
 const SAMPLE_EVERY_MS = 1000;
@@ -56,6 +60,42 @@ createChart($('chart'));
 updateBaselineInfo();
 renderFingers(fingersEl, FINGERS.map((name) => ({ name, change: null })));
 
+// ---------- Tests (tabs) ----------
+
+const MODES = ['color', 'catching', 'tapping'];
+let mode = MODES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'color';
+let busy = false; // true while any test is running, so the user cannot switch tests in the middle
+
+const historyPanel = createHistoryPanel();
+const panelOptions = {
+  setStatus: (text) => (statusEl.textContent = text),
+  setBusy: (value) => (busy = value),
+  onSaved: () => historyPanel.render(),
+  fileName: (prefix) => todayName(prefix),
+};
+const trigger = createTriggerPanel(panelOptions);
+const tap = createTapPanel(panelOptions);
+
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach((tab) => (tab.onclick = () => setMode(tab.dataset.mode)));
+setMode(mode);
+
+function setMode(next) {
+  if (busy || rec.isRecording()) {
+    statusEl.textContent = 'Finish or stop the current test first.';
+    return;
+  }
+  mode = next;
+  window.history.replaceState(null, '', '#' + mode);
+  tabs.forEach((tab) => {
+    const on = tab.dataset.mode === mode;
+    tab.classList.toggle('active', on);
+    tab.setAttribute('aria-selected', on);
+  });
+  document.querySelectorAll('[data-only]').forEach((el) => el.classList.toggle('hidden', el.dataset.only !== mode));
+  historyPanel.setMode(mode);
+}
+
 // ---------- Camera ----------
 
 btnCamera.onclick = async () => {
@@ -84,15 +124,18 @@ btnCamera.onclick = async () => {
 
   work.width = overlay.width = video.videoWidth;
   work.height = overlay.height = video.videoHeight;
-  statusEl.textContent = lockMsg + '. Show your palm to the camera.';
+  statusEl.textContent = lockMsg + '. Show your hand to the camera.';
   markStep(1, 'active');
   btnCamera.textContent = 'Camera On';
   btnBaseline.disabled = false;
   btnRecord.disabled = false;
+  trigger.enable();
+  tap.enable();
   requestAnimationFrame(loop);
 };
 
 overlay.onclick = (e) => {
+  if (mode !== 'color') return; // the grey card is only used by the color test
   const rect = overlay.getBoundingClientRect();
   cardPos = {
     x: (e.clientX - rect.left) * (overlay.width / rect.width),
@@ -103,25 +146,33 @@ overlay.onclick = (e) => {
 
 // ---------- Main loop ----------
 
+// One loop for every test: run the hand model once per frame, then hand the result to the chosen test.
 function loop(now) {
   try {
-    wctx.drawImage(video, 0, 0);
     octx.clearRect(0, 0, overlay.width, overlay.height);
-    const spots = findFingertips(video, now);
-
-    if (cardPos) drawBox(cardPos.x, cardPos.y, CARD_BOX, 'yellow');
-    if (spots) {
-      for (const p of Object.values(spots)) drawBox(p.x, p.y, p.size, 'lime');
-    }
-
-    if (spots && now - lastSample > SAMPLE_EVERY_MS) {
-      lastSample = now;
-      sample(spots);
-    }
+    const hand = detectHand(video, now);
+    if (mode === 'color') colorFrame(hand, now);
+    else if (mode === 'catching') trigger.onFrame(hand, now, octx);
+    else tap.onFrame(hand, now, octx);
   } catch (e) {
     statusEl.textContent = 'Loop error: ' + e.message;
   }
   requestAnimationFrame(loop);
+}
+
+function colorFrame(hand, now) {
+  wctx.drawImage(video, 0, 0); // only the color test needs the pixels
+  const spots = hand ? fingertipSpots(hand.image, video.videoWidth, video.videoHeight) : null;
+
+  if (cardPos) drawBox(cardPos.x, cardPos.y, CARD_BOX, 'yellow');
+  if (spots) {
+    for (const p of Object.values(spots)) drawBox(p.x, p.y, p.size, 'lime');
+  }
+
+  if (spots && now - lastSample > SAMPLE_EVERY_MS) {
+    lastSample = now;
+    sample(spots);
+  }
 }
 
 function sample(spots) {
@@ -299,6 +350,10 @@ function stopRecording() {
   btnWarm.disabled = true;
   btnTemp.disabled = true;
   btnCsv.disabled = false;
+  if (lastResult && lastResult.ok) {
+    saveSession({ test: 'color', result: lastResult.recoverySec === null ? null : lastResult.recoverySec / 60 });
+    historyPanel.render();
+  }
   showResult(lastResult);
   btnPdf.disabled = !(lastResult && lastResult.ok);
   if (lastResult && lastResult.ok) markStep(4, 'done');

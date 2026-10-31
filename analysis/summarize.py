@@ -55,6 +55,7 @@ def main():
         print(f"Recovery time mean: {rec.mean():.1f} min")
     if len(rec) > 1:
         print(f"Recovery time SD:   {rec.std():.1f} min  (sample SD, ddof=1)")
+        print(f"Recovery time CV:   {rec.std() / rec.mean() * 100:.0f} %  (repeatability: smaller is better)")
     if check:
         print("All sessions match the app" if mismatches == 0 else f"{mismatches} session(s) DO NOT match the app")
 

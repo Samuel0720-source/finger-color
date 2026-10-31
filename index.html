@@ -10,6 +10,10 @@
     />
     <meta name="theme-color" content="#0f766e" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="FingerColor" />
     <meta property="og:title" content="Finger Color Recovery" />
     <meta property="og:description" content="Measure fingertip color recovery after cold exposure with your phone camera." />
     <meta property="og:type" content="website" />
@@ -31,10 +35,10 @@
 
     <header class="hero">
       <p class="eyebrow">Hand health research tool</p>
-      <h1>How fast do your fingers<br />warm back up?</h1>
+      <h1>Three hand tests.<br />Just your phone camera.</h1>
       <p class="subtitle">
-        Point your phone camera at your hand after being in the cold. The app tracks the color of each fingertip and
-        times how long it takes to return to normal.
+        Time how fast your fingertips regain their color after the cold, check whether a finger catches when it
+        straightens, and measure how fast and steady your thumb can tap.
       </p>
       <ul class="chips">
         <li>Runs in your browser</li>
@@ -44,6 +48,18 @@
     </header>
 
     <main class="layout">
+      <nav class="tabs wide" role="tablist" aria-label="Choose a test">
+        <button class="tab" role="tab" data-mode="color">
+          <strong>Color recovery</strong><span>After cold exposure</span>
+        </button>
+        <button class="tab" role="tab" data-mode="catching">
+          <strong>Finger catching</strong><span>Bend and straighten</span>
+        </button>
+        <button class="tab" role="tab" data-mode="tapping">
+          <strong>Thumb tapping</strong><span>10-second speed test</span>
+        </button>
+      </nav>
+
       <section class="card camera-card">
         <div id="stage">
           <video id="video" playsinline muted></video>
@@ -54,21 +70,22 @@
               <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
             </svg>
             <strong>Camera is off</strong>
-            <span>Press Start Camera, then hold your hand palm up in view.</span>
+            <span>Press Start Camera, then hold your hand in view.</span>
           </div>
           <div id="timer" class="timer hidden">00:00</div>
         </div>
-        <p id="status" class="status" role="status" aria-live="polite">Press Start Camera to begin.</p>
+        <div class="camera-bar">
+          <p id="status" class="status" role="status" aria-live="polite">Press Start Camera to begin.</p>
+          <button id="btn-camera" class="btn btn-primary">Start Camera</button>
+        </div>
       </section>
 
-      <div class="steps">
+      <!-- ===== Color recovery ===== -->
+      <div class="steps" data-only="color">
         <section class="card step-card" data-step="1">
-          <h2><span class="step">1</span> Set up</h2>
-          <p class="hint">Rest your hand palm up under steady light. Then save your normal color while your hands are warm.</p>
-          <div class="actions">
-            <button id="btn-camera" class="btn btn-primary">Start Camera</button>
-            <button id="btn-baseline" class="btn btn-secondary" disabled>Save Normal Color</button>
-          </div>
+          <h2><span class="step">1</span> Save your normal color</h2>
+          <p class="hint">Rest your hand palm up under steady light while your hands are warm, then press the button and keep still for 10 seconds.</p>
+          <button id="btn-baseline" class="btn btn-secondary full" disabled>Save Normal Color</button>
           <p id="baseline-info" class="hint small">No normal color saved yet.</p>
           <p class="hint small">Optional: if you have a photo grey card, tap it on the video to correct the light.</p>
         </section>
@@ -87,7 +104,7 @@
         </section>
       </div>
 
-      <section class="card wide" data-step="3">
+      <section class="card wide" data-step="3" data-only="color">
         <div class="card-head">
           <h2><span class="step">3</span> Your fingers right now</h2>
           <p class="legend-note">0 = same as normal &middot; above 3 = a change most people can see</p>
@@ -96,7 +113,7 @@
         <div class="chart-box"><canvas id="chart" aria-label="Change score over time for each finger" role="img"></canvas></div>
       </section>
 
-      <section class="card wide" data-step="4">
+      <section class="card wide" data-step="4" data-only="color">
         <h2><span class="step">4</span> Results</h2>
         <div class="results-row">
           <div id="result" class="result muted">Finish a recording to see your results here.</div>
@@ -106,6 +123,81 @@
           </div>
         </div>
       </section>
+
+      <!-- ===== Finger catching ===== -->
+      <div class="steps" data-only="catching">
+        <section class="card step-card">
+          <h2>Finger catching test</h2>
+          <p class="hint">
+            Hold your hand up with the palm facing the camera. Slowly make a fist, then open it all the way. Repeat 10
+            times. The test stops by itself.
+          </p>
+          <p id="trig-live" class="live-readout">Start the camera first.</p>
+          <button id="trig-start" class="btn btn-primary full" disabled>Start Test</button>
+          <p class="hint small why">
+            <b>Why:</b> a finger that stops partway and then snaps straight is called catching. It can be a sign of trigger
+            finger. The app measures the middle joint angle of each finger from the 3D hand points.
+          </p>
+        </section>
+      </div>
+
+      <section class="card wide" data-only="catching">
+        <h2>Results</h2>
+        <div class="results-row">
+          <div id="trig-result" class="result muted">Finish a test to see your results here.</div>
+          <div class="result-actions">
+            <button id="trig-csv" class="btn-link" disabled>Download angles (CSV)</button>
+          </div>
+        </div>
+        <div class="chart-box"><canvas id="trig-chart" aria-label="Joint angle over time for each finger" role="img"></canvas></div>
+      </section>
+
+      <!-- ===== Thumb tapping ===== -->
+      <div class="steps" data-only="tapping">
+        <section class="card step-card">
+          <h2>Thumb tapping test</h2>
+          <p class="hint">
+            Hold your hand side-on to the camera. After the countdown, tap your thumb and index finger together as fast and
+            as wide as you can for 10 seconds.
+          </p>
+          <p id="tap-live" class="live-readout">Start the camera first.</p>
+          <div class="meter" aria-hidden="true"><div id="tap-meter-fill" class="meter-fill"></div></div>
+          <button id="tap-start" class="btn btn-primary full" disabled>Start 10-second Test</button>
+          <p class="hint small why">
+            <b>Why:</b> thumb speed and rhythm are simple measures of hand dexterity, which can drop when the nerve to the
+            thumb is squeezed (as in carpal tunnel syndrome). This test does not diagnose anything.
+          </p>
+        </section>
+      </div>
+
+      <section class="card wide" data-only="tapping">
+        <h2>Results</h2>
+        <div class="results-row">
+          <div id="tap-result" class="result muted">Finish a test to see your results here.</div>
+          <div class="result-actions">
+            <button id="tap-csv" class="btn-link" disabled>Download tap data (CSV)</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== History (all tests) ===== -->
+      <section class="card wide">
+        <div class="card-head">
+          <h2>Your history</h2>
+          <button id="history-csv" class="btn-link" disabled>Download history (CSV)</button>
+        </div>
+        <p id="history-empty" class="hint">No tests saved yet. Finished tests are kept in this browser only.</p>
+        <div class="history-grid">
+          <div>
+            <p id="history-chart-title" class="legend-note"></p>
+            <div class="chart-box small"><canvas id="history-chart" aria-label="Results over time" role="img"></canvas></div>
+          </div>
+          <table class="mini-table">
+            <thead><tr><th>When</th><th>Test</th><th>Result</th></tr></thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <section id="how" class="how">
@@ -113,18 +205,18 @@
       <div class="how-grid">
         <article>
           <span class="how-num">01</span>
-          <h3>Find the fingertips</h3>
-          <p>A hand-tracking model (MediaPipe) finds 21 points on your hand in every frame and places a small box on each fingertip and on your palm.</p>
+          <h3>Find the hand</h3>
+          <p>A hand-tracking model (MediaPipe) finds 21 points on your hand in every video frame, both on the picture and in 3D.</p>
         </article>
         <article>
           <span class="how-num">02</span>
-          <h3>Measure the color</h3>
-          <p>Each box is converted to CIELAB, a color space built to match human vision. The palm is used as a reference so changes in room light cancel out.</p>
+          <h3>Measure</h3>
+          <p>Color: each fingertip is converted to CIELAB and compared with your palm. Movement: joint angles and the thumb-to-finger gap come from the 3D points, so camera distance does not matter.</p>
         </article>
         <article>
           <span class="how-num">03</span>
-          <h3>Time the recovery</h3>
-          <p>The change from your saved normal color is smoothed over 10 seconds. Recovery is the moment it stays below your own noise level for 30 seconds.</p>
+          <h3>Score</h3>
+          <p>Recovery time after cold, catches (a finger that stops, then snaps open), and taps per second with rhythm steadiness. Compare each result with your own history.</p>
         </article>
       </div>
     </section>
