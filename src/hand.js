@@ -6,6 +6,7 @@ const MODEL_URL =
 let landmarker = null;
 
 export async function loadHandModel() {
+  if (landmarker) return;
   const vision = await FilesetResolver.forVisionTasks('/wasm');
   const options = (delegate) => ({
     baseOptions: { modelAssetPath: MODEL_URL, delegate },
@@ -37,7 +38,9 @@ export function detectHand(videoEl, timeMs) {
   if (!landmarker) return null;
   const result = landmarker.detectForVideo(videoEl, timeMs);
   if (!result.landmarks || result.landmarks.length === 0) return null;
-  return { image: result.landmarks[0], world: result.worldLandmarks[0] };
+  const world = result.worldLandmarks?.[0];
+  if (!world || world.length !== 21 || world.some(p => ![p.x, p.y, p.z].every(Number.isFinite))) return null;
+  return { image: result.landmarks[0], world };
 }
 
 // Color sampling boxes (in pixels) for each fingertip and the palm.
@@ -64,3 +67,4 @@ export function fingertipSpots(pts, w, h) {
   };
   return spots;
 }
+

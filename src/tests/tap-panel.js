@@ -18,6 +18,11 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
   let tStart = 0;
   let counter = null;
   let last = null;
+  let trackedMs = 0;
+  let previousFrame = null;
+  let previousTracked = false;
+  let maxGap = 0;
+  let lastTracked = 0;
 
   btnStart.onclick = () => (phase === 'idle' ? start() : cancel());
   btnCsv.onclick = () => {
@@ -34,6 +39,12 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
     phase = 'ready';
     tStart = performance.now();
     counter = createTapCounter();
+    trackedMs = 0;
+    previousFrame = null;
+    previousTracked = false;
+    maxGap = 0;
+    lastTracked = 0;
+    meterFill.style.width = '0%';
     btnStart.textContent = 'Cancel test';
     btnCsv.disabled = true;
     resultEl.className = 'result muted';
@@ -43,6 +54,7 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
   }
 
   function cancel() {
+    if (phase === 'idle') return;
     phase = 'idle';
     setBusy(false);
     btnStart.textContent = 'Start 10-second test';
@@ -56,7 +68,14 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
     setBusy(false);
     btnStart.textContent = 'Start 10-second test';
     last = counter.result(TEST_MS);
-    btnCsv.disabled = false;
+    btnCsv.disabled = last.trace.length === 0;
+    maxGap = Math.max(maxGap, TEST_MS - lastTracked);
+    if (trackedMs < TEST_MS * 0.9 || maxGap > 500 || last.trace.length < 150) {
+      resultEl.className = 'result muted';
+      resultEl.textContent = 'Tracking was incomplete or too slow. This test was not scored or saved. Keep your whole hand visible and try again. Raw samples are available.';
+      setStatus('Test needs another attempt.');
+      return;
+    }
 
     const tooFast = last.tapsPerSec > MAX_RELIABLE_TAPS_PER_SEC;
     const rhythm = last.rhythmCV === null ? 'Not enough taps' : `${last.rhythmCV.toFixed(0)}% variation`;
@@ -70,9 +89,9 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
       </div>
       <p class="result-note">Lower variation means a steadier rhythm. Compare with your own history below, not with other people.
       ${tooFast ? '<br><b>Faster than 6 taps a second, the camera can miss taps, so your real count may be higher.</b>' : ''}</p>`;
-    saveSession({ test: 'tapping', result: Number(last.tapsPerSec.toFixed(2)), taps: last.taps });
+    const saved = saveSession({ test: 'tapping', algorithm: 2, result: Number(last.tapsPerSec.toFixed(2)), taps: last.taps });
     onSaved();
-    setStatus('Test finished.');
+    setStatus(saved ? 'Test finished.' : 'Test finished. Browser storage is unavailable; download your results.');
   }
 
   function onFrame(hand, now, octx) {
@@ -97,6 +116,11 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
 
     const elapsed = now - tStart;
     if (phase === 'ready') {
+      if (!hand) {
+        tStart = now;
+        liveEl.textContent = 'Show your hand to start the countdown.';
+        return;
+      }
       const left = Math.ceil((READY_MS - elapsed) / 1000);
       liveEl.textContent = `Get ready. Starting in ${left}`;
       if (elapsed >= READY_MS) {
@@ -107,9 +131,16 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
       return;
     }
 
-    // phase === 'testing'
+    // End before sampling: frames outside the ten-second window do not count.
+    if (elapsed >= TEST_MS) { finish(); return; }
+    if (previousFrame !== null && previousTracked && hand) trackedMs += Math.min(elapsed - previousFrame, 100);
+    previousFrame = elapsed;
+    previousTracked = Boolean(hand);
     if (hand) {
+      maxGap = Math.max(maxGap, elapsed - lastTracked);
+      lastTracked = elapsed;
       const r = counter.update(hand.world, elapsed);
+      if (!r) { previousTracked = false; return; }
       // Meter: 0% = touching, 100% = wide open (OPEN limit x 2)
       meterFill.style.width = `${Math.min(100, (r.gap / (OPEN * 2)) * 100)}%`;
       meterFill.classList.toggle('touching', r.gap < CLOSE);
@@ -117,7 +148,7 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
     } else {
       liveEl.textContent = 'Hand not found. Keep your hand in view!';
     }
-    if (elapsed >= TEST_MS) finish();
+
   }
 
   return {
@@ -128,7 +159,10 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
       btnStart.disabled = true;
       liveEl.textContent = 'Start the camera first.';
     },
+    tick(now) { if (phase === 'testing' && now - tStart >= TEST_MS) finish(); },
+    cancel,
     isRunning: () => phase !== 'idle',
     onFrame,
   };
 }
+

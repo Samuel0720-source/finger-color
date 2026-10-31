@@ -18,10 +18,10 @@ It installs to the home screen as a web app (PWA) and keeps a history of results
 
 1. **Finds the fingertips.** MediaPipe Hand Landmarker finds 21 hand landmarks in every video frame. The app places a sampling box between each fingertip and the joint below it, plus one on the palm.
 2. **Measures color.** Each box is averaged, converted from sRGB to linear RGB to CIE XYZ to **CIELAB** (a color space designed so that equal distances look like equal differences to people).
-3. **Cancels room lighting.** Each fingertip is compared with the palm of the same frame (`finger − palm`). If the room gets brighter, both change together, so the difference stays stable. An optional photo grey card adds a second correction.
-4. **Scores the change.** The user saves a "normal color" baseline while warm. The change score is the CIELAB distance (ΔE) from that baseline. ΔE ≈ 3 is roughly the smallest difference most people can see.
-5. **Times recovery.** After the user presses *I'm Back in the Warm*, the middle-finger score is smoothed over 10 s. Recovery is the first moment it stays below a threshold for 30 s. The threshold is the larger of 10 % of the starting change and the user's own baseline noise (mean + 2 SD).
-6. **Reports.** A one-page PDF report (chart, per-finger table, temperature log) and raw CSV files for research.
+3. **Reduces some lighting effects.** Each fingertip is compared with the palm of the same frame (`finger − palm`). This is not full lighting cancellation: exposure, shadows, and white balance still affect results. Optional grey-card correction is exported in CSV columns only and does not enter the recovery score.
+4. **Scores the change.** The user saves a "normal color" baseline while warm. The change score is the CIELAB distance (ΔE) from that baseline. The reference score of 3 is a UI heuristic, not a validated clinical cutoff.
+5. **Times recovery.** After the user presses *I'm Back in the Warm*, the middle-finger score is smoothed using a trailing, timestamp-based 10 s window. Recovery is the first moment it stays below a threshold for 30 s. The threshold is the larger of 10 % of the starting change and the user's own baseline noise (mean + 2 SD).
+6. **Reports.** A PDF report (chart, per-finger table, temperature log) and raw CSV files for research.
 
 Everything runs on the device. Video is never uploaded.
 
@@ -31,7 +31,7 @@ MediaPipe also returns **world landmarks**: 3D points in meters. The angle at ea
 
 ### Thumb tapping
 
-The thumb-tip to index-tip distance is divided by hand size (wrist to middle knuckle), so camera distance does not matter. Two limits (touch below 0.15, release above 0.30) stop small wobbles from counting as extra taps (`src/tests/tap-test.js`).
+The thumb-tip to index-tip distance is divided by hand size (wrist to middle knuckle), to reduce scale sensitivity. Camera position and tracking errors still matter. Two limits (touch below 0.15, release above 0.30) stop small wobbles from counting as extra taps (`src/tests/tap-test.js`).
 
 ## Tech
 
@@ -104,3 +104,40 @@ python summarize.py --check
 ## Author
 
 Samuel Koo, Biomedical Engineering (Co-op), University of Waterloo
+
+
+## Redesign and reliability review (2026-10-31)
+
+All three tests, live camera/overlay, baseline, warming marker, optional temperature log,
+five-finger colors, charts, PDF, raw CSV, events CSV, and local history remain available.
+The new example-results dialog uses clearly labeled synthetic values and never writes history.
+The temperature log is under an expandable control. Data and events have separate download buttons
+because mobile browsers can block two downloads from one click.
+
+### Run the checks
+
+```bash
+npm ci
+npm test
+npm run build
+```
+
+### Measurement rules and limits
+
+- Tapping speed is detected taps divided by the full ten-second window. A tap requires an
+  open-to-close transition; starting with fingers touching is not a tap.
+- A tapping score needs at least 90% tracked time, no tracking gap above 500 ms, and at
+  least 150 tracked samples. These are engineering quality rules, not clinical validation.
+- Catching needs ten middle-finger cycles and no tracking gaps above 500 ms; incomplete
+  recordings can export raw angles but are not saved as a successful score.
+- Color algorithm v2 needs at least 60 seconds after warming, no gaps above 2.5 seconds,
+  and 30 actual seconds below threshold. Missing data is never interpreted as recovery.
+  The exported algorithm_version event lets Python preserve the old algorithm for older files.
+- Hide the page during a test and the timed test is cancelled; color data remains downloadable
+  but is marked interrupted and not scored. Keep the same hand, camera, and lighting across sessions.
+- A grey card only affects extra CSV columns, not the palm-referenced score or baseline.
+- Do not deliberately expose hands to cold to obtain a result. Observe naturally occurring changes.
+- Existing history uses previous algorithms; do not treat old and new results as directly interchangeable.
+
+This review does not establish accuracy on real iOS/Android cameras or clinical validity.
+Real-hand testing across frame rates, lighting, skin tones and camera models is still needed.

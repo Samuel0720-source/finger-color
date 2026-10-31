@@ -18,7 +18,7 @@ export function createChart(canvas) {
           ...lineStyle(name === 'middle'),
         })),
         {
-          label: 'Visible change',
+          label: 'Reference score (3)',
           data: [],
           borderColor: MUTED,
           borderWidth: 1,
@@ -79,3 +79,4 @@ export function resetChart() {
 export function chartImage() {
   return chart ? chart.toBase64Image('image/png', 1) : null;
 }
+

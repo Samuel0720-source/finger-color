@@ -19,53 +19,57 @@
     <meta property="og:type" content="website" />
   </head>
   <body>
+    <a class="skip-link" href="#workspace">Skip to tests</a>
     <header class="site-header">
       <a class="brand" href="/">
         <img src="/favicon.svg" alt="" width="26" height="26" />
-        <span>finger-color</span>
+        <span>finger<span class="brand-light">color</span><small>THE HAND OBSERVATORY</small></span>
       </a>
       <nav class="site-nav" aria-label="Page">
-        <a href="#how">How it works</a>
+        <a href="#workspace">Workspace</a><a href="#history">History</a><a href="#how">How it works</a>
         <a href="#privacy">Privacy</a>
       </nav>
     </header>
 
     <main>
       <section class="intro">
-        <h1>Hand tests you can run with your phone camera.</h1>
-        <p class="lede">
-          Time how fast your fingertips regain their color after the cold, check whether a finger catches as it
-          straightens, and measure how fast your thumb can tap. The video is analyzed on this device and never uploaded.
-        </p>
+        <div>
+          <p class="eyebrow"><span class="live-dot"></span> PERSONAL HAND MEASUREMENTS</p>
+          <h1>A little more insight.<br><span>Right at your fingertips.</span></h1>
+          <p class="lede">Explore color, movement, and rhythm with your camera. Three simple ways to observe your hands and keep a record over time.</p>
+          <div class="intro-actions"><a href="#workspace" class="btn btn-primary">Explore the tests <span aria-hidden="true">↗</span></a><button id="btn-demo" class="btn btn-quiet">See example results</button></div>
+          <p class="trust-line">No account needed <span>•</span> Video stays on your device <span>•</span> Free to use</p>
+        </div>
+        <aside class="intro-note"><span class="note-number">01 / 03</span><p>Small movements.<br>Meaningful observations.</p><span class="note-caption">Your own baseline. Your own history.<br>A student research project, not a diagnosis.</span><div class="color-spectrum" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></aside>
       </section>
-
+      <div class="workspace-heading" id="workspace"><div><p class="eyebrow">YOUR WORKSPACE</p><h2>What would you like to explore?</h2></div><span class="research-badge">Experimental · not clinically validated</span></div>
       <!-- ===== The instrument: test choice, camera, controls ===== -->
       <section class="instrument" aria-label="Run a test">
         <div class="test-switch" role="group" aria-label="Choose a test">
           <button class="tab" data-mode="color" aria-pressed="false">
-            <strong>Color recovery</strong><span>Fingertip color after cold</span>
+            <span class="tab-index">01 <span aria-hidden="true">◒</span></span><strong>Color recovery</strong><span>Compare color with your baseline</span>
           </button>
           <button class="tab" data-mode="catching" aria-pressed="false">
-            <strong>Finger catching</strong><span>Bend and straighten, 10 times</span>
+            <span class="tab-index">02 <span aria-hidden="true">⌁</span></span><strong>Finger catching</strong><span>Observe 10 bend-and-open cycles</span>
           </button>
           <button class="tab" data-mode="tapping" aria-pressed="false">
-            <strong>Thumb tapping</strong><span>10-second speed test</span>
+            <span class="tab-index">03 <span aria-hidden="true">↔</span></span><strong>Thumb tapping</strong><span>Explore speed and rhythm in 10 seconds</span>
           </button>
         </div>
 
         <div class="instrument-body">
-          <div class="viewer">
+          <div class="viewer"><div class="viewer-heading"><span>CAMERA VIEW</span><span id="tracking-state">Camera off</span></div>
             <div id="stage">
               <video id="video" playsinline muted></video>
-              <canvas id="overlay"></canvas>
+              <canvas id="overlay" aria-label="Hand tracking overlay"></canvas>
               <div id="stage-empty" class="stage-empty">
                 <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M18 11V6a2 2 0 0 0-4 0v0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8" />
                   <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
                 </svg>
-                <strong>Camera is off</strong>
-                <span>Your browser will ask to use the camera. Nothing is recorded or uploaded.</span>
-                <button id="btn-camera-start" class="btn btn-primary btn-big">Start camera</button>
+                <strong>Let’s get your hand in view.</strong>
+                <span>Allow camera access when prompted.<br>Video is processed here and never uploaded.</span>
+                <button id="btn-camera-start" class="btn btn-primary btn-big">Enable camera <span aria-hidden="true">↗</span></button>
               </div>
               <div id="timer" class="timer hidden">00:00</div>
             </div>
@@ -75,7 +79,7 @@
             </div>
           </div>
 
-          <div class="controls">
+          <div class="controls"><p class="eyebrow">GUIDED SESSION</p>
             <!-- Color recovery -->
             <div data-only="color">
               <h2 class="controls-title">Color recovery</h2>
@@ -92,20 +96,20 @@
                 <li data-step="2">
                   <span class="step">2</span>
                   <div>
-                    <h3>Record the cold and the warm-up</h3>
-                    <p class="hint">Start recording before the cold. Press <b>I'm back in the warm</b> the moment you sit down after it.</p>
+                    <h3>Observe color as you warm up</h3>
+                    <p class="hint">For an ordinary, naturally occurring color change, start recording and mark when warming begins. Keep your hand in view for at least 60 seconds afterward. Do not deliberately cool your hands for this test.</p>
                     <div class="actions">
                       <button id="btn-record" class="btn btn-primary" disabled>Start recording</button>
                       <button id="btn-warm" class="btn btn-warm" disabled>I'm back in the warm</button>
                     </div>
-                    <div class="temp-row">
-                      <input id="temp-input" type="number" step="0.1" inputmode="decimal" placeholder="Finger temperature, °C (optional)" aria-label="Middle finger temperature in °C" />
+                    <details class="advanced"><summary>Optional temperature log</summary><div class="temp-row">
+                      <input id="temp-input" type="number" step="0.1" min="0" max="50" inputmode="decimal" placeholder="Finger temperature, °C (optional)" aria-label="Middle finger temperature in °C" />
                       <button id="btn-temp" class="btn btn-secondary" disabled>Log</button>
-                    </div>
+                    </div></details>
                   </div>
                 </li>
               </ol>
-              <p class="hint small fine">Optional: tap a photo grey card on the video to correct for the room's light.</p>
+              <p class="hint small fine">Research option: before recording, tap a photo grey card in the video to export corrected color values. The recovery score always uses the palm reference.</p>
             </div>
 
             <!-- Finger catching -->
@@ -115,7 +119,7 @@
               <p id="trig-live" class="live-readout">Start the camera first.</p>
               <button id="trig-start" class="btn btn-primary full" disabled>Start test</button>
               <p class="hint small fine">
-                A finger that stops partway and then snaps straight is called catching. It can be a sign of trigger finger.
+                This explores pauses followed by quick opening. Camera estimates cannot confirm or rule out a condition. Stop if a movement hurts.
                 The app tracks the middle joint of each finger in 3D.
               </p>
             </div>
@@ -128,8 +132,7 @@
               <div class="meter" aria-hidden="true"><div id="tap-meter-fill" class="meter-fill"></div></div>
               <button id="tap-start" class="btn btn-primary full" disabled>Start 10-second test</button>
               <p class="hint small fine">
-                Tapping speed and rhythm are simple measures of hand dexterity, which can drop when the nerve to the thumb
-                is squeezed, as in carpal tunnel syndrome. This test does not diagnose anything.
+                Compare speed and rhythm across your own sessions using the same hand and setup. This test does not identify a cause or diagnose a condition.
               </p>
             </div>
           </div>
@@ -140,7 +143,7 @@
       <section class="readout" data-only="color" data-step="3">
         <div class="readout-head">
           <h2>Your fingertips</h2>
-          <p class="legend-note">Left circle: your normal color. Right circle: now. A change above 3 is one most people can see.</p>
+          <p class="legend-note">Left circle: your normal color. Right circle: now. The score is an experimental color difference, not a health rating.</p>
         </div>
         <div id="fingers" class="finger-grid"></div>
         <div class="well chart-well"><div class="chart-box"><canvas id="chart" aria-label="Color change from normal over time for each finger" role="img"></canvas></div></div>
@@ -154,7 +157,7 @@
           <div id="result" class="result muted">Finish a recording to see your recovery time here.</div>
           <div class="result-actions">
             <button id="btn-pdf" class="btn btn-primary" disabled>Download PDF report</button>
-            <button id="btn-csv" class="btn-link" disabled>Download raw data (CSV)</button>
+            <button id="btn-csv" class="btn-link" disabled>Download raw data (CSV)</button><button id="btn-events" class="btn-link" disabled>Download events (CSV)</button>
           </div>
         </div>
       </section>
@@ -179,7 +182,7 @@
       </section>
 
       <!-- ===== History (all tests) ===== -->
-      <section class="readout">
+      <section class="readout" id="history">
         <div class="readout-head">
           <h2>Your history</h2>
           <button id="history-csv" class="btn-link" disabled>Download history (CSV)</button>
@@ -206,11 +209,11 @@
           </li>
           <li>
             <h3>Measure</h3>
-            <p>Color is converted to CIELAB, a scale built around human vision, and compared with your palm so room light cancels out. Joint angles and the thumb-to-finger gap come from the 3D points, so distance from the camera does not matter.</p>
+            <p>Color is converted to CIELAB, a scale built around human vision, and compared with your palm to reduce some lighting effects. Camera exposure, skin tone, position, and tracking quality can still affect results. 3D landmarks estimate movement; they are not a calibrated clinical measurement.</p>
           </li>
           <li>
             <h3>Score</h3>
-            <p>Recovery time after cold, the number of catches, and taps per second with rhythm steadiness. Each result is compared with your own history, not with other people.</p>
+            <p>Recovery time after cold, the number of catches, and taps per second with rhythm steadiness. Review your own history using the same hand, camera, and lighting. Changes in setup can change the result.</p>
           </li>
         </ol>
       </section>
@@ -230,6 +233,14 @@
       <p class="credit">Built by Samuel Koo, Biomedical Engineering, University of Waterloo.</p>
     </footer>
 
+    <dialog id="example-dialog" aria-labelledby="example-title">
+      <form method="dialog"><button class="btn btn-quiet close-dialog" aria-label="Close example results">Close ×</button></form>
+      <p class="eyebrow">ILLUSTRATIVE DATA ONLY</p><h2 id="example-title">A preview of your observations.</h2>
+      <p class="hint">These made-up examples show the format. They are not your measurements, normal ranges, or a medical interpretation. They are never saved to history.</p>
+      <div class="example-grid"><article><span>Color recovery</span><strong>82 <small>seconds</small></strong><p>An estimated return to the saved baseline.</p></article><article><span>Finger catching</span><strong>2 <small>events</small></strong><p>Catch-like patterns across recorded movements.</p></article><article><span>Thumb tapping</span><strong>3.2 <small>taps/s</small></strong><p>32 detected taps in a 10-second session.</p></article></div>
+      <p class="hint">Real sessions include available charts and exports. If tracking is incomplete, the app asks for another attempt instead of saving a score.</p>
+    </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
+
