@@ -34,7 +34,7 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
     phase = 'ready';
     tStart = performance.now();
     counter = createTapCounter();
-    btnStart.textContent = 'Cancel';
+    btnStart.textContent = 'Cancel test';
     btnCsv.disabled = true;
     resultEl.className = 'result muted';
     resultEl.textContent = 'Get ready...';
@@ -45,31 +45,31 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
   function cancel() {
     phase = 'idle';
     setBusy(false);
-    btnStart.textContent = 'Start 10-second Test';
+    btnStart.textContent = 'Start 10-second test';
     resultEl.className = 'result muted';
-    resultEl.textContent = 'Cancelled.';
+    resultEl.textContent = 'Test cancelled. Start again when ready.';
     setStatus('Test cancelled.');
   }
 
   function finish() {
     phase = 'idle';
     setBusy(false);
-    btnStart.textContent = 'Start 10-second Test';
+    btnStart.textContent = 'Start 10-second test';
     last = counter.result(TEST_MS);
     btnCsv.disabled = false;
 
     const tooFast = last.tapsPerSec > MAX_RELIABLE_TAPS_PER_SEC;
-    const rhythm = last.rhythmCV === null ? 'not enough taps' : `${last.rhythmCV.toFixed(0)} %`;
+    const rhythm = last.rhythmCV === null ? 'Not enough taps' : `${last.rhythmCV.toFixed(0)}% variation`;
     resultEl.className = 'result';
     resultEl.innerHTML = `
       <div class="result-label">Taps in 10 seconds</div>
       <div class="result-big">${last.taps}</div>
       <div class="stat-row">
         <div><span>Speed</span><strong>${last.tapsPerSec.toFixed(1)} taps/s</strong></div>
-        <div><span>Rhythm change (CV)</span><strong>${rhythm}</strong></div>
+        <div><span>Rhythm steadiness</span><strong>${rhythm}</strong></div>
       </div>
-      <p class="result-note">Lower rhythm change means a steadier rhythm. Compare with your own earlier results.
-      ${tooFast ? '<br><b>Above 6 taps per second the camera may miss taps, so the real number may be higher.</b>' : ''}</p>`;
+      <p class="result-note">Lower variation means a steadier rhythm. Compare with your own history below, not with other people.
+      ${tooFast ? '<br><b>Faster than 6 taps a second, the camera can miss taps, so your real count may be higher.</b>' : ''}</p>`;
     saveSession({ test: 'tapping', result: Number(last.tapsPerSec.toFixed(2)), taps: last.taps });
     onSaved();
     setStatus('Test finished.');
@@ -91,18 +91,18 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
     }
 
     if (phase === 'idle') {
-      liveEl.textContent = hand ? 'Hand found. Press Start when ready.' : 'Show your hand to the camera.';
+      liveEl.textContent = hand ? 'Hand found. Press start when ready.' : 'Show your hand to the camera.';
       return;
     }
 
     const elapsed = now - tStart;
     if (phase === 'ready') {
       const left = Math.ceil((READY_MS - elapsed) / 1000);
-      liveEl.textContent = `Starting in ${left}...`;
+      liveEl.textContent = `Get ready. Starting in ${left}`;
       if (elapsed >= READY_MS) {
         phase = 'testing';
         tStart = now;
-        resultEl.textContent = 'Tap thumb and index finger together, as fast and as wide as you can!';
+        resultEl.textContent = 'Go. Tap your thumb and index finger together, fast and wide.';
       }
       return;
     }
@@ -113,7 +113,7 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
       // Meter: 0% = touching, 100% = wide open (OPEN limit x 2)
       meterFill.style.width = `${Math.min(100, (r.gap / (OPEN * 2)) * 100)}%`;
       meterFill.classList.toggle('touching', r.gap < CLOSE);
-      liveEl.textContent = `Taps: ${r.taps} · ${Math.max(0, (TEST_MS - elapsed) / 1000).toFixed(1)} s left`;
+      liveEl.textContent = `${r.taps} taps. ${Math.max(0, (TEST_MS - elapsed) / 1000).toFixed(1)} s left`;
     } else {
       liveEl.textContent = 'Hand not found. Keep your hand in view!';
     }
@@ -123,6 +123,10 @@ export function createTapPanel({ setStatus, setBusy, onSaved, fileName }) {
   return {
     enable() {
       btnStart.disabled = false;
+    },
+    disable() {
+      btnStart.disabled = true;
+      liveEl.textContent = 'Start the camera first.';
     },
     isRunning: () => phase !== 'idle',
     onFrame,

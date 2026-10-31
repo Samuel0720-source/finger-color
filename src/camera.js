@@ -12,6 +12,19 @@ export async function startCamera(videoEl) {
   return stream.getVideoTracks()[0];
 }
 
+export function stopCamera(videoEl) {
+  const stream = videoEl.srcObject;
+  if (stream) stream.getTracks().forEach((t) => t.stop());
+  videoEl.srcObject = null;
+}
+
+// A laptop or selfie camera faces the user, so show it like a mirror.
+// Phones report 'environment' for the back camera; laptops often report nothing at all.
+export function isFrontCamera(track) {
+  const settings = track.getSettings ? track.getSettings() : {};
+  return settings.facingMode !== 'environment';
+}
+
 export async function tryLockCamera(track) {
   const caps = track.getCapabilities ? track.getCapabilities() : {};
   const wanted = {};
@@ -22,12 +35,12 @@ export async function tryLockCamera(track) {
     wanted.whiteBalanceMode = 'manual';
   }
   if (Object.keys(wanted).length === 0) {
-    return 'Camera lock not supported (using grey card correction)';
+    return 'Camera ready. This camera adjusts its own brightness, so keep the light steady.';
   }
   try {
     await track.applyConstraints({ advanced: [wanted] });
-    return 'Camera lock OK: ' + Object.keys(wanted).join(', ');
-  } catch (e) {
-    return 'Camera lock failed: ' + e.message;
+    return 'Camera ready. Brightness and color balance are locked.';
+  } catch {
+    return 'Camera ready. Brightness could not be locked, so keep the light steady.';
   }
 }

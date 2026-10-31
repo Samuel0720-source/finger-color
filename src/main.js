@@ -1,5 +1,7 @@
+// Font served from this site (no request to Google). Variable width + weight.
+import '@fontsource-variable/instrument-sans/wdth.css';
 import './style.css';
-import { startCamera, tryLockCamera } from './camera.js';
+import { startCamera, stopCamera, isFrontCamera, tryLockCamera } from './camera.js';
 import { loadHandModel, detectHand, fingertipSpots } from './hand.js';
 import { averageRGB, toLinear, correctWithCard, linearToLab } from './color.js';
 import * as rec from './recorder.js';
@@ -30,6 +32,7 @@ const resultEl = $('result');
 const baselineInfo = $('baseline-info');
 const tempInput = $('temp-input');
 const btnCamera = $('btn-camera');
+const btnCameraStart = $('btn-camera-start');
 const btnBaseline = $('btn-baseline');
 const btnRecord = $('btn-record');
 const btnWarm = $('btn-warm');
@@ -48,6 +51,8 @@ let lastResult = null;
 let recordedSeconds = 0;
 let usedCard = false;
 let wakeLock = null;
+let cameraOn = false;
+let mirrored = false;
 
 window.onerror = (msg) => {
   statusEl.textContent = 'Error: ' + msg;
@@ -90,7 +95,7 @@ function setMode(next) {
   tabs.forEach((tab) => {
     const on = tab.dataset.mode === mode;
     tab.classList.toggle('active', on);
-    tab.setAttribute('aria-selected', on);
+    tab.setAttribute('aria-pressed', on);
   });
   document.querySelectorAll('[data-only]').forEach((el) => el.classList.toggle('hidden', el.dataset.only !== mode));
   historyPanel.setMode(mode);
@@ -98,56 +103,88 @@ function setMode(next) {
 
 // ---------- Camera ----------
 
-btnCamera.onclick = async () => {
-  btnCamera.disabled = true;
+btnCameraStart.onclick = () => turnCameraOn();
+btnCamera.onclick = () => turnCameraOff();
+
+async function turnCameraOn() {
+  btnCameraStart.disabled = true;
   statusEl.textContent = 'Opening camera...';
   let lockMsg;
+  let track;
   try {
-    const track = await startCamera(video);
+    track = await startCamera(video);
     lockMsg = await tryLockCamera(track);
   } catch (e) {
-    statusEl.textContent = `Could not open the camera (${e.message}). Allow camera access and try again.`;
-    btnCamera.disabled = false;
+    statusEl.textContent = `Could not open the camera (${e.message}). Allow camera access in your browser and try again.`;
+    btnCameraStart.disabled = false;
     return;
   }
 
+  mirrored = isFrontCamera(track);
+  stage.classList.toggle('mirrored', mirrored);
   stage.classList.add('is-live');
   stageEmpty.classList.add('hidden');
-  statusEl.textContent = 'Loading hand model...';
+  statusEl.textContent = 'Loading the hand model (about 8 MB, first time only)...';
   try {
     await loadHandModel();
   } catch (e) {
-    statusEl.textContent = `Could not load the hand model (${e.message}). Check your internet and try again.`;
-    btnCamera.disabled = false;
+    stopCamera(video);
+    stage.classList.remove('is-live');
+    stageEmpty.classList.remove('hidden');
+    statusEl.textContent = `Could not load the hand model (${e.message}). Check your internet connection and try again.`;
+    btnCameraStart.disabled = false;
     return;
   }
 
   work.width = overlay.width = video.videoWidth;
   work.height = overlay.height = video.videoHeight;
-  statusEl.textContent = lockMsg + '. Show your hand to the camera.';
+  cameraOn = true;
+  statusEl.textContent = lockMsg;
   markStep(1, 'active');
-  btnCamera.textContent = 'Camera On';
+  btnCamera.classList.remove('hidden');
+  btnCameraStart.disabled = false;
   btnBaseline.disabled = false;
-  btnRecord.disabled = false;
+  btnRecord.disabled = !baseline;
   trigger.enable();
   tap.enable();
   requestAnimationFrame(loop);
-};
+}
+
+function turnCameraOff() {
+  if (busy || rec.isRecording() || baselineBuffer) {
+    statusEl.textContent = 'Finish or stop the current test first.';
+    return;
+  }
+  cameraOn = false;
+  stopCamera(video);
+  octx.clearRect(0, 0, overlay.width, overlay.height);
+  stage.classList.remove('is-live');
+  stageEmpty.classList.remove('hidden');
+  btnCamera.classList.add('hidden');
+  btnBaseline.disabled = true;
+  btnRecord.disabled = true;
+  trigger.disable();
+  tap.disable();
+  statusEl.textContent = 'Camera off.';
+}
 
 overlay.onclick = (e) => {
   if (mode !== 'color') return; // the grey card is only used by the color test
   const rect = overlay.getBoundingClientRect();
+  // When the picture is shown as a mirror, the click's x has to be flipped back to the camera's x.
+  const fromLeft = mirrored ? rect.right - e.clientX : e.clientX - rect.left;
   cardPos = {
-    x: (e.clientX - rect.left) * (overlay.width / rect.width),
+    x: fromLeft * (overlay.width / rect.width),
     y: (e.clientY - rect.top) * (overlay.height / rect.height),
   };
-  statusEl.textContent = 'Grey card position saved.';
+  statusEl.textContent = 'Grey card marked. Its color will be used to correct the light.';
 };
 
 // ---------- Main loop ----------
 
 // One loop for every test: run the hand model once per frame, then hand the result to the chosen test.
 function loop(now) {
+  if (!cameraOn) return;
   try {
     octx.clearRect(0, 0, overlay.width, overlay.height);
     const hand = detectHand(video, now);
@@ -188,6 +225,7 @@ function sample(spots) {
     if (!pixel) return; // A fingertip is outside the picture. Skip this sample.
     const raw = linearToLab(toLinear(pixel));
     current[name] = {
+      rgb: pixel,
       raw,
       lab: card ? linearToLab(correctWithCard(pixel, card)) : null,
       d: { L: raw.L - palmLab.L, a: raw.a - palmLab.a, b: raw.b - palmLab.b },
@@ -197,11 +235,12 @@ function sample(spots) {
   if (baselineBuffer) collectBaseline(current);
 
   const views = FINGERS.map((name) => {
-    if (!baseline) return { name, diff: null, change: null };
+    const now = current[name].rgb;
+    if (!baseline) return { name, diff: null, change: null, now };
     const base = baseline.fingers[name];
     const d = current[name].d;
     const diff = { L: d.L - base.L, a: d.a - base.a, b: d.b - base.b };
-    return { name, diff, change: describeChange(diff) };
+    return { name, diff, change: describeChange(diff), now, normal: base.rgb || null };
   });
   renderFingers(fingersEl, views);
 
@@ -240,24 +279,27 @@ function makeRow(view, c, card) {
 btnBaseline.onclick = () => {
   baselineBuffer = [];
   btnBaseline.disabled = true;
-  statusEl.textContent = 'Keep your hand still...';
+  btnBaseline.textContent = `Hold still... ${BASELINE_SECONDS} s`;
+  statusEl.textContent = 'Keep your hand still with all five fingertips in view.';
 };
 
 function collectBaseline(current) {
   baselineBuffer.push(current);
   const left = BASELINE_SECONDS - baselineBuffer.length;
   if (left > 0) {
-    statusEl.textContent = `Saving your normal color... keep still (${left} s)`;
+    btnBaseline.textContent = `Hold still... ${left} s`;
     return;
   }
 
   const fingers = {};
   for (const name of FINGERS) {
     const ds = baselineBuffer.map((s) => s[name].d);
+    const px = baselineBuffer.map((s) => s[name].rgb);
     fingers[name] = {
       L: mean(ds.map((d) => d.L)),
       a: mean(ds.map((d) => d.a)),
       b: mean(ds.map((d) => d.b)),
+      rgb: { r: mean(px.map((p) => p.r)), g: mean(px.map((p) => p.g)), b: mean(px.map((p) => p.b)) },
     };
   }
   const m = fingers.middle;
@@ -269,6 +311,7 @@ function collectBaseline(current) {
   saveBaseline(baseline);
   baselineBuffer = null;
   btnBaseline.disabled = false;
+  btnRecord.disabled = false;
   updateBaselineInfo();
   statusEl.textContent = 'Normal color saved. You can start recording.';
 }
@@ -295,11 +338,12 @@ function saveBaseline(value) {
 
 function updateBaselineInfo() {
   if (!baseline) {
-    baselineInfo.textContent = 'No normal color saved yet. Save it while your hands are warm.';
+    baselineInfo.textContent = 'Not saved yet. Recording unlocks after this step.';
     return;
   }
   const when = new Date(baseline.savedAt).toLocaleString();
-  baselineInfo.textContent = `Normal color saved ${when}. Save it again if the light or place changes.`;
+  baselineInfo.textContent = `Saved ${when}. Save again if the room or light changes.`;
+  btnBaseline.textContent = 'Save normal color again';
   markStep(1, 'done');
 }
 
@@ -308,10 +352,7 @@ function updateBaselineInfo() {
 btnRecord.onclick = () => (rec.isRecording() ? stopRecording() : startRecording());
 
 function startRecording() {
-  if (!baseline) {
-    const ok = confirm('You have not saved your normal color yet. Results and the PDF need it. Record anyway?');
-    if (!ok) return;
-  }
+  if (!baseline) return; // the button stays disabled until a normal color is saved
   rec.startRecording();
   // Save the noise level with the data so the Python analysis uses the same number as the app.
   if (baseline) rec.addEvent('baseline_noise', baseline.noise.toFixed(4));
@@ -319,17 +360,17 @@ function startRecording() {
   markStep(2, 'active');
   resetChart();
   lastResult = null;
-  btnRecord.textContent = 'Stop Recording';
+  btnRecord.textContent = 'Stop recording';
   btnRecord.classList.add('btn-recording');
   btnWarm.disabled = false;
   btnTemp.disabled = false;
   btnPdf.disabled = true;
   btnCsv.disabled = true;
   resultEl.className = 'result muted';
-  resultEl.textContent = 'Recording...';
+  resultEl.textContent = 'Recording. Your result appears here when you stop.';
   timerEl.classList.remove('hidden');
   timerId = setInterval(updateTimer, 500);
-  statusEl.textContent = 'Recording. Press "I\'m Back in the Warm" as soon as you sit down.';
+  statusEl.textContent = 'Recording. Press "I\'m back in the warm" the moment you sit down.';
 }
 
 function stopRecording() {
@@ -345,7 +386,7 @@ function stopRecording() {
   markStep(2, 'done');
   clearInterval(timerId);
   timerEl.classList.add('hidden');
-  btnRecord.textContent = 'Start Recording';
+  btnRecord.textContent = 'Start recording';
   btnRecord.classList.remove('btn-recording');
   btnWarm.disabled = true;
   btnTemp.disabled = true;
@@ -370,7 +411,7 @@ function updateTimer() {
 btnWarm.onclick = () => {
   rec.addEvent('warm_start');
   btnWarm.disabled = true;
-  statusEl.textContent = 'Got it. Keep your hand still and log your finger temperature every minute.';
+  statusEl.textContent = 'Warm-up started. Keep your hand still. Log a finger temperature each minute if you have a thermometer.';
 };
 
 btnTemp.onclick = () => {
@@ -393,15 +434,15 @@ function showResult(r) {
     resultEl.textContent = r.reason;
     return;
   }
-  let note = 'Time for your middle finger to return to its normal color after you came back in the warm.';
+  let note = 'How long your middle finger took to return to its normal color after you came back into the warm.';
   if (r.recoverySec === null) {
-    note = 'Your middle finger did not return to its normal color before you stopped. Try recording longer.';
+    note = 'Your middle finger had not returned to its normal color when you stopped. Next time, record for longer.';
   } else if (r.startScore <= r.threshold) {
-    note = 'Your finger was already close to normal when you came in, so this number may be too small.';
+    note = 'Your finger was already close to its normal color when you came in, so there was nothing to time. Try a longer or colder exposure.';
   }
   resultEl.className = 'result';
   resultEl.innerHTML = `
-    <div class="result-label">Recovery time</div>
+    <div class="result-label">Recovery time, middle finger</div>
     <div class="result-big">${headlineText(r)}</div>
     <p class="result-note">${note}</p>`;
 }
@@ -409,7 +450,9 @@ function showResult(r) {
 function headlineText(r) {
   if (!r.ok) return r.reason;
   if (r.recoverySec === null) return 'Not back to normal yet';
-  return `${(r.recoverySec / 60).toFixed(1)} minutes`;
+  if (r.startScore <= r.threshold) return 'Already normal';
+  const min = r.recoverySec / 60;
+  return min < 1 ? `${Math.round(r.recoverySec)} seconds` : `${min.toFixed(1)} minutes`;
 }
 
 function fingerSummary(rows, finger, tWarm) {
@@ -430,7 +473,7 @@ btnPdf.onclick = async () => {
     buildReport(makeReport, name);
   } finally {
     btnPdf.disabled = false;
-    btnPdf.textContent = 'Download PDF Report';
+    btnPdf.textContent = 'Download PDF report';
   }
 };
 
