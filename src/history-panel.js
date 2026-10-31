@@ -43,7 +43,7 @@ export function createHistoryPanel() {
     const list = loadHistory();
     if (list.length === 0) return;
     downloadRows(
-      list.map((s) => ({ saved_at: s.savedAt, test: s.test, result: s.result ?? '', unit: TESTS[s.test]?.unit ?? '' })),
+      list.map((s) => ({ saved_at: s.savedAt, test: s.test, result: s.result ?? '', unit: TESTS[s.test]?.unit ?? '', algorithm: s.algorithm ?? 1 })),
       'finger-color_history.csv'
     );
   };
@@ -57,14 +57,14 @@ export function createHistoryPanel() {
     tbody.innerHTML = list
       .slice(-8)
       .reverse()
-      .map((s) => `<tr><td>${new Date(s.savedAt).toLocaleString()}</td><td>${TESTS[s.test]?.name ?? s.test}</td><td>${format(s)}</td></tr>`)
+      .map((s) => `<tr><td>${new Date(s.savedAt).toLocaleString()}</td><td>${TESTS[s.test]?.name ?? s.test}${s.test !== 'catching' && s.algorithm !== 2 ? ' (legacy)' : ''}</td><td>${format(s)}</td></tr>`)
       .join('');
 
-    const mine = list.filter((s) => s.test === mode);
+    const mine = list.filter((s) => s.test === mode && (mode === 'catching' || s.algorithm === 2));
     chartWrap.classList.toggle('hidden', mine.length === 0);
     titleEl.textContent =
       mine.length === 0
-        ? `No ${TESTS[mode].name.toLowerCase()} results yet.`
+        ? `No current-method ${TESTS[mode].name.toLowerCase()} results yet. Older results remain in the table and CSV.`
         : `${TESTS[mode].label}, ${mine.length} session${mine.length === 1 ? '' : 's'}`;
     chart.data.labels = mine.map((s) => new Date(s.savedAt).toLocaleDateString());
     chart.data.datasets[0].data = mine.map((s) => (s.result === null || s.result === undefined ? null : Number(s.result)));
@@ -79,3 +79,4 @@ export function createHistoryPanel() {
     },
   };
 }
+

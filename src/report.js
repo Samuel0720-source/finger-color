@@ -136,7 +136,7 @@ export function makeReport(info) {
 
   const note =
     'How to read this: the change score compares each fingertip with the normal color saved before the recording. ' +
-    '0 means no change. Above 3 is a difference most people can see. ' +
+    '0 means no change. The score is experimental and depends on the camera and lighting. ' +
     'This report is a record of measurements to share with a clinician. It is not a diagnosis.';
   const noteLines = doc.splitTextToSize(note, WIDTH);
   ensureSpace(noteLines.length * 4.5);
@@ -146,4 +146,5 @@ export function makeReport(info) {
 
   doc.save(info.name + '_report.pdf');
 }
+
 

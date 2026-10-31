@@ -36,10 +36,14 @@ export function addEvent(type, value = '') {
   events.push({ t: elapsed().toFixed(2), type, value });
 }
 
-function toCSV(list) {
+export function toCSV(list) {
   if (list.length === 0) return '';
   const headers = Object.keys(list[0]);
-  const lines = list.map((obj) => headers.map((h) => obj[h]).join(','));
+  const cell = (value) => {
+    const text = String(value ?? '');
+    return /[",\n\r]/.test(text) ? '"' + text.replaceAll('"', '""') + '"' : text;
+  };
+  const lines = list.map((obj) => headers.map((h) => cell(obj[h])).join(','));
   return [headers.join(','), ...lines].join('\n');
 }
 
@@ -58,11 +62,14 @@ function saveFile(text, filename) {
 
 export function downloadCSV(name) {
   saveFile(toCSV(rows), name + '_data.csv');
-  // Browsers may block a second download that starts at the same instant.
-  setTimeout(() => saveFile(toCSV(events), name + '_events.csv'), 400);
+}
+
+export function downloadEvents(name) {
+  saveFile(toCSV(events), name + '_events.csv');
 }
 
 // Any list of rows (same keys in every row) -> one CSV download. Used by the other tests and history.
 export function downloadRows(list, filename) {
   saveFile(toCSV(list), filename);
 }
+

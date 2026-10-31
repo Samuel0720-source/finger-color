@@ -27,6 +27,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   let lastChart = 0;
   let lastSummary = null;
   let stopAt = null;
+  let trackingLost = false;
+  let lastTracked = 0;
 
   const chart = new Chart($('trig-chart'), {
     type: 'line',
@@ -65,8 +67,10 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     bent = false;
     cycles = 0;
     stopAt = null;
+    trackingLost = false;
+    lastTracked = 0;
     t0 = performance.now();
-    chart.data.datasets.forEach((d) => (d.data = []));
+    chart.data.datasets = FINGERS.map(f => ({ label: NAMES[f], data: [], ...lineStyle(f === 'middle') }));
     chart.update('none');
     btnStart.textContent = 'Stop test';
     btnStart.classList.add('btn-recording');
@@ -82,10 +86,19 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     setBusy(false);
     btnStart.textContent = 'Start test';
     btnStart.classList.remove('btn-recording');
+    if (performance.now() - t0 - lastTracked > 500) trackingLost = true;
     if (samples.length < 30) {
       resultEl.className = 'result muted';
       resultEl.textContent = 'Not enough data. Keep your hand in view and try again.';
       setStatus('Test stopped.');
+      return;
+    }
+    if (cycles < TARGET_CYCLES || trackingLost) {
+      lastSummary = {};
+      btnCsv.disabled = false;
+      resultEl.className = 'result muted';
+      resultEl.textContent = 'Test incomplete: complete 10 cycles with continuous tracking. No catch score was saved. Raw angles are available.';
+      setStatus('Test needs another attempt.');
       return;
     }
     const times = samples.map((s) => s.t);
@@ -96,9 +109,9 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     drawFinalChart(times, perFinger);
     btnCsv.disabled = false;
     const totalCatches = FINGERS.reduce((sum, f) => sum + perFinger[f].catches.length, 0);
-    saveSession({ test: 'catching', result: totalCatches, cycles: perFinger.middle.cycles });
+    const saved = saveSession({ test: 'catching', result: totalCatches, cycles: perFinger.middle.cycles });
     onSaved();
-    setStatus('Test finished.');
+    setStatus(saved ? 'Test finished.' : 'Test finished. Browser storage is unavailable; download your results.');
   }
 
   function showResult(perFinger) {
@@ -110,7 +123,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     }).join('');
     const note =
       total === 0
-        ? 'Every finger opened smoothly. No catching found.'
+        ? 'No catch-like events detected in the recorded movement. This does not rule out a problem.'
         : 'A catch is when a finger stops partway, then snaps open. If it happens often or hurts, show this result to a clinician.';
     resultEl.className = 'result';
     resultEl.innerHTML = `
@@ -146,6 +159,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   }
 
   function onFrame(hand, now, octx) {
+    if (running && (now - t0 >= MAX_MS || (stopAt !== null && now - t0 >= stopAt))) { stop(); return; }
     if (!hand) {
       if (running) liveEl.textContent = 'Hand not found. Move your whole hand into view.';
       return;
@@ -165,6 +179,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     }
 
     const t = now - t0;
+    if (t - lastTracked > 500) { trackingLost = true; bent = false; }
+    lastTracked = t;
     samples.push({ t, ...angles });
 
     // Live cycle count on the middle finger (same two limits as countCycles).
@@ -194,7 +210,17 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
       btnStart.disabled = true;
       liveEl.textContent = 'Start the camera first.';
     },
+    tick(now) { if (running && now - t0 >= MAX_MS) stop(); },
+    cancel() {
+      if (!running) return;
+      running = false;
+      setBusy(false);
+      btnStart.textContent = 'Start test';
+      btnStart.classList.remove('btn-recording');
+      resultEl.textContent = 'Test interrupted. Start again with this page visible.';
+    },
     isRunning: () => running,
     onFrame,
   };
 }
+

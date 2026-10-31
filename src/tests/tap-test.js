@@ -8,14 +8,19 @@ function dist(p, q) {
 
 export function createTapCounter() {
   let touching = false;
+  let armed = false;
   const tapTimes = [];
   const trace = []; // every frame: { t, gap }, for the CSV
   return {
     update(world, tMs) {
       const handSize = dist(world[0], world[9]); // wrist to middle knuckle
+      if (!Number.isFinite(handSize) || handSize <= 0) return null;
       const gap = dist(world[4], world[8]) / handSize; // thumb tip to index tip
-      if (!touching && gap < CLOSE) {
+      if (!Number.isFinite(gap) || !Number.isFinite(tMs)) return null;
+      if (gap > OPEN) armed = true;
+      if (armed && !touching && gap < CLOSE) {
         touching = true;
+        armed = false;
         tapTimes.push(tMs);
       } else if (touching && gap > OPEN) {
         touching = false;
@@ -24,13 +29,15 @@ export function createTapCounter() {
       return { gap, touching, taps: tapTimes.length };
     },
     result(durationMs) {
+      if (!(durationMs > 0)) throw new RangeError("Duration must be positive");
       const gaps = tapTimes.slice(1).map((t, i) => t - tapTimes[i]);
       if (gaps.length < 2) {
         return { taps: tapTimes.length, tapsPerSec: tapTimes.length / (durationMs / 1000), rhythmCV: null, tapTimes, trace };
       }
       const mean = gaps.reduce((s, g) => s + g, 0) / gaps.length;
       const sd = Math.sqrt(gaps.reduce((s, g) => s + (g - mean) ** 2, 0) / (gaps.length - 1));
-      return { taps: tapTimes.length, tapsPerSec: 1000 / mean, rhythmCV: (sd / mean) * 100, tapTimes, trace };
+      return { taps: tapTimes.length, tapsPerSec: tapTimes.length / (durationMs / 1000), rhythmCV: (sd / mean) * 100, tapTimes, trace };
     },
   };
 }
+
