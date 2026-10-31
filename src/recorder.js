@@ -61,3 +61,8 @@ export function downloadCSV(name) {
   // Browsers may block a second download that starts at the same instant.
   setTimeout(() => saveFile(toCSV(events), name + '_events.csv'), 400);
 }
+
+// Any list of rows (same keys in every row) -> one CSV download. Used by the other tests and history.
+export function downloadRows(list, filename) {
+  saveFile(toCSV(list), filename);
+}
