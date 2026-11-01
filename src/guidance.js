@@ -4,16 +4,50 @@ export const GUIDANCE = {
  catching: {title:'Catching and trigger finger', symptom:'I feel a finger locking, clicking, or hurting when I bend or straighten it.', detail:'Painful clicking or a finger sticking in a bent position can occur with trigger finger. A detected pause-and-release pattern may also be voluntary movement or tracking noise.', action:'Arrange a clinical assessment if locking or pain persists or interferes with daily activities. Do not force a painful or locked finger.', source:'https://www.nhs.uk/conditions/trigger-finger/'},
  tapping: {title:'Dexterity and carpal tunnel symptoms', symptom:'I have recurring tingling, numbness, hand pain, or thumb/grip weakness, often worse at night.', detail:'These symptoms can occur with carpal tunnel syndrome. Slow tapping alone cannot identify carpal tunnel or any other disease; fatigue, pain, technique and tracking can change the score.', action:'Arrange a clinical assessment if these symptoms persist or worsen. A fast or normal-looking tapping result does not rule out a nerve problem.', source:'https://www.nhs.uk/conditions/carpal-tunnel-syndrome/'}
 };
-export function getGuidance(mode,reported=false) {
- const g=GUIDANCE[mode];
- return {title:g.title,reported,lines:[g.detail,reported?'You reported related symptoms. '+g.action:'If these symptoms apply to you: '+g.action,'This is educational guidance, not a diagnosis or a validated screening test.'],source:g.source};
+
+export const QUESTIONS = {
+ color: ['Do your fingers change color with cold or stress?', 'Do color changes come with pain, numbness or tingling?', 'Does this affect only one side?', 'Do you also have joint pain, rash or muscle weakness?'],
+ catching: ['Does a finger lock or stick when bending or straightening?', 'Do you feel painful clicking or tenderness?', 'Is stiffness worse after waking?', 'Do you need your other hand to release a stuck finger?'],
+ tapping: ['Do you have tingling or numbness in your hand?', 'Do you have hand pain?', 'Do symptoms wake you or worsen at night?', 'Do you notice thumb weakness or difficulty gripping?']
+};
+const common = [
+ ['duration','How long have symptoms been present?', ['No symptoms','Less than 2 weeks','2 weeks or longer']],
+ ['trend','How are symptoms changing?', ['No symptoms','Improving','Unchanged / persistent','Worsening']],
+ ['impact','How do symptoms affect daily activities?', ['No impact','Some difficulty','Unable to do some usual activities']],
+ ['hand','Which hand did you measure?', ['Left','Right']],
+ ['dominant','Which is your dominant hand?', ['Left','Right','Both']],
+ ['pain','Pain during this test (self-reported, not disease risk)', ['0 - none','1-3 - mild','4-6 - moderate','7-10 - severe']],
+ ['fatigue','Were you tired during the test?', ['No','Yes','Unsure']]
+];
+export function questionnaire(mode) {
+ return [...QUESTIONS[mode].map((q,i)=>['symptom'+i,q,['No','Yes','Unsure']]),...common];
 }
-export function currentGuidance(mode) {return getGuidance(mode,Boolean(document.getElementById('symptom-'+mode)?.checked));}
+export function getGuidance(mode,answers={}) {
+ if(typeof answers !== 'object') answers={};
+ const g=GUIDANCE[mode], qs=questionnaire(mode);
+ const rows=qs.map(([id,q,options])=>({question:q,answer:options.includes(answers[id])?answers[id]:'Not answered'}));
+ const yes=QUESTIONS[mode].map((_,i)=>answers['symptom'+i]==='Yes');
+ const reported=yes.some(Boolean);
+ const reasons=[];
+ if(answers.trend==='Worsening') reasons.push('Symptoms reported as worsening');
+ if(answers.trend==='Unchanged / persistent') reasons.push('Symptoms reported as persistent');
+ if(['Some difficulty','Unable to do some usual activities'].includes(answers.impact)) reasons.push('Daily activities affected');
+ if(mode==='color'&&(yes[2]||yes[3])) reasons.push('One-sided changes or associated symptoms reported');
+ if(answers.pain==='7-10 - severe') reasons.push('Severe pain reported');
+ const answered=rows.filter(r=>r.answer!=='Not answered').length;
+ const allNo=yes.every(v=>!v)&&QUESTIONS[mode].every((_,i)=>answers['symptom'+i]==='No');
+ const conclusion=reasons.length?'Clinical assessment recommended':reported?'Related symptoms reported':allNo?'No listed symptoms reported':'Insufficient symptom information';
+ const action=reasons.length?'Arrange a clinical assessment. This recommendation follows your reported symptoms, not the camera score.':reported?'Discuss ongoing or concerning symptoms with a clinician. Complete the questions about persistence and daily impact.':allNo?'No symptom-based recommendation was triggered by these answers. This does not establish that your hand is healthy.':'You may leave answers blank. No personal disease or care conclusion can be drawn from missing answers.';
+ return {title:g.title,reported,answers:rows,conclusion,lines:[g.detail,conclusion+'. '+action,'Reason: '+(reasons.join('; ')||'See the symptom answers below.'),`Questionnaire completeness: ${answered}/${qs.length}. Disease probability and a 1-10 medical risk score are not calculated: this questionnaire is not validated for those purposes.`],source:g.source};
+}
+export function currentGuidance(mode) {
+ return getGuidance(mode,Object.fromEntries(questionnaire(mode).map(([id])=>[id,document.getElementById('survey-'+mode+'-'+id)?.value||''])));
+}
 export function mountGuidance() {
  for(const [mode,g] of Object.entries(GUIDANCE)){
-  const el=document.getElementById('guidance-'+mode);
-  el.innerHTML=`<h3>${g.title}</h3><p>${g.detail}</p><label class="symptom-choice"><input type="checkbox" id="symptom-${mode}"><span>${g.symptom}</span></label><p id="advice-${mode}" role="status"></p><a href="${g.source}" target="_blank" rel="noopener">Source: NHS patient information ↗</a>`;
-  const update=()=>{document.getElementById('advice-'+mode).textContent=currentGuidance(mode).lines[1];};
-  document.getElementById('symptom-'+mode).onchange=update;update();
+ const el=document.getElementById('guidance-'+mode);
+ el.innerHTML=`<h3>${g.title}</h3><p>Optional symptom and session questions. Blank means unanswered, not no symptoms. Answers remain on this page and are included when you export a PDF.</p><div class="survey-grid">${questionnaire(mode).map(([id,q,options])=>`<label>${q}<select id="survey-${mode}-${id}"><option value="">Not answered</option>${options.map(o=>`<option>${o}</option>`).join('')}</select></label>`).join('')}</div><p id="advice-${mode}" role="status"></p><p>No validated disease probability or medical risk score is available.</p><a href="${g.source}" target="_blank" rel="noopener">Source: NHS patient information</a>`;
+ const update=()=>{const r=currentGuidance(mode);document.getElementById('advice-'+mode).textContent=r.lines.slice(1,3).join(' ');};
+ questionnaire(mode).forEach(([id])=>document.getElementById('survey-'+mode+'-'+id).onchange=update);update();
  }
 }

@@ -13,6 +13,7 @@ export function makeMovementReport(info,{save=true}={}) {
  text(info.test==='tapping'?'Thumb Tapping Report':'Finger Movement Report',{bold:true,size:20});
  text('Personal observation tool. Not a diagnosis or validated disease screen.',{size:9});
  for(const [key,value] of [['Session',info.name],['Recorded',info.date],['Recording quality',info.status]])text(key+': '+value);
+ heading('Summary and next step');text(info.guidance.conclusion || 'Personal observation');text('Camera measurements describe movement, not a diagnosis. Session answers below were entered by the user at export.');
  heading('Your measurements');
  for(const [key,value] of info.metrics)text(key+': '+value);
  heading('What the numbers mean');text(info.explanation);
@@ -24,14 +25,17 @@ export function makeMovementReport(info,{save=true}={}) {
    const stride=Math.max(1,Math.ceil(points.length/500));const selected=points.filter((_,i)=>i%stride===0||i===points.length-1);
    const pos=p=>[x+(p.t-first)/(last-first||1)*w,y+h-(p.v-min)/(max-min||1)*h];
    for(let i=1;i<selected.length;i++)doc.line(...pos(selected[i-1]),...pos(selected[i]));
-   y+=47;text(`Time: ${first.toFixed(1)} to ${last.toFixed(1)} seconds. Signal range: ${min.toFixed(2)} to ${max.toFixed(2)}.`,{size:9});
+   doc.setDrawColor(170,90,30);
+   for(const t of info.tapTimes||[]){const tx=x+(t-first)/(last-first||1)*w;doc.line(tx,y+h-4,tx,y+h);}
+   y+=47;text('Orange ticks mark detected taps. Distance is estimated, not physical contact.',{size:8});text(`Time: ${first.toFixed(1)} to ${last.toFixed(1)} seconds. Signal range: ${min.toFixed(2)} to ${max.toFixed(2)}.`,{size:9});
   }
  }
  if(info.chartImg){if(y+78>275)page();doc.addImage(info.chartImg,'PNG',20,y,170,65);y+=73;}
  if(info.events?.length){heading('Why an event was flagged');for(const event of info.events)text(event,{size:9});}
- heading(info.guidance.title);
+ page();heading('Interpretation and symptom context');heading(info.guidance.title);
  for(const line of info.guidance.lines)text(line,{size:10});
- text('Related symptoms self-reported at export: '+(info.guidance.reported?'Yes':'Not selected'),{size:9});
+ heading('Your questionnaire answers');
+ for(const row of info.guidance.answers||[])text(row.question+': '+row.answer,{size:9});
  text('Medical information source: '+info.guidance.source,{size:8});
  text('Camera measurements cannot determine a disease probability. Seek care for concerning symptoms even if this report shows no events.',{size:9});
  const count=doc.getNumberOfPages();for(let n=1;n<=count;n++){doc.setPage(n);doc.setFontSize(8);doc.setTextColor(100);doc.text(`Fingercolor | ${n} / ${count}`,20,289);}
