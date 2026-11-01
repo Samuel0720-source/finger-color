@@ -4,7 +4,7 @@ import { downloadRows } from './recorder.js';
 
 const TESTS = {
   color: { name: 'Color recovery', unit: 'min', label: 'Recovery time (min)' },
-  catching: { name: 'Finger catching', unit: 'catches', label: 'Catches per test' },
+  catching: { name: 'Finger catching', unit: 'finger-events', label: 'Flagged finger-events per test' },
   tapping: { name: 'Thumb tapping', unit: 'taps/s', label: 'Taps per second' },
 };
 
@@ -57,10 +57,10 @@ export function createHistoryPanel() {
     tbody.innerHTML = list
       .slice(-8)
       .reverse()
-      .map((s) => `<tr><td>${new Date(s.savedAt).toLocaleString()}</td><td>${TESTS[s.test]?.name ?? s.test}${s.test !== 'catching' && s.algorithm !== 2 ? ' (legacy)' : ''}</td><td>${format(s)}</td></tr>`)
+      .map((s) => `<tr><td>${new Date(s.savedAt).toLocaleString()}</td><td>${TESTS[s.test]?.name ?? s.test}${s.algorithm !== (s.test === 'color' ? 2 : 3) ? ' (legacy)' : ''}</td><td>${format(s)}</td></tr>`)
       .join('');
 
-    const mine = list.filter((s) => s.test === mode && (mode === 'catching' || s.algorithm === 2));
+    const mine = list.filter((s) => s.test === mode && s.algorithm === (mode === 'color' ? 2 : 3));
     chartWrap.classList.toggle('hidden', mine.length === 0);
     titleEl.textContent =
       mine.length === 0

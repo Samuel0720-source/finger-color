@@ -1,3 +1,4 @@
+import { mountGuidance, currentGuidance } from './guidance.js';
 // Font served from this site (no request to Google). Variable width + weight.
 import '@fontsource-variable/instrument-sans/wdth.css';
 import './style.css';
@@ -65,6 +66,7 @@ window.onunhandledrejection = (e) => {
   statusEl.textContent = 'Error: ' + e.reason;
 };
 
+mountGuidance();
 createChart($('chart'));
 updateBaselineInfo();
 renderFingers(fingersEl, FINGERS.map((name) => ({ name, change: null })));
@@ -505,7 +507,7 @@ function showResult(r) {
   resultEl.innerHTML = `
     <div class="result-label">Recovery time, middle finger</div>
     <div class="result-big">${headlineText(r)}</div>
-    <p class="result-note">${note}</p>`;
+    <p class="result-note">${note}</p><p class="result-note">This times a smoothed camera signal, not blood flow. A trailing 10-second average reduces noise and can delay the estimate. The signal must stay below the experimental threshold for 30 seconds to confirm it.</p>`;
 }
 
 function headlineText(r) {
@@ -546,6 +548,7 @@ function buildReport(makeReport, name) {
   const tWarm = warm ? Number(warm.t) : 0;
   makeReport({
     name,
+    guidance: currentGuidance('color'),
     date: new Date().toLocaleString(),
     durationSec: recordedSeconds,
     mode: usedCard ? 'Palm reference (grey-card values in CSV only)' : 'Palm reference',

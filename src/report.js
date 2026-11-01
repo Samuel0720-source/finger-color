@@ -64,7 +64,7 @@ export function makeReport(info) {
   doc.roundedRect(LEFT, y, WIDTH, 26, 3, 3, 'F');
   doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
-  doc.text('Middle finger: time to return to normal color', LEFT + 6, y + 9);
+  doc.text('Middle finger: estimated color-signal recovery', LEFT + 6, y + 9);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(15, 118, 110);
@@ -136,14 +136,23 @@ export function makeReport(info) {
 
   const note =
     'How to read this: the change score compares each fingertip with the normal color saved before the recording. ' +
-    '0 means no change. The score is experimental and depends on the camera and lighting. ' +
+    'A trailing 10-second average can delay the estimate; 30 seconds below the threshold confirms it. This does not measure blood flow. 0 means no change. The score is experimental and depends on the camera and lighting. ' +
     'This report is a record of measurements to share with a clinician. It is not a diagnosis.';
   const noteLines = doc.splitTextToSize(note, WIDTH);
   ensureSpace(noteLines.length * 4.5);
   doc.setFontSize(9);
   doc.setTextColor(100, 116, 139);
   doc.text(noteLines, LEFT, y);
+  y += noteLines.length * 4.5 + 6;
 
+  if (info.guidance) {
+    heading(info.guidance.title);
+    for (const paragraph of [...info.guidance.lines, 'Medical information: ' + info.guidance.source]) {
+      const lines = doc.splitTextToSize(paragraph, WIDTH);
+      for (const line of lines) { ensureSpace(6); doc.text(line, LEFT, y); y += 5; }
+      y += 3;
+    }
+  }
   doc.save(info.name + '_report.pdf');
 }
 

@@ -1300,3 +1300,13 @@ dialog h2 {
     display:none;
   }
 }
+
+.first-visit {max-width:var(--page);padding:0 var(--gutter);color:var(--muted);line-height:1.7;margin:0 auto 24px;}
+.clinical-guide {background:#edf2fc;border:1px solid #d3def3;border-radius:16px;padding:24px;width:calc(100% - 2 * var(--gutter));max-width:calc(var(--page) - 2 * var(--gutter));margin:20px auto 40px;line-height:1.7;}
+.clinical-guide h3 {margin:0 0 8px;color:#203b72;}
+.clinical-guide p {max-width:85ch;}
+.clinical-guide a {color:#234e9c;text-underline-offset:3px;}
+.symptom-choice {display:flex;gap:12px;align-items:flex-start;padding:14px 0;cursor:pointer;}
+.symptom-choice input {width:24px;height:24px;flex-shrink:0;accent-color:#265dd9;}
+.readout-head {flex-wrap:wrap;gap:12px;}
+.mini-table {font-size:clamp(10px,2.5vw,14px);}
