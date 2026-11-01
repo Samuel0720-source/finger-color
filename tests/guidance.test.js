@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {getGuidance} from '../src/guidance.js';
 import {researchContext,repeatSummary} from '../src/research.js';
-const complete={symptom0:'No',symptom1:'No',symptom2:'No',symptom3:'No',duration:'No symptoms',trend:'No symptoms',impact:'No impact'};
+const complete={urgent:'No',symptom0:'No',symptom1:'No',symptom2:'No',symptom3:'No',duration:'No symptoms',trend:'No symptoms',impact:'No impact'};
 test('blank and partial answers cannot produce reassurance',()=>{assert.equal(getGuidance('tapping').code,'insufficient');assert.equal(getGuidance('tapping',{symptom0:'No'}).code,'insufficient');});
 test('complete negative answers produce limited no-indication conclusion',()=>assert.equal(getGuidance('tapping',complete).code,'no_indication'));
 test('worsening overrides missing answers and contradictory absence',()=>{const r=getGuidance('tapping',{symptom0:'Yes',trend:'Worsening',duration:'No symptoms'});assert.equal(r.code,'recommend');assert.match(r.lines.join(' '),/conflict/);});
@@ -12,3 +12,7 @@ test('unsupported input is treated as unanswered',()=>assert.equal(getGuidance('
 test('reference age boundaries and unsupported ages',()=>{assert.match(researchContext('tapping',{age:'29'}).lines[0],/3.53/);assert.match(researchContext('tapping',{age:'30'}).lines[0],/3.57/);assert.match(researchContext('tapping',{age:'70'}).lines[0],/2.69/);assert.match(researchContext('tapping',{age:'71'}).lines[0],/2.36/);for(const age of ['',19,90])assert.match(researchContext('tapping',{age}).lines[0],/does not apply/);});
 test('published metric never creates percentile or normal classification',()=>{const r=researchContext('tapping',{age:22},{valid:true,tapsPerSec:3});assert.match(r.status,/direct comparison unavailable/);assert.equal(r.percentile,undefined);});
 test('repeat summary excludes other hands, setups and legacy records',()=>{const context={hand:'Left',dominant:'Right',setup:'Laptop'};const a=[1,2,3].map(result=>({test:'tapping',algorithm:3,result,context,savedAt:'2026-11-01'}));a.push({...a[0],result:99,context:{...context,hand:'Right'}});assert.match(repeatSummary(a,context).lines[0],/Median 2.00/);});
+
+test('urgent symptoms override negative or blank answers',()=>{const r=getGuidance('color',{urgent:'Yes'});assert.equal(r.code,'recommend');assert.equal(r.urgent,true);assert.match(r.action,/urgent medical advice/);});
+test('missing urgent answer does not yield reassurance',()=>assert.equal(getGuidance('tapping',{...complete,urgent:''}).code,'insufficient'));
+test('persistent symptoms trigger advice even when improving',()=>assert.equal(getGuidance('catching',{...complete,symptom0:'Yes',duration:'2 weeks or longer',trend:'Improving'}).code,'recommend'));

@@ -1,3 +1,5 @@
+import {repeatSummary} from './research.js';
+import {mountSession, sessionContext, lockSession} from './session.js';
 import { mountGuidance, currentGuidance } from './guidance.js';
 // Font served from this site (no request to Google). Variable width + weight.
 import '@fontsource-variable/instrument-sans/wdth.css';
@@ -9,15 +11,15 @@ import * as rec from './recorder.js';
 import { describeChange, renderFingers } from './plain.js';
 import { createChart, addPoint, resetChart, chartImage } from './livechart.js';
 import { computeRecovery } from './recovery.js';
-import { saveSession } from './history.js';
+import { saveSession, loadHistory } from './history.js';
 import { createHistoryPanel } from './history-panel.js';
 import { createTriggerPanel } from './tests/trigger-panel.js';
 import { createTapPanel } from './tests/tap-panel.js';
 
 const CARD_BOX = 40;
+let fpsFrames=0,fpsStart=0;
 const SAMPLE_EVERY_MS = 1000;
 const BASELINE_SECONDS = 10;
-const BASELINE_KEY = 'finger-color-baseline';
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const $ = (id) => document.getElementById(id);
@@ -46,7 +48,11 @@ $('btn-demo').onclick = () => $('example-dialog').showModal();
 
 let cardPos = null;
 let lastSample = 0;
-let baseline = loadBaseline();
+let baseline = null; // A new camera session requires a fresh reference under current lighting.
+let colorContext = {};
+let colorResults = {};
+let colorStartedAt = null;
+let warmAt = null;
 let baselineBuffer = null;
 let timerId = null;
 let lastResult = null;
@@ -66,7 +72,12 @@ window.onunhandledrejection = (e) => {
   statusEl.textContent = 'Error: ' + e.reason;
 };
 
+mountSession();
 mountGuidance();
+document.addEventListener('session-context-change', () => {
+ if (rec.isRecording() || baselineBuffer) return;
+ if (baseline && (baseline.context.hand !== sessionContext().hand || baseline.context.setup !== sessionContext().setup)) {baseline=null;btnRecord.disabled=true;updateBaselineInfo();}
+});
 createChart($('chart'));
 updateBaselineInfo();
 renderFingers(fingersEl, FINGERS.map((name) => ({ name, change: null })));
@@ -80,7 +91,7 @@ let busy = false; // true while any test is running, so the user cannot switch t
 const historyPanel = createHistoryPanel();
 const panelOptions = {
   setStatus: (text) => (statusEl.textContent = text),
-  setBusy: (value) => (busy = value),
+  setBusy: (value) => {busy = value;lockSession(value);},
   onSaved: () => historyPanel.render(),
   fileName: (prefix) => todayName(prefix),
 };
@@ -153,7 +164,7 @@ async function turnCameraOn() {
 
   work.width = overlay.width = video.videoWidth;
   work.height = overlay.height = video.videoHeight;
-  cameraOn = true;
+  cameraOn = true;fpsFrames=0;fpsStart=performance.now();
   statusEl.textContent = lockMsg;
   markStep(1, 'active');
   btnCamera.classList.remove('hidden');
@@ -171,6 +182,7 @@ function turnCameraOff() {
     return;
   }
   cameraOn = false;
+  baseline=null;updateBaselineInfo();
   cancelAnimationFrame(frameId);
   lastVideoTime = -1;
   cardPos = null;
@@ -221,7 +233,7 @@ function loop(now) {
   try {
     octx.clearRect(0, 0, overlay.width, overlay.height);
     const hand = detectHand(video, now);
-    $('tracking-state').textContent = hand ? 'Hand detected' : 'Looking for your hand';
+    fpsFrames++;if(now-fpsStart>=1000){$('tracking-state').textContent=(hand?'Hand detected':'Hand not detected')+' · '+Math.round(fpsFrames*1000/(now-fpsStart))+' fps';fpsFrames=0;fpsStart=now;}
     $('tracking-state').dataset.ready = String(Boolean(hand));
     if (mode === 'color') colorFrame(hand, now);
     else if (mode === 'catching') trigger.onFrame(hand, now, octx);
@@ -247,6 +259,7 @@ function colorFrame(hand, now) {
     statusEl.textContent = 'Hand lost. Baseline restarts when all fingertips are visible.';
   }
   if (spots && now - lastSample > SAMPLE_EVERY_MS) {
+    if(baselineBuffer && lastSample && now-lastSample>2500)baselineBuffer=[];
     lastSample = now;
     sample(spots);
   }
@@ -326,6 +339,7 @@ function makeRow(view, c, card) {
 btnBaseline.onclick = () => {
   if (baselineBuffer) {
     baselineBuffer = null;
+    lockSession(false);
     btnBaseline.textContent = baseline ? 'Save normal color again' : 'Save normal color';
     btnRecord.disabled = !baseline;
     statusEl.textContent = 'Baseline cancelled.';
@@ -333,6 +347,7 @@ btnBaseline.onclick = () => {
   }
   if (rec.isRecording()) return;
   baselineBuffer = [];
+  lockSession(true);
   btnRecord.disabled = true;
   btnBaseline.textContent = `Cancel baseline · ${BASELINE_SECONDS} samples left`;
   statusEl.textContent = 'Keep your hand still with all five fingertips in view.';
@@ -362,33 +377,15 @@ function collectBaseline(current) {
     Math.hypot(s.middle.d.L - m.L, s.middle.d.a - m.a, s.middle.d.b - m.b)
   );
 
-  baseline = { savedAt: new Date().toISOString(), fingers, noise: mean(scores) + 2 * std(scores) };
-  saveBaseline(baseline);
+  const noiseByFinger = Object.fromEntries(FINGERS.map(f => {const values=baselineBuffer.map(s=>Math.hypot(s[f].d.L-fingers[f].L,s[f].d.a-fingers[f].a,s[f].d.b-fingers[f].b));return [f,mean(values)+2*std(values)];}));
+  baseline = { savedAt: new Date().toISOString(), fingers, noise: mean(scores) + 2 * std(scores),noiseByFinger,context:sessionContext() };
+  lockSession(false);
+  // The reference stays in memory so old lighting cannot silently become a new baseline.
   baselineBuffer = null;
   btnBaseline.disabled = false;
   btnRecord.disabled = false;
   updateBaselineInfo();
   statusEl.textContent = 'Normal color saved. You can start recording.';
-}
-
-function loadBaseline() {
-  try {
-    const text = localStorage.getItem(BASELINE_KEY);
-    const value = text ? JSON.parse(text) : null;
-    // A baseline saved by an older version of the app has a different shape. Ignore it.
-    const valid = value && value.fingers && FINGERS.every((f) => value.fingers[f] && ['L', 'a', 'b'].every(k => Number.isFinite(value.fingers[f][k]))) && Number.isFinite(value.noise);
-    return valid ? value : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveBaseline(value) {
-  try {
-    localStorage.setItem(BASELINE_KEY, JSON.stringify(value));
-  } catch {
-    // Storage can be blocked (private mode). The baseline still works until the page closes.
-  }
 }
 
 function updateBaselineInfo() {
@@ -408,6 +405,7 @@ btnRecord.onclick = () => (rec.isRecording() ? stopRecording() : startRecording(
 
 function startRecording() {
   if (!baseline || baselineBuffer || !cameraOn) return; // the button stays disabled until a normal color is saved
+  colorContext=sessionContext();colorStartedAt=new Date().toLocaleString();warmAt=null;lockSession(true);
   sessionName = todayName('recovery');
   rec.startRecording();
   rec.addEvent('algorithm_version', '2');
@@ -433,9 +431,10 @@ function startRecording() {
 }
 
 function stopRecording() {
-  recordedSeconds = rec.elapsed();
+  recordedSeconds = rec.elapsed();lockSession(false);
   usedCard = cardPos !== null;
   lastResult = baseline ? computeRecovery(rec.getRows(), rec.getEvents(), baseline.noise) : null;
+  colorResults=Object.fromEntries(FINGERS.map(f=>[f,computeRecovery(rec.getRows(),rec.getEvents(),baseline?.noiseByFinger?.[f]??baseline?.noise,f)]));
   // Save the app's answer in the events file so the Python analysis can check it gets the same number.
   if (lastResult && lastResult.ok) {
     rec.addEvent('app_recovery_sec', lastResult.recoverySec === null ? '' : lastResult.recoverySec.toFixed(2));
@@ -453,11 +452,12 @@ function stopRecording() {
   $('btn-events').disabled = false;
   btnBaseline.disabled = false;
   if (lastResult && lastResult.ok && !lastResult.noChange) {
-    lastResult.saved = saveSession({ test: 'color', result: lastResult.recoverySec === null ? null : lastResult.recoverySec / 60, algorithm: 2 });
+    lastResult.saved = saveSession({ test: 'color', result: lastResult.recoverySec === null ? null : lastResult.recoverySec / 60, algorithm: 2, context:colorContext });
     historyPanel.render();
   }
   showResult(lastResult);
-  btnPdf.disabled = !(lastResult && lastResult.ok);
+  if(lastResult?.ok)appendColorDetails();
+  btnPdf.disabled = false; // A failed attempt can still be documented.
   if (lastResult && lastResult.ok) markStep(4, 'done');
   statusEl.textContent = lastResult?.saved === false ? 'Recording stopped. Browser storage is unavailable; download your results.' : 'Recording stopped.';
 }
@@ -467,10 +467,11 @@ function updateTimer() {
   const mm = String(Math.floor(s / 60)).padStart(2, '0');
   const ss = String(s % 60).padStart(2, '0');
   timerEl.textContent = `${mm}:${ss}`;
+  if(warmAt!==null){const elapsed=rec.elapsed()-warmAt;statusEl.textContent=elapsed<61?`Warming recorded: ${Math.floor(elapsed)} s. Keep the hand visible for at least ${Math.ceil(61-elapsed)} more seconds.`:'Minimum recording time reached. Stop when ready; the result checks for a sustained return to baseline.';}
 }
 
 btnWarm.onclick = () => {
-  rec.addEvent('warm_start');
+  rec.addEvent('warm_start');warmAt=rec.elapsed();
   btnWarm.disabled = true;
   statusEl.textContent = 'Warm-up started. Keep your hand still. Log a finger temperature each minute if you have a thermometer.';
 };
@@ -492,7 +493,7 @@ function showResult(r) {
   }
   if (!r.ok) {
     resultEl.className = 'result muted';
-    resultEl.textContent = r.reason;
+    resultEl.textContent = 'Repeat needed: '+r.reason+' You can download an attempt report and review symptom guidance below.';
     return;
   }
   let note = 'How long your middle finger took to return to its normal color after you came back into the warm.';
@@ -507,7 +508,13 @@ function showResult(r) {
   resultEl.innerHTML = `
     <div class="result-label">Recovery time, middle finger</div>
     <div class="result-big">${headlineText(r)}</div>
-    <p class="result-note">${note}</p><p class="result-note">This times a smoothed camera signal, not blood flow. A trailing 10-second average reduces noise and can delay the estimate. The signal must stay below the experimental threshold for 30 seconds to confirm it.</p>`;
+    <p class="result-note">${note}</p><p class="quality-pill">Recording checks passed · this is not a health grade</p><p class="result-note">This times a smoothed camera signal, not blood flow. A trailing 10-second average reduces noise and can delay the estimate. The signal must stay below the experimental threshold for 30 seconds to confirm it.</p>`;
+}
+
+function appendColorDetails(){
+ const table=document.createElement('div');table.className='table-scroll';
+ table.innerHTML=`<table class="mini-table"><thead><tr><th>Finger</th><th>Color-signal recovery</th></tr></thead><tbody>${FINGERS.map(f=>{const r=colorResults[f];return `<tr><td>${f}</td><td>${!r?.ok?'Not scored':r.noChange?'No clear change':r.recoverySec===null?'Not observed':Math.round(r.recoverySec)+' s'}</td></tr>`;}).join('')}</tbody></table><p class="hint small">Each finger uses its own baseline noise. These are experimental signal timings, not circulation measurements or clinical recovery cutoffs.</p>`;
+ resultEl.append(table);const repeat=document.createElement('p');repeat.className='hint small';repeat.textContent=repeatSummary(loadHistory(),colorContext,'color').lines.join(' ');resultEl.append(repeat);
 }
 
 function headlineText(r) {
@@ -533,9 +540,9 @@ btnPdf.onclick = async () => {
   btnPdf.textContent = 'Making PDF...';
   // jsPDF is big, so it is only downloaded when someone asks for a report.
   try {
-    const { makeReport } = await import('./report.js');
-    buildReport(makeReport, name);
-  } finally {
+    const { makeMovementReport } = await import('./movement-report.js');
+    buildReport(makeMovementReport, name);
+  } catch(e){statusEl.textContent='PDF could not be created. Please try again. '+e.message;} finally {
     btnPdf.disabled = false;
     btnPdf.textContent = 'Download PDF report';
   }
@@ -547,18 +554,12 @@ function buildReport(makeReport, name) {
   const warm = events.find((e) => e.type === 'warm_start');
   const tWarm = warm ? Number(warm.t) : 0;
   makeReport({
-    name,
-    guidance: currentGuidance('color'),
-    date: new Date().toLocaleString(),
-    durationSec: recordedSeconds,
-    mode: usedCard ? 'Palm reference (grey-card values in CSV only)' : 'Palm reference',
-    headline: headlineText(lastResult),
-    pattern: null,
-    chartImg: chartImage(),
-    fingers: FINGERS.map((f) => fingerSummary(rows, f, tWarm)),
-    temps: events
-      .filter((e) => e.type === 'finger_temp_c')
-      .map((e) => ({ min: (Number(e.t) - tWarm) / 60, value: e.value })),
+    repeat:repeatSummary(loadHistory(),colorContext,'color'),
+    test:'color', name, guidance:currentGuidance('color'),date:colorStartedAt,
+    status:lastResult?.ok?'Usable recording':'Not scored',measurementContext:colorContext,
+    metrics:[['Recording length',recordedSeconds.toFixed(0)+' s'],['Middle-finger result',lastResult?.ok?headlineText(lastResult):'Not scored'],...FINGERS.map(f=>{const r=colorResults[f];return [f+' recovery',!r?.ok?'Not scored':r.noChange?'No clear change':r.recoverySec===null?'Not observed':r.recoverySec.toFixed(1)+' s'];}),...FINGERS.map(f=>{const v=fingerSummary(rows,f,tWarm);return [f+' signal change',`Peak ${v.peak.toFixed(1)}; end ${v.endScore.toFixed(1)}`];}),...events.filter(e=>e.type==='finger_temp_c').map(e=>['Temperature at '+(Number(e.t)-tWarm).toFixed(0)+' s',e.value+' C'])],
+    explanation:lastResult?.ok?'Each finger is compared with its own saved baseline. A trailing 10-second average and 30-second confirmation define this experimental signal time. No clear change and recovery not observed are different outcomes. Camera exposure and lighting can affect every value. This does not measure blood flow.':lastResult?.reason||'No usable recording.',
+    chartImg:rows.length?chartImage():null,events:[],
   });
 }
 
@@ -590,7 +591,7 @@ function todayName(prefix) {
   const dd = String(d.getDate()).padStart(2, '0');
   const hh = String(d.getHours()).padStart(2, '0');
   const mi = String(d.getMinutes()).padStart(2, '0');
-  return `${prefix}_${d.getFullYear()}${mm}${dd}_${hh}${mi}`;
+  return `${prefix}_${d.getFullYear()}${mm}${dd}_${hh}${mi}_${String(d.getSeconds()).padStart(2,'0')}`;
 }
 
 // ---------- Helpers ----------

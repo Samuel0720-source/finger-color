@@ -43,7 +43,9 @@
         <aside class="intro-note"><span class="note-number">01 / 03</span><p>Small movements.<br>Meaningful observations.</p><span class="note-caption">Your own baseline. Your own history.<br>A student research project, not a diagnosis.</span><div class="color-spectrum" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></aside>
       </section>
       <div class="workspace-heading" id="workspace"><div><p class="eyebrow">YOUR WORKSPACE</p><h2>What would you like to explore?</h2></div><span class="research-badge">Experimental · not clinically validated</span></div>
-      <p class="first-visit"><strong>First visit?</strong> Choose a test → enable your camera → follow the setup → read what the number means → download your PDF. No medical “normal” range is available for these experimental measurements.</p>
+      <p class="first-visit"><strong>First visit?</strong> Set your hand and setup → choose a test → follow the camera guide → review results and symptoms → download your PDF. No medical “normal” range is available for these experimental measurements.</p>
+      <section id="session-profile" class="session-profile" aria-label="Session preparation"></section>
+      <details class="care-notice"><summary>Before testing: when to get medical help</summary><p>Do not continue a movement that hurts or force a locked finger. Do not deliberately cool your hands.</p><p>For severe hand pain, inability to move or hold things, or an icy cold, pale or blue hand, seek urgent medical advice. Sudden blue/grey lips or face with breathing difficulty needs emergency help. Use your local emergency service; in Canada call 911 for an emergency.</p><a href="https://www.nhsinform.scot/illnesses-and-conditions/muscle-bone-and-joints/arm-shoulder-and-hand-problems-and-conditions/wrist-hand-finger-and-thumb-problems" target="_blank" rel="noopener">Hand symptom guidance</a> · <a href="https://www.nhs.uk/symptoms/blue-skin-or-lips-cyanosis/" target="_blank" rel="noopener">Blue/grey skin guidance</a></details>
       <!-- ===== The instrument: test choice, camera, controls ===== -->
       <section class="instrument" aria-label="Run a test">
         <div class="test-switch" role="group" aria-label="Choose a test">
@@ -110,14 +112,14 @@
                   </div>
                 </li>
               </ol>
-              <p class="hint small fine">Research option: before recording, tap a photo grey card in the video to export corrected color values. The recovery score always uses the palm reference.</p>
+              <details class="advanced"><summary>Optional research export: grey card</summary><p class="hint small">Before recording, tap a photo grey card in the video to export corrected color columns. These columns do not change the recovery estimate.</p></details>
             </div>
 
             <!-- Finger catching -->
             <div data-only="catching">
               <h2 class="controls-title">Finger catching</h2>
-              <p class="hint">Palm toward the camera, whole hand in view. Slowly make a fist, then open it all the way. Repeat 10 times. The test stops by itself.</p>
-              <p id="trig-live" class="live-readout">Start the camera first.</p>
+              <p class="hint">Palm toward the camera, whole hand in view. Slowly make a fist, then open it all the way. Repeat 10 times. Hold your hand open for the 3-second countdown. The test stops by itself.</p>
+              <p class="hint small">Follow the middle finger for progress. Other fingers may complete fewer cycles; their counts are shown separately.</p><p id="trig-live" class="live-readout">Start the camera first.</p>
               <button id="trig-start" class="btn btn-primary full" disabled>Start test</button>
               <p class="hint small fine">
                 This explores pauses followed by quick opening. Camera estimates cannot confirm or rule out a condition. Stop if a movement hurts.
@@ -128,7 +130,7 @@
             <!-- Thumb tapping -->
             <div data-only="tapping">
               <h2 class="controls-title">Thumb tapping</h2>
-              <p class="hint small">For research context and repeat comparisons, complete age, measured hand, dominant hand and setup in the questions below before starting. These details are saved with this measurement.</p>
+              <p class="hint small">Repeat at a comfortable pace. Rest between attempts and use the same hand and setup. Stop if you feel pain.</p>
               <p class="hint">Keep thumb and index fingertips visible without overlap. First hold them touching, then apart to calibrate. After the countdown, touch and separate them repeatedly for 10 seconds. You are tapping your fingers together, not tapping the screen.</p>
               <p id="tap-live" class="live-readout">Start the camera first.</p>
               <div class="meter" aria-hidden="true"><div id="tap-meter-fill" class="meter-fill"></div></div>
@@ -191,17 +193,17 @@
       <!-- ===== History (all tests) ===== -->
       <section class="readout" id="history">
         <div class="readout-head">
-          <h2>Your history</h2>
+          <h2>Your history</h2><label class="history-filter">Hand <select id="history-hand"><option value="">All hands</option><option>Left</option><option>Right</option></select></label>
           <button id="history-csv" class="btn-link" disabled>Download history (CSV)</button>
         </div>
-        <p id="history-empty" class="hint">Nothing saved yet. Finished tests are kept in this browser only.</p>
+        <p class="hint small">Charts show the selected test and hand. Camera and room changes can affect results. CSV includes all stored sessions and their context.</p><p id="history-empty" class="hint">Nothing saved yet. Finished tests are kept in this browser only.</p>
         <div id="history-grid" class="history-grid">
           <div>
             <p id="history-chart-title" class="legend-note"></p>
             <div id="history-chart-wrap" class="chart-box small"><canvas id="history-chart" aria-label="Results over time" role="img"></canvas></div>
           </div>
           <table class="mini-table">
-            <thead><tr><th>When</th><th>Test</th><th>Result</th></tr></thead>
+            <thead><tr><th>When</th><th>Test / hand</th><th>Result</th></tr></thead>
             <tbody id="history-body"></tbody>
           </table>
         </div>
@@ -230,7 +232,7 @@
       <div class="footer-cols">
         <div>
           <h2>Privacy</h2>
-          <p>Video is analyzed on your device and never uploaded. Your normal color and history are stored only in this browser. Clearing your browser data removes them.</p>
+          <p>Video is analyzed on your device and never uploaded. Your history and measurement context are stored only in this browser. The current baseline, symptom answers and appointment notes stay in memory until the page closes. Clearing your browser data removes stored history.</p>
         </div>
         <div>
           <h2>Not a medical device</h2>
