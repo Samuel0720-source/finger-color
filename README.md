@@ -141,3 +141,11 @@ npm run build
 
 This review does not establish accuracy on real iOS/Android cameras or clinical validity.
 Real-hand testing across frame rates, lighting, skin tones and camera models is still needed.
+
+## Follow-up: interpretable movement measurements
+
+Tapping now calibrates touching and open positions before a 3-second countdown and 10-second test. Touch thumb and index together, not the screen. Invalid tracking does not save a score. The catching result identifies per-finger pause-and-release events with timestamps and rule evidence; it is not a diagnosis or severity grade. Catch scoring requires 25+ fps and no frame gaps above 100 ms.
+
+All three tests export PDF reports. Movement PDFs include interpretation, symptom-based care guidance, and signal/event evidence; incomplete completed attempts can export a clearly unscored report. NHS-linked symptom explanations cover Raynaud's, trigger finger and carpal tunnel without estimating disease risk from scores. Updated movement results use algorithm version 3; legacy measurements remain exportable but are excluded from current-method charts.
+
+See [the 50-scenario evaluation](validation/README.md) and run `npm run benchmark`. This is synthetic development testing, not measured real-camera or clinical accuracy.

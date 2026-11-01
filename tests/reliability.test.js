@@ -54,12 +54,21 @@ function panelHarness() {
  const ctx={canvas:{width:100,height:100},beginPath(){},arc(){},fill(){},moveTo(){},lineTo(){},stroke(){}};
  return {panel,elements,ctx,busy:()=>busy};
 }
-test('tapping panel waits for a visible hand before countdown',()=>{const h=panelHarness();h.elements.get('tap-start').onclick();h.panel.onFrame(null,performance.now()+5000,h.ctx);assert.match(h.elements.get('tap-live').textContent,/Show your hand/);assert.equal(h.busy(),true);h.panel.cancel();assert.equal(h.busy(),false);});
-test('a whole test with tracking loss is not saved as zero',()=>{const h=panelHarness();h.elements.get('tap-start').onclick();const t=performance.now()+3100;h.panel.onFrame({image:world(.5),world:world(.5)},t,h.ctx);h.panel.tick(t+10001);assert.match(h.elements.get('tap-result').textContent,/not scored or saved/);assert.equal(loadHistory().length,0);});
-test('complete synthetic tap session saves full-window speed and excludes late frames',()=>{
- const h=panelHarness();h.elements.get('tap-start').onclick();const t=performance.now()+3100;
- h.panel.onFrame({image:world(.5),world:world(.5)},t,h.ctx);
- for(let ms=30;ms<10000;ms+=30){const w=world(ms%600<300?.5:.1);h.panel.onFrame({image:w,world:w},t+ms,h.ctx);}
- const late=world(.1);h.panel.onFrame({image:late,world:late},t+15000,h.ctx);
- const saved=loadHistory();assert.equal(saved.length,1);assert.equal(saved[0].result,saved[0].taps/10);assert.equal(h.busy(),false);
+test('tapping panel waits for a visible hand before countdown',()=>{const h=panelHarness();h.elements.get('tap-start').onclick();h.panel.onFrame(null,performance.now()+5000,h.ctx);assert.match(h.elements.get('tap-live').textContent,/Show both fingertips/);assert.equal(h.busy(),true);h.panel.cancel();assert.equal(h.busy(),false);});
+function calibratedSession(h) {
+ h.elements.get('tap-start').onclick();const t=performance.now();
+ const frame=(gap,ms)=>h.panel.onFrame({image:world(gap),world:world(gap)},t+ms,h.ctx);
+ for(let ms=0;ms<=1500;ms+=30)frame(.24,ms);
+ for(let ms=1530;ms<=3060;ms+=30)frame(.8,ms);
+ frame(.8,6060);return t+6060;
+}
+test('a whole test with tracking loss is not saved as zero',()=>{const h=panelHarness();const t=calibratedSession(h);h.panel.tick(t+10001);assert.match(h.elements.get('tap-result').textContent,/Tracking was incomplete/);assert.equal(loadHistory().length,0);assert.equal(h.elements.get('tap-pdf').disabled,false);});
+test('calibrated synthetic tap session saves full-window speed and excludes late frames',()=>{
+ const h=panelHarness();const t=calibratedSession(h);
+ for(let ms=30;ms<10000;ms+=30){const w=world(ms%600<300?.8:.24);h.panel.onFrame({image:w,world:w},t+ms,h.ctx);}
+ const late=world(.24);h.panel.onFrame({image:late,world:late},t+15000,h.ctx);
+ const saved=loadHistory();assert.equal(saved.length,1);assert.ok(saved[0].taps>0);assert.equal(saved[0].result,saved[0].taps/10);assert.equal(h.busy(),false);
 });
+
+test('single-frame angle spike does not become a catch',()=>{const s=Array.from({length:20},(_,i)=>({t:i*33,angle:i===12?160:120}));assert.equal(findCatches(s).length,0);});
+test('missing angle frames cannot supply a pause-and-release',()=>{const s=[...Array.from({length:10},(_,i)=>({t:i*30,angle:120})),{t:800,angle:160},{t:830,angle:160}];assert.equal(findCatches(s).length,0);});

@@ -3,6 +3,7 @@ import { PIP, pipAngles } from '../angles.js';
 import { FINGER_CHAINS, drawChain, drawDot } from '../draw.js';
 import { summarizeFinger, OPEN_ANGLE, CLOSED_ANGLE } from './trigger-test.js';
 import { downloadRows } from '../recorder.js';
+import { currentGuidance } from '../guidance.js';
 import { saveSession } from '../history.js';
 
 const FINGERS = Object.keys(PIP); // index, middle, ring, pinky
@@ -16,6 +17,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   const $ = (id) => document.getElementById(id);
   const btnStart = $('trig-start');
   const btnCsv = $('trig-csv');
+  const btnPdf = $('trig-pdf');
+  let report = null;
   const liveEl = $('trig-live');
   const resultEl = $('trig-result');
 
@@ -29,6 +32,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   let stopAt = null;
   let trackingLost = false;
   let lastTracked = 0;
+  let maxFrameGap = 0;
 
   const chart = new Chart($('trig-chart'), {
     type: 'line',
@@ -61,7 +65,17 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     downloadRows(rows, fileName('catching') + '_angles.csv');
   };
 
+  btnPdf.onclick = async () => {
+    if (!report) return;
+    btnPdf.disabled = true;
+    try { const { makeMovementReport } = await import('../movement-report.js'); makeMovementReport({ ...report, guidance: currentGuidance('catching') }); }
+    catch (e) { setStatus('PDF could not be created. Try again: ' + e.message); }
+    finally { btnPdf.disabled = false; }
+  };
+
   function start() {
+    report = null;
+    btnPdf.disabled = true;
     running = true;
     samples = [];
     bent = false;
@@ -69,6 +83,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     stopAt = null;
     trackingLost = false;
     lastTracked = 0;
+    maxFrameGap = 0;
     t0 = performance.now();
     chart.data.datasets = FINGERS.map(f => ({ label: NAMES[f], data: [], ...lineStyle(f === 'middle') }));
     chart.update('none');
@@ -87,17 +102,20 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     btnStart.textContent = 'Start test';
     btnStart.classList.remove('btn-recording');
     if (performance.now() - t0 - lastTracked > 500) trackingLost = true;
+    report = {test:'catching',name:fileName('catching'),date:new Date().toLocaleString(),status:'Not scored',metrics:[['Completed middle-finger cycles',cycles]],explanation:'This recording is incomplete. No disease conclusion or catch score is available.',events:[]};
+    btnPdf.disabled = false;
     if (samples.length < 30) {
       resultEl.className = 'result muted';
       resultEl.textContent = 'Not enough data. Keep your hand in view and try again.';
       setStatus('Test stopped.');
       return;
     }
-    if (cycles < TARGET_CYCLES || trackingLost) {
+    const frameRate = (samples.length - 1) * 1000 / (samples.at(-1).t - samples[0].t);
+    if (cycles < TARGET_CYCLES || trackingLost || frameRate < 25 || maxFrameGap > 100) {
       lastSummary = {};
       btnCsv.disabled = false;
       resultEl.className = 'result muted';
-      resultEl.textContent = 'Test incomplete: complete 10 cycles with continuous tracking. No catch score was saved. Raw angles are available.';
+      resultEl.textContent = 'Not scored: complete 10 cycles with continuous tracking at 25+ frames/second and no gaps over 100 ms. Low frame rates can miss rapid opening. Try better light and close other apps. Raw angles and an incomplete-attempt PDF are available.';
       setStatus('Test needs another attempt.');
       return;
     }
@@ -108,8 +126,13 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     showResult(perFinger);
     drawFinalChart(times, perFinger);
     btnCsv.disabled = false;
+    report.status = 'Usable recording';
+    report.metrics = FINGERS.map(f => [NAMES[f], `${perFinger[f].cycles} cycles; ${perFinger[f].catches.length} flagged finger-events`]);
+    report.explanation = 'A flagged finger-event is a brief pause followed by rapid opening in the estimated joint angle. Events are summed across four fingers: three events do not mean three affected fingers, three episodes, or disease severity. Voluntary pauses and tracking errors can produce this pattern. Thumb catching is not measured.';
+    report.events = FINGERS.flatMap(f => perFinger[f].catches.map(c => `${NAMES[f]} at ${(c.t/1000).toFixed(2)} s: pause ${c.pauseMs.toFixed(0)} ms, then opened ${c.deltaDeg.toFixed(1)} degrees in ${c.snapMs.toFixed(0)} ms.`));
+    report.chartImg = chart.toBase64Image('image/png',1);
     const totalCatches = FINGERS.reduce((sum, f) => sum + perFinger[f].catches.length, 0);
-    const saved = saveSession({ test: 'catching', result: totalCatches, cycles: perFinger.middle.cycles });
+    const saved = saveSession({ test: 'catching', algorithm: 3, result: totalCatches, cycles: perFinger.middle.cycles });
     onSaved();
     setStatus(saved ? 'Test finished.' : 'Test finished. Browser storage is unavailable; download your results.');
   }
@@ -124,16 +147,20 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     const note =
       total === 0
         ? 'No catch-like events detected in the recorded movement. This does not rule out a problem.'
-        : 'A catch is when a finger stops partway, then snaps open. If it happens often or hurts, show this result to a clinician.';
+        : 'The camera flagged pauses followed by rapid opening. If it happens often or hurts, show this result to a clinician.';
     resultEl.className = 'result';
     resultEl.innerHTML = `
-      <div class="result-label">Catches found</div>
+      <div class="result-label">Flagged finger-events (not a diagnosis)</div>
       <div class="result-big">${total}</div>
       <p class="result-note">${note}</p>
+      <p class="result-note">${total} means ${total} detected pause-and-release patterns summed across four fingers. It is not the number of affected fingers or a severity grade. Intentional pauses and camera jitter can also trigger a flag. Thumb catching is not measured.</p>
       <table class="mini-table">
-        <thead><tr><th>Finger</th><th>Fist cycles</th><th>Bend range</th><th>Fastest opening</th><th>Catches</th></tr></thead>
+        <thead><tr><th>Finger</th><th>Fist cycles</th><th>Bend range</th><th>Fastest opening</th><th>Flags</th></tr></thead>
         <tbody>${rows}</tbody>
-      </table>`;
+      </table>
+      <details class="advanced"><summary>Why were events flagged?</summary>
+      <p class="hint">Rule: less than 8° change for at least 150 ms in mid-bend, followed by at least 25° opening within 120 ms. These experimental thresholds are not clinical criteria.</p>
+      <ul>${FINGERS.flatMap(f => perFinger[f].catches.map(c => `<li>${NAMES[f]} · ${(c.t/1000).toFixed(2)} s: paused ${c.pauseMs.toFixed(0)} ms, then opened ${c.deltaDeg.toFixed(1)}° in ${c.snapMs.toFixed(0)} ms.</li>`)).join('') || '<li>No events met the rule.</li>'}</ul></details>`;
   }
 
   function drawFinalChart(times, perFinger) {
@@ -180,6 +207,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
 
     const t = now - t0;
     if (t - lastTracked > 500) { trackingLost = true; bent = false; }
+    if (samples.length) maxFrameGap = Math.max(maxFrameGap, t - lastTracked);
     lastTracked = t;
     samples.push({ t, ...angles });
 
