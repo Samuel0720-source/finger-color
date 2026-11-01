@@ -8,7 +8,13 @@ export async function startCamera(videoEl) {
     audio: false,
   });
   videoEl.srcObject = stream;
-  await videoEl.play();
+  try {
+    await videoEl.play();
+  } catch (error) {
+    stream.getTracks().forEach((track) => track.stop());
+    videoEl.srcObject = null;
+    throw error;
+  }
   return stream.getVideoTracks()[0];
 }
 
@@ -44,3 +50,4 @@ export async function tryLockCamera(track) {
     return 'Camera ready. Brightness could not be locked, so keep the light steady.';
   }
 }
+

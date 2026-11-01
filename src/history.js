@@ -3,7 +3,11 @@ const MAX_SESSIONS = 200;
 
 export function loadHistory() {
   try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    const data = JSON.parse(localStorage.getItem(HISTORY_KEY));
+    return Array.isArray(data) ? data.filter(s => s &&
+      ['color', 'catching', 'tapping'].includes(s.test) &&
+      Number.isFinite(Date.parse(s.savedAt)) &&
+      (s.result === null || (Number.isFinite(s.result) && s.result >= 0))) : [];
   } catch {
     return [];
   }
@@ -14,7 +18,9 @@ export function saveSession(summary) {
   list.push({ savedAt: new Date().toISOString(), ...summary });
   try {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(-MAX_SESSIONS)));
+    return true;
   } catch {
-    // Storage full or blocked. The PDF and CSV still work.
+    return false; // The caller tells the user to download a copy.
   }
 }
+

@@ -41,6 +41,7 @@ const CARD_LINEAR = 0.18;
 export function correctWithCard(pixel, card) {
   const p = toLinear(pixel);
   const c = toLinear(card);
+  if ([c.r, c.g, c.b].some(v => !Number.isFinite(v) || v <= 0)) return null;
   return {
     r: p.r * (CARD_LINEAR / c.r),
     g: p.g * (CARD_LINEAR / c.g),
@@ -67,3 +68,4 @@ export function linearToLab(lin) {
     b: 200 * (fy - fz),
   };
 }
+
