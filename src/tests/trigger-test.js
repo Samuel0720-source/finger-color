@@ -12,33 +12,28 @@ export const CLOSED_ANGLE = 120; // PIP angle below this = finger bent
 // samples: [{ t: ms, angle: degrees }, ...] for one finger
 // Checks a whole time window instead of two frames, because the model wobbles a few degrees every frame.
 export function findCatches(samples) {
-  const catches = [];
-  let lastStuck = null; // { t, angle } = the most recent moment the finger was stuck
-  let start = 0; // first sample inside the stuck window
-  for (let i = 0; i < samples.length; i++) {
-    const now = samples[i];
-    while (now.t - samples[start].t > MIN_STUCK_MS) start++;
-
-    // 1) Was the finger stuck for the last MIN_STUCK_MS, somewhere in the middle of the movement?
-    const covered = start > 0 && now.t - samples[start - 1].t >= MIN_STUCK_MS;
-    if (covered) {
-      const window = samples.slice(start, i + 1).map((s) => s.angle);
-      const lo = Math.min(...window);
-      const hi = Math.max(...window);
-      const mid = (lo + hi) / 2;
-      if (hi - lo < STUCK_RANGE && mid > 100 && mid < 165) lastStuck = { t: now.t, angle: mid };
+  const catches=[];
+  let lastStuck=null, start=0, lastEvent=-Infinity;
+  for(let i=0;i<samples.length;i++){
+    const now=samples[i];
+    if(!Number.isFinite(now.angle)||!Number.isFinite(now.t)) { lastStuck=null;start=i+1;continue; }
+    if(i>0&&(now.t<=samples[i-1].t||now.t-samples[i-1].t>100)){lastStuck=null;start=i;}
+    while(start<i && now.t-samples[start+1].t>=MIN_STUCK_MS)start++;
+    if(now.t-samples[start].t>=MIN_STUCK_MS){
+      const window=samples.slice(start,i+1).map(s=>s.angle);
+      const lo=Math.min(...window),hi=Math.max(...window),mid=(lo+hi)/2;
+      if(hi-lo<STUCK_RANGE&&mid>100&&mid<165)lastStuck={t:now.t,angle:mid,pauseMs:now.t-samples[start].t};
     }
-
-    // 2) Did it jump open quickly right after being stuck?
-    if (lastStuck && now.t > lastStuck.t && now.t - lastStuck.t <= SNAP_MS) {
-      const gained = now.angle - lastStuck.angle;
-      if (gained >= SNAP_DEG) {
-        catches.push({ t: now.t, angle: lastStuck.angle, speed: gained / ((now.t - lastStuck.t) / 1000) });
-        lastStuck = null;
+    if(lastStuck&&now.t>lastStuck.t&&now.t-lastStuck.t<=SNAP_MS){
+      const gained=now.angle-lastStuck.angle;
+      // Do not treat a one-frame spike that immediately reverses as an event.
+      const next=samples[i+1];
+      const confirmed=next&&next.t>now.t&&next.t-now.t<=100&&next.angle>=lastStuck.angle+SNAP_DEG*.8;
+      if(gained>=SNAP_DEG&&confirmed&&now.t-lastEvent>=350){
+        catches.push({t:now.t,angle:lastStuck.angle,pauseMs:lastStuck.pauseMs,deltaDeg:gained,snapMs:now.t-lastStuck.t,speed:gained/((now.t-lastStuck.t)/1000)});
+        lastEvent=now.t;lastStuck=null;
       }
-    } else if (lastStuck && now.t - lastStuck.t > SNAP_MS) {
-      lastStuck = null;
-    }
+    }else if(lastStuck&&now.t-lastStuck.t>SNAP_MS)lastStuck=null;
   }
   return catches;
 }
@@ -80,3 +75,4 @@ export function summarizeFinger(times, rawAngles) {
     smoothed: angles,
   };
 }
+

@@ -7,7 +7,7 @@ const NAMES = {
 };
 
 const TONES = {
-  Normal: 'ok',
+  'Near baseline': 'ok',
   Paler: 'pale',
   Darker: 'dark',
   Bluer: 'blue',
@@ -19,7 +19,7 @@ const BAR_FULL_SCORE = 20;
 
 export function describeChange(diff) {
   const score = Math.hypot(diff.L, diff.a, diff.b);
-  if (score < NORMAL_LIMIT) return { score, label: 'Normal' };
+  if (score < NORMAL_LIMIT) return { score, label: 'Near baseline' };
 
   const options = [
     { label: 'Paler', size: diff.L },
@@ -68,3 +68,4 @@ export function renderFingers(container, views) {
     })
     .join('');
 }
+

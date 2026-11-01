@@ -57,30 +57,55 @@ def analyze_session(sess, events, finger=FINGER):
     if noise is None:
         raise ValueError("No baseline_noise in the events file. Record again with the current app version.")
 
-    sess["smooth"] = smooth(sess["change_score"].to_numpy())
-
     warm = events.loc[events["type"] == "warm_start", "t"]
     if len(warm) == 0:
-        raise ValueError('No warm_start event. Press "I\'m Back in the Warm" during the recording.')
+        raise ValueError("No warm_start event.")
     t_warm = float(warm.iloc[0])
-
-    after = sess[sess["t"] >= t_warm]
-    times = (after["t"] - t_warm).to_numpy()
-    vals = after["smooth"].to_numpy()
+    version = event_value(events, "algorithm_version")
+    if version == 2:
+        if (events["type"] == "interrupted").any():
+            raise ValueError("Recording interrupted.")
+        sess = sess[np.isfinite(sess["t"]) & np.isfinite(sess["change_score"]) & (sess["change_score"] >= 0)].sort_values("t")
+        after = sess[sess["t"] >= t_warm].copy()
+        times = (after["t"] - t_warm).to_numpy()
+        if len(times) < 2 or times[-1] - times[0] < 60:
+            raise ValueError("At least 60 seconds after warming are required.")
+        if times[0] > 2.5 or np.any(np.diff(times) > 2.5) or np.any(np.diff(times) <= 0):
+            raise ValueError("Hand tracking has gaps.")
+        raw = after["change_score"].to_numpy()
+        vals = np.array([raw[:i+1][times[i] - times[:i+1] < SMOOTH_SECONDS].mean() for i in range(len(times))])
+    else:
+        # Keep old CSV analyses reproducible; v2 recordings carry their algorithm version.
+        sess["smooth"] = smooth(sess["change_score"].to_numpy())
+        after = sess[sess["t"] >= t_warm]
+        times = (after["t"] - t_warm).to_numpy()
+        vals = after["smooth"].to_numpy()
     if len(times) == 0:
         raise ValueError("No data after warm_start.")
-
     start = vals[0]
     threshold = max(RECOVERY_FRACTION * start, noise)
-
     recovery = None
-    for i in range(len(times)):
-        if times[i] + HOLD_SECONDS > times[-1]:
-            break
-        window = (times >= times[i]) & (times <= times[i] + HOLD_SECONDS)
-        if np.all(vals[window] <= threshold):
-            recovery = times[i]
-            break
+    if version == 2 and start <= threshold:
+        pass
+    elif version == 2:
+        below_since = None
+        for t, v in zip(times, vals):
+            if v > threshold:
+                below_since = None
+            else:
+                if below_since is None:
+                    below_since = t
+                if t - below_since >= HOLD_SECONDS:
+                    recovery = below_since
+                    break
+    else:
+        for i in range(len(times)):
+            if times[i] + HOLD_SECONDS > times[-1]:
+                break
+            window = (times >= times[i]) & (times <= times[i] + HOLD_SECONDS)
+            if np.all(vals[window] <= threshold):
+                recovery = times[i]
+                break
 
     temps = events[events["type"] == "finger_temp_c"].copy()
     temps["since"] = temps["t"].astype(float) - t_warm
@@ -149,3 +174,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

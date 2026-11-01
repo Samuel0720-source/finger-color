@@ -1,3 +1,4 @@
+import { mountGuidance, currentGuidance } from './guidance.js';
 // Font served from this site (no request to Google). Variable width + weight.
 import '@fontsource-variable/instrument-sans/wdth.css';
 import './style.css';
@@ -41,6 +42,7 @@ const btnPdf = $('btn-pdf');
 const btnCsv = $('btn-csv');
 const stage = $('stage');
 const stageEmpty = $('stage-empty');
+$('btn-demo').onclick = () => $('example-dialog').showModal();
 
 let cardPos = null;
 let lastSample = 0;
@@ -53,6 +55,9 @@ let usedCard = false;
 let wakeLock = null;
 let cameraOn = false;
 let mirrored = false;
+let lastVideoTime = -1;
+let frameId = null;
+let sessionName = null;
 
 window.onerror = (msg) => {
   statusEl.textContent = 'Error: ' + msg;
@@ -61,6 +66,7 @@ window.onunhandledrejection = (e) => {
   statusEl.textContent = 'Error: ' + e.reason;
 };
 
+mountGuidance();
 createChart($('chart'));
 updateBaselineInfo();
 renderFingers(fingersEl, FINGERS.map((name) => ({ name, change: null })));
@@ -86,10 +92,11 @@ tabs.forEach((tab) => (tab.onclick = () => setMode(tab.dataset.mode)));
 setMode(mode);
 
 function setMode(next) {
-  if (busy || rec.isRecording()) {
+  if (busy || rec.isRecording() || baselineBuffer) {
     statusEl.textContent = 'Finish or stop the current test first.';
     return;
   }
+  if (!MODES.includes(next)) return;
   mode = next;
   window.history.replaceState(null, '', '#' + mode);
   tabs.forEach((tab) => {
@@ -120,6 +127,14 @@ async function turnCameraOn() {
     return;
   }
 
+  track.addEventListener('ended', () => {
+    if (baselineBuffer) btnBaseline.click();
+    trigger.cancel();
+    tap.cancel();
+    if (rec.isRecording()) { rec.addEvent('interrupted'); stopRecording(); }
+    turnCameraOff();
+    statusEl.textContent = 'Camera disconnected. Reconnect it and enable the camera again.';
+  });
   mirrored = isFrontCamera(track);
   stage.classList.toggle('mirrored', mirrored);
   stage.classList.add('is-live');
@@ -147,7 +162,7 @@ async function turnCameraOn() {
   btnRecord.disabled = !baseline;
   trigger.enable();
   tap.enable();
-  requestAnimationFrame(loop);
+  frameId = requestAnimationFrame(loop);
 }
 
 function turnCameraOff() {
@@ -156,6 +171,10 @@ function turnCameraOff() {
     return;
   }
   cameraOn = false;
+  cancelAnimationFrame(frameId);
+  lastVideoTime = -1;
+  cardPos = null;
+  renderFingers(fingersEl, FINGERS.map(name => ({ name, change: null })));
   stopCamera(video);
   octx.clearRect(0, 0, overlay.width, overlay.height);
   stage.classList.remove('is-live');
@@ -166,10 +185,12 @@ function turnCameraOff() {
   trigger.disable();
   tap.disable();
   statusEl.textContent = 'Camera off.';
+  $('tracking-state').textContent = 'Camera off';
+  $('tracking-state').dataset.ready = 'false';
 }
 
 overlay.onclick = (e) => {
-  if (mode !== 'color') return; // the grey card is only used by the color test
+  if (mode !== 'color' || !cameraOn || rec.isRecording() || baselineBuffer) return; // the grey card is only used by the color test
   const rect = overlay.getBoundingClientRect();
   // When the picture is shown as a mirror, the click's x has to be flipped back to the camera's x.
   const fromLeft = mirrored ? rect.right - e.clientX : e.clientX - rect.left;
@@ -177,7 +198,7 @@ overlay.onclick = (e) => {
     x: fromLeft * (overlay.width / rect.width),
     y: (e.clientY - rect.top) * (overlay.height / rect.height),
   };
-  statusEl.textContent = 'Grey card marked. Its color will be used to correct the light.';
+  statusEl.textContent = 'Grey card marked for the corrected-color CSV columns. Recovery still uses the palm reference.';
 };
 
 // ---------- Main loop ----------
@@ -185,16 +206,30 @@ overlay.onclick = (e) => {
 // One loop for every test: run the hand model once per frame, then hand the result to the chosen test.
 function loop(now) {
   if (!cameraOn) return;
+  trigger.tick(now);
+  tap.tick(now);
+  if (video.readyState < 2 || video.currentTime === lastVideoTime) {
+    frameId = requestAnimationFrame(loop);
+    return;
+  }
+  lastVideoTime = video.currentTime;
+  if (work.width !== video.videoWidth || work.height !== video.videoHeight) {
+    work.width = overlay.width = video.videoWidth;
+    work.height = overlay.height = video.videoHeight;
+    cardPos = null;
+  }
   try {
     octx.clearRect(0, 0, overlay.width, overlay.height);
     const hand = detectHand(video, now);
+    $('tracking-state').textContent = hand ? 'Hand detected' : 'Looking for your hand';
+    $('tracking-state').dataset.ready = String(Boolean(hand));
     if (mode === 'color') colorFrame(hand, now);
     else if (mode === 'catching') trigger.onFrame(hand, now, octx);
     else tap.onFrame(hand, now, octx);
   } catch (e) {
     statusEl.textContent = 'Loop error: ' + e.message;
   }
-  requestAnimationFrame(loop);
+  frameId = requestAnimationFrame(loop);
 }
 
 function colorFrame(hand, now) {
@@ -206,6 +241,11 @@ function colorFrame(hand, now) {
     for (const p of Object.values(spots)) drawBox(p.x, p.y, p.size, 'lime');
   }
 
+  if (!spots && baselineBuffer) {
+    baselineBuffer = [];
+    btnBaseline.textContent = 'Cancel baseline';
+    statusEl.textContent = 'Hand lost. Baseline restarts when all fingertips are visible.';
+  }
   if (spots && now - lastSample > SAMPLE_EVERY_MS) {
     lastSample = now;
     sample(spots);
@@ -213,6 +253,12 @@ function colorFrame(hand, now) {
 }
 
 function sample(spots) {
+  const inside = Object.values(spots).every(p => p.x - p.size / 2 >= 0 && p.y - p.size / 2 >= 0 && p.x + p.size / 2 <= work.width && p.y + p.size / 2 <= work.height);
+  if (!inside) {
+    if (baselineBuffer) baselineBuffer = [];
+    statusEl.textContent = 'Move your whole hand away from the edge of the camera view.';
+    return;
+  }
   const palmPixel = averageRGB(wctx, spots.palm.x, spots.palm.y, spots.palm.size);
   if (!palmPixel) return;
   const palmLab = linearToLab(toLinear(palmPixel));
@@ -224,10 +270,11 @@ function sample(spots) {
     const pixel = averageRGB(wctx, p.x, p.y, p.size);
     if (!pixel) return; // A fingertip is outside the picture. Skip this sample.
     const raw = linearToLab(toLinear(pixel));
+    const corrected = card ? correctWithCard(pixel, card) : null;
     current[name] = {
       rgb: pixel,
       raw,
-      lab: card ? linearToLab(correctWithCard(pixel, card)) : null,
+      lab: corrected ? linearToLab(corrected) : null,
       d: { L: raw.L - palmLab.L, a: raw.a - palmLab.a, b: raw.b - palmLab.b },
     };
   }
@@ -277,9 +324,17 @@ function makeRow(view, c, card) {
 // ---------- Normal color (baseline) ----------
 
 btnBaseline.onclick = () => {
+  if (baselineBuffer) {
+    baselineBuffer = null;
+    btnBaseline.textContent = baseline ? 'Save normal color again' : 'Save normal color';
+    btnRecord.disabled = !baseline;
+    statusEl.textContent = 'Baseline cancelled.';
+    return;
+  }
+  if (rec.isRecording()) return;
   baselineBuffer = [];
-  btnBaseline.disabled = true;
-  btnBaseline.textContent = `Hold still... ${BASELINE_SECONDS} s`;
+  btnRecord.disabled = true;
+  btnBaseline.textContent = `Cancel baseline · ${BASELINE_SECONDS} samples left`;
   statusEl.textContent = 'Keep your hand still with all five fingertips in view.';
 };
 
@@ -287,7 +342,7 @@ function collectBaseline(current) {
   baselineBuffer.push(current);
   const left = BASELINE_SECONDS - baselineBuffer.length;
   if (left > 0) {
-    btnBaseline.textContent = `Hold still... ${left} s`;
+    btnBaseline.textContent = `Cancel baseline · ${left} samples left`;
     return;
   }
 
@@ -321,7 +376,7 @@ function loadBaseline() {
     const text = localStorage.getItem(BASELINE_KEY);
     const value = text ? JSON.parse(text) : null;
     // A baseline saved by an older version of the app has a different shape. Ignore it.
-    const valid = value && value.fingers && FINGERS.every((f) => value.fingers[f]) && Number.isFinite(value.noise);
+    const valid = value && value.fingers && FINGERS.every((f) => value.fingers[f] && ['L', 'a', 'b'].every(k => Number.isFinite(value.fingers[f][k]))) && Number.isFinite(value.noise);
     return valid ? value : null;
   } catch {
     return null;
@@ -352,10 +407,14 @@ function updateBaselineInfo() {
 btnRecord.onclick = () => (rec.isRecording() ? stopRecording() : startRecording());
 
 function startRecording() {
-  if (!baseline) return; // the button stays disabled until a normal color is saved
+  if (!baseline || baselineBuffer || !cameraOn) return; // the button stays disabled until a normal color is saved
+  sessionName = todayName('recovery');
   rec.startRecording();
+  rec.addEvent('algorithm_version', '2');
+  btnBaseline.disabled = true;
+  $('btn-events').disabled = true;
   // Save the noise level with the data so the Python analysis uses the same number as the app.
-  if (baseline) rec.addEvent('baseline_noise', baseline.noise.toFixed(4));
+  if (baseline) rec.addEvent('baseline_noise', String(baseline.noise));
   keepScreenOn();
   markStep(2, 'active');
   resetChart();
@@ -390,15 +449,17 @@ function stopRecording() {
   btnRecord.classList.remove('btn-recording');
   btnWarm.disabled = true;
   btnTemp.disabled = true;
-  btnCsv.disabled = false;
-  if (lastResult && lastResult.ok) {
-    saveSession({ test: 'color', result: lastResult.recoverySec === null ? null : lastResult.recoverySec / 60 });
+  btnCsv.disabled = rec.getRows().length === 0;
+  $('btn-events').disabled = false;
+  btnBaseline.disabled = false;
+  if (lastResult && lastResult.ok && !lastResult.noChange) {
+    lastResult.saved = saveSession({ test: 'color', result: lastResult.recoverySec === null ? null : lastResult.recoverySec / 60, algorithm: 2 });
     historyPanel.render();
   }
   showResult(lastResult);
   btnPdf.disabled = !(lastResult && lastResult.ok);
   if (lastResult && lastResult.ok) markStep(4, 'done');
-  statusEl.textContent = 'Recording stopped.';
+  statusEl.textContent = lastResult?.saved === false ? 'Recording stopped. Browser storage is unavailable; download your results.' : 'Recording stopped.';
 }
 
 function updateTimer() {
@@ -415,7 +476,7 @@ btnWarm.onclick = () => {
 };
 
 btnTemp.onclick = () => {
-  if (tempInput.value === '') return;
+  if (!rec.isRecording() || tempInput.value === '' || !tempInput.checkValidity() || !Number.isFinite(Number(tempInput.value))) return;
   rec.addEvent('finger_temp_c', tempInput.value);
   statusEl.textContent = `Logged ${tempInput.value} °C`;
   tempInput.value = '';
@@ -435,21 +496,24 @@ function showResult(r) {
     return;
   }
   let note = 'How long your middle finger took to return to its normal color after you came back into the warm.';
-  if (r.recoverySec === null) {
+  if (r.noChange) {
+    note = 'There was no clear color change to time. This session is not saved as a recovery time. Do not deliberately cool your hands to create a result.';
+  } else if (r.recoverySec === null) {
     note = 'Your middle finger had not returned to its normal color when you stopped. Next time, record for longer.';
   } else if (r.startScore <= r.threshold) {
-    note = 'Your finger was already close to its normal color when you came in, so there was nothing to time. Try a longer or colder exposure.';
+    note = 'Your finger was already close to its normal color when you came in, so there was nothing to time. No recovery time can be inferred from this session. Do not deliberately cool your hands to create a result.';
   }
   resultEl.className = 'result';
   resultEl.innerHTML = `
     <div class="result-label">Recovery time, middle finger</div>
     <div class="result-big">${headlineText(r)}</div>
-    <p class="result-note">${note}</p>`;
+    <p class="result-note">${note}</p><p class="result-note">This times a smoothed camera signal, not blood flow. A trailing 10-second average reduces noise and can delay the estimate. The signal must stay below the experimental threshold for 30 seconds to confirm it.</p>`;
 }
 
 function headlineText(r) {
   if (!r.ok) return r.reason;
-  if (r.recoverySec === null) return 'Not back to normal yet';
+  if (r.noChange) return 'No clear change to time';
+  if (r.recoverySec === null) return 'Not observed in this recording';
   if (r.startScore <= r.threshold) return 'Already normal';
   const min = r.recoverySec / 60;
   return min < 1 ? `${Math.round(r.recoverySec)} seconds` : `${min.toFixed(1)} minutes`;
@@ -464,7 +528,7 @@ function fingerSummary(rows, finger, tWarm) {
 }
 
 btnPdf.onclick = async () => {
-  const name = todayName('recovery');
+  const name = sessionName || todayName('recovery');
   btnPdf.disabled = true;
   btnPdf.textContent = 'Making PDF...';
   // jsPDF is big, so it is only downloaded when someone asks for a report.
@@ -484,9 +548,10 @@ function buildReport(makeReport, name) {
   const tWarm = warm ? Number(warm.t) : 0;
   makeReport({
     name,
+    guidance: currentGuidance('color'),
     date: new Date().toLocaleString(),
     durationSec: recordedSeconds,
-    mode: usedCard ? 'Grey card + palm reference' : 'Palm reference',
+    mode: usedCard ? 'Palm reference (grey-card values in CSV only)' : 'Palm reference',
     headline: headlineText(lastResult),
     pattern: null,
     chartImg: chartImage(),
@@ -498,7 +563,26 @@ function buildReport(makeReport, name) {
 }
 
 // prompt() is blocked inside some in-app browsers (Instagram, KakaoTalk), so files are named automatically.
-btnCsv.onclick = () => rec.downloadCSV(todayName('recovery'));
+btnCsv.onclick = () => rec.downloadCSV(sessionName);
+$('btn-events').onclick = () => rec.downloadEvents(sessionName);
+
+// A hidden page may suspend video. Never score an interrupted timed test.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) return;
+  if (baselineBuffer) btnBaseline.click();
+  trigger.cancel();
+  tap.cancel();
+  if (rec.isRecording()) {
+    rec.addEvent('interrupted');
+    stopRecording();
+  }
+});
+window.addEventListener('pagehide', () => {
+  cameraOn = false;
+  cancelAnimationFrame(frameId);
+  stopCamera(video);
+  releaseScreen();
+});
 
 function todayName(prefix) {
   const d = new Date();
