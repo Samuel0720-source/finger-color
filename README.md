@@ -157,3 +157,14 @@ Profiles now collect optional age, sex category, measured/dominant hand and setu
 The research panel cites Kwon et al. 2022 (DOI 10.3233/THC-228011), Table 3, with age-group spectral-frequency means. These are 15-second gyrosensor results, not interchangeable with this app's 10-second camera counts. The app deliberately does not calculate a difference, percentile, normal range or disease probability from incompatible metrics. No sex/dominance adjustment is fabricated. Color and catching show that a compatible reference is not configured.
 
 New tapping records snapshot demographic/hand/setup context at start; symptom answers are only included in the PDF at export. The latest three matching hand/dominance/setup records are summarized by median/range. Setup equivalence is self-reported, not verified. Records without context are excluded. This is descriptive repeatability, not an accuracy or clinical validation study.
+
+## Three-test workflow update (2026-11-01)
+
+- A shared preparation form records hand, dominance, camera/room label and optional demographics before any test. Context is frozen during measurements and included in local history and PDFs.
+- Color references are now session-only and invalidated when camera, hand or setup changes. Each finger has its own baseline noise and experimental recovery result. Incomplete attempts can export a report. The middle-finger history metric remains algorithm v2.
+- Catching waits for an open tracked hand and a three-second countdown before timing ten middle-finger cycles. Reports include tracking rate, largest gap, each finger's cycles/range/events, and the measurement context.
+- Tapping reports tracking coverage, sample count and gaps when an attempt cannot be scored. The detector remains algorithm v3.
+- All three tests summarize the last three matching hand/dominance/setup records. History filters by hand and test; charts separate setup/hand groups. Matching remains self-reported.
+- Symptom guidance retains three consultation categories, with urgent advice within the recommended category. Severe hand pain, inability to move/hold objects, or an icy cold/pale/blue hand triggers urgent advice independent of measurement. Sources: NHS finger pain, NHS inform wrist/hand/finger problems, and NHS cyanosis pages. This is not a validated emergency triage system.
+- A questionnaire-only PDF is available without camera access. Appointment notes, including non-Latin notes rendered with browser fonts, stay in memory and enter PDFs only. Existing measurements and symptom summaries have separate export buttons.
+- No disease probability, clinical normal range, or sensitivity/specificity claim is added. Thirty-six automated checks cover measurement math and questionnaire handling; actual camera and clinical performance remain unvalidated.

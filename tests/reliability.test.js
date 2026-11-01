@@ -62,7 +62,7 @@ function calibratedSession(h) {
  for(let ms=1530;ms<=3060;ms+=30)frame(.8,ms);
  frame(.8,6060);return t+6060;
 }
-test('a whole test with tracking loss is not saved as zero',()=>{const h=panelHarness();const t=calibratedSession(h);h.panel.tick(t+10001);assert.match(h.elements.get('tap-result').textContent,/Tracking was incomplete/);assert.equal(loadHistory().length,0);assert.equal(h.elements.get('tap-pdf').disabled,false);});
+test('a whole test with tracking loss is not saved as zero',()=>{const h=panelHarness();const t=calibratedSession(h);h.panel.tick(t+10001);assert.match(h.elements.get('tap-result').textContent,/Repeat needed/);assert.equal(loadHistory().length,0);assert.equal(h.elements.get('tap-pdf').disabled,false);});
 test('calibrated synthetic tap session saves full-window speed and excludes late frames',()=>{
  const h=panelHarness();const t=calibratedSession(h);
  for(let ms=30;ms<10000;ms+=30){const w=world(ms%600<300?.8:.24);h.panel.onFrame({image:w,world:w},t+ms,h.ctx);}

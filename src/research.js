@@ -12,10 +12,11 @@ export function researchContext(mode,profile={},measurement=null) {
  lines.push('No sex-specific or dominant-hand-specific age norms are supplied in this table. These inputs are recorded, not used to invent adjustments. No percentile, normal/abnormal label, or disease probability is calculated.');
  return {status:validAge?'Published mean available; direct comparison unavailable':'Age-group reference unavailable; direct comparison unavailable',lines,source:STUDY.url};
 }
-export function repeatSummary(records,context){
+export function repeatSummary(records,context,mode='tapping'){
+ const algorithm=mode==='color'?2:3;const unit=mode==='color'?'min':mode==='catching'?'finger-events':'taps/s';
  if(!context?.hand||!context?.setup)return {lines:['Select the measured hand and setup before starting to compare repeated trials.']};
- const mine=records.filter(s=>s.test==='tapping'&&s.algorithm===3&&s.context?.hand===context.hand&&s.context?.dominant===context.dominant&&s.context?.setup===context.setup&&Number.isFinite(s.result)).slice(-3);
+ const mine=records.filter(s=>s.test===mode&&s.algorithm===algorithm&&s.context?.hand===context.hand&&s.context?.dominant===context.dominant&&s.context?.setup===context.setup&&Number.isFinite(s.result)).slice(-3);
  if(!mine.length)return {lines:['No matching trials yet. Repeat with the same hand and setup; stop if uncomfortable.']};
  const values=mine.map(s=>s.result),sorted=[...values].sort((a,b)=>a-b),n=sorted.length,median=n%2?sorted[(n-1)/2]:(sorted[n/2-1]+sorted[n/2])/2;
- return {lines:[`Last ${n} matching trials: ${values.map(v=>v.toFixed(2)).join(', ')} taps/s. Median ${median.toFixed(2)}; range ${sorted[0].toFixed(2)}-${sorted.at(-1).toFixed(2)} taps/s.`,`Dates: ${mine.map(s=>new Date(s.savedAt).toLocaleString()).join('; ')}. Matching is based on your hand/setup labels; device and lighting equivalence are not verified. Repeatability does not establish measurement accuracy.`]};
+ return {lines:[`Last ${n} matching trials: ${values.map(v=>v.toFixed(2)).join(', ')} ${unit}. Median ${median.toFixed(2)}; range ${sorted[0].toFixed(2)}-${sorted.at(-1).toFixed(2)} ${unit}.`,`Dates: ${mine.map(s=>new Date(s.savedAt).toLocaleString()).join('; ')}. Matching is based on your hand/setup labels; device and lighting equivalence are not verified. Repeatability does not establish measurement accuracy.`]};
 }
