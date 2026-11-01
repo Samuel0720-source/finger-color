@@ -147,7 +147,7 @@ export function makeReport(info) {
 
   if (info.guidance) {
     heading(info.guidance.title);
-    for (const paragraph of [...info.guidance.lines, ...(info.guidance.answers||[]).map(r=>r.question+': '+r.answer), 'Medical information: ' + info.guidance.source]) {
+    for (const paragraph of [...info.guidance.lines, ...(info.guidance.research?.lines||[]), ...(info.guidance.answers||[]).map(r=>r.question+': '+r.answer), 'Medical information: ' + info.guidance.source]) {
       const lines = doc.splitTextToSize(paragraph, WIDTH);
       for (const line of lines) { ensureSpace(6); doc.text(line, LEFT, y); y += 5; }
       y += 3;

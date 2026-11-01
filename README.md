@@ -31,7 +31,7 @@ MediaPipe also returns **world landmarks**: 3D points in meters. The angle at ea
 
 ### Thumb tapping
 
-The thumb-tip to index-tip distance is divided by hand size (wrist to middle knuckle), to reduce scale sensitivity. Camera position and tracking errors still matter. Two limits (touch below 0.15, release above 0.30) stop small wobbles from counting as extra taps (`src/tests/tap-test.js`).
+The thumb-tip to index-tip distance is divided by hand size (wrist to middle knuckle), to reduce scale sensitivity. Camera position and tracking errors still matter. The current UI calibrates touching and open positions for each attempt, then uses separate touch/release thresholds to limit repeated counts from small wobbles (`src/tests/tap-test.js`).
 
 ## Tech
 
@@ -149,3 +149,11 @@ Tapping now calibrates touching and open positions before a 3-second countdown a
 All three tests export PDF reports. Movement PDFs include interpretation, symptom-based care guidance, and signal/event evidence; incomplete completed attempts can export a clearly unscored report. NHS-linked symptom explanations cover Raynaud's, trigger finger and carpal tunnel without estimating disease risk from scores. Updated movement results use algorithm version 3; legacy measurements remain exportable but are excluded from current-method charts.
 
 See [the 50-scenario evaluation](validation/README.md) and run `npm run benchmark`. This is synthetic development testing, not measured real-camera or clinical accuracy.
+
+## Research context and consultation conclusions
+
+Profiles now collect optional age, sex category, measured/dominant hand and setup. The three consultation outputs are recommendation, no indication identified, and insufficient information. Incomplete or conflicting negative responses cannot create reassurance; an explicit referral reason remains visible even with other missing answers. Camera performance does not alter this symptom-based conclusion.
+
+The research panel cites Kwon et al. 2022 (DOI 10.3233/THC-228011), Table 3, with age-group spectral-frequency means. These are 15-second gyrosensor results, not interchangeable with this app's 10-second camera counts. The app deliberately does not calculate a difference, percentile, normal range or disease probability from incompatible metrics. No sex/dominance adjustment is fabricated. Color and catching show that a compatible reference is not configured.
+
+New tapping records snapshot demographic/hand/setup context at start; symptom answers are only included in the PDF at export. The latest three matching hand/dominance/setup records are summarized by median/range. Setup equivalence is self-reported, not verified. Records without context are excluded. This is descriptive repeatability, not an accuracy or clinical validation study.
