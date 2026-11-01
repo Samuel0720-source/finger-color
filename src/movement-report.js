@@ -13,7 +13,7 @@ export function makeMovementReport(info,{save=true}={}) {
  text(info.test==='tapping'?'Thumb Tapping Report':'Finger Movement Report',{bold:true,size:20});
  text('Personal observation tool. Not a diagnosis or validated disease screen.',{size:9});
  for(const [key,value] of [['Session',info.name],['Recorded',info.date],['Recording quality',info.status]])text(key+': '+value);
- heading('Summary and next step');text(info.guidance.conclusion || 'Personal observation');text('Camera measurements describe movement, not a diagnosis. Session answers below were entered by the user at export.');
+ heading('Summary and next step');text(info.guidance.conclusion || 'Personal observation');text(info.guidance.action||'');text(info.guidance.lines[2]||'');text('Camera measurements describe movement, not a diagnosis. Session answers below were entered by the user at export.');
  heading('Your measurements');
  for(const [key,value] of info.metrics)text(key+': '+value);
  heading('What the numbers mean');text(info.explanation);
@@ -32,6 +32,9 @@ export function makeMovementReport(info,{save=true}={}) {
  }
  if(info.chartImg){if(y+78>275)page();doc.addImage(info.chartImg,'PNG',20,y,170,65);y+=73;}
  if(info.events?.length){heading('Why an event was flagged');for(const event of info.events)text(event,{size:9});}
+ if(info.measurementContext){heading('Context at measurement start');text(Object.entries(info.measurementContext).filter(([k])=>['age','sex','hand','dominant','setup'].includes(k)).map(([k,v])=>k+': '+(v||'Not answered')).join('; '));}
+ if(info.repeat){heading('Repeated measurements');for(const line of info.repeat.lines)text(line,{size:9});}
+ const research=info.research||info.guidance.research;if(research){heading('Research reference');text(research.status,{bold:true});for(const line of research.lines)text(line,{size:9});if(research.source)text(research.source,{size:8});}
  page();heading('Interpretation and symptom context');heading(info.guidance.title);
  for(const line of info.guidance.lines)text(line,{size:10});
  heading('Your questionnaire answers');

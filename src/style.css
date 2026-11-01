@@ -1314,3 +1314,6 @@ dialog h2 {
 .survey-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:18px;}
 .survey-grid label {font-weight:500;}
 .survey-grid select {display:block;min-height:48px;width:100%;margin-top:8px;padding:10px;border:1px solid #bac8dd;border-radius:8px;background:white;color:#203b72;}
+
+.conclusion-card {margin:22px 0;padding:18px;background:white;border:1px solid #bdcce2;border-radius:12px;}
+.conclusion-card h4 {margin:0;font-size:20px;}

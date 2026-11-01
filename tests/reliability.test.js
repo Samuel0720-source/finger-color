@@ -48,7 +48,7 @@ test('catch detector identifies a sustained pause followed by a snap',()=>{const
 function panelHarness() {
  globalThis.localStorage=storage();
  const elements=new Map();
- globalThis.document={getElementById(id){if(!elements.has(id))elements.set(id,{textContent:'',disabled:false,style:{},classList:{toggle(){},add(){},remove(){}}});return elements.get(id);}};
+ globalThis.document={createElement(){return {};},getElementById(id){if(!elements.has(id))elements.set(id,{append(){},textContent:'',disabled:false,style:{},classList:{toggle(){},add(){},remove(){}}});return elements.get(id);}};
  let busy=false;
  const panel=createTapPanel({setStatus(){},setBusy:v=>busy=v,onSaved(){},fileName:()=>''});
  const ctx={canvas:{width:100,height:100},beginPath(){},arc(){},fill(){},moveTo(){},lineTo(){},stroke(){}};
