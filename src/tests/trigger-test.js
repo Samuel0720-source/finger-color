@@ -55,7 +55,7 @@ export function countCycles(angles) {
 
 // times: ms, rawAngles: degrees for ONE finger
 export function summarizeFinger(times, rawAngles) {
-  if (times.length < 2) return { cycles: 0, catches: [], rangeDeg: 0, maxOpenSpeed: 0, smoothed: rawAngles };
+  if (times.length < 2) return { cycles: 0, catches: [], rangeDeg: 0, maxOpenSpeed: 0, maxAngle: NaN, minAngle: NaN, smoothed: rawAngles };
   const angles = smooth(rawAngles, SMOOTH_SAMPLES);
   const samples = times.map((t, i) => ({ t, angle: angles[i] }));
 
@@ -71,6 +71,8 @@ export function summarizeFinger(times, rawAngles) {
     cycles: countCycles(angles),
     catches: findCatches(samples),
     rangeDeg: Math.max(...angles) - Math.min(...angles),
+    maxAngle: Math.max(...angles), // how straight it got (trigger finger grade III/IV if low)
+    minAngle: Math.min(...angles), // how far it bent (grade IIIB if high)
     maxOpenSpeed,
     smoothed: angles,
   };

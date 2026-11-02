@@ -9,6 +9,15 @@ export function jointAngle(a, b, c) {
   return (Math.acos(cos) * 180) / Math.PI;
 }
 
+// The joint that catches in trigger finger: the thumb's IP joint [2, 3, 4] and each finger's PIP joint.
+export const JOINTS = {
+  thumb: [2, 3, 4],
+  index: [5, 6, 7],
+  middle: [9, 10, 11],
+  ring: [13, 14, 15],
+  pinky: [17, 18, 19],
+};
+
 // [knuckle, PIP joint, next joint] for each finger (MediaPipe point numbers)
 export const PIP = {
   index: [5, 6, 7],
@@ -17,9 +26,9 @@ export const PIP = {
   pinky: [17, 18, 19],
 };
 
-export function pipAngles(world) {
+export function pipAngles(world, joints = JOINTS) {
   const out = {};
-  for (const [name, [a, b, c]] of Object.entries(PIP)) {
+  for (const [name, [a, b, c]] of Object.entries(joints)) {
     out[name] = jointAngle(world[a], world[b], world[c]);
   }
   return out;
