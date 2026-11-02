@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {getGuidance} from '../src/guidance.js';
 import {researchContext,repeatSummary} from '../src/research.js';
-const complete={urgent:'No',symptom0:'No',symptom1:'No',symptom2:'No',symptom3:'No',duration:'No symptoms',trend:'No symptoms',impact:'No impact'};
+const complete={sores:'No',lockedNow:'No',constantNumb:'No',dropping:'No',urgent:'No',symptom0:'No',symptom1:'No',symptom2:'No',symptom3:'No',duration:'No symptoms',trend:'No symptoms',impact:'No impact'};
 test('blank and partial answers cannot produce reassurance',()=>{assert.equal(getGuidance('tapping').code,'insufficient');assert.equal(getGuidance('tapping',{symptom0:'No'}).code,'insufficient');});
 test('complete negative answers produce limited no-indication conclusion',()=>assert.equal(getGuidance('tapping',complete).code,'no_indication'));
 test('worsening overrides missing answers and contradictory absence',()=>{const r=getGuidance('tapping',{symptom0:'Yes',trend:'Worsening',duration:'No symptoms'});assert.equal(r.code,'recommend');assert.match(r.lines.join(' '),/conflict/);});

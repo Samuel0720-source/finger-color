@@ -21,7 +21,7 @@ export function makeMovementReport(info,{save=true}={}) {
  doc.setFillColor(38,93,217);doc.rect(0,0,210,7,'F');
  text(info.test==='color'?'Color Observation Report':info.test==='tapping'?'Thumb Tapping Report':'Finger Movement Report',{bold:true,size:20});
  text('Personal observation tool. Not a diagnosis or validated disease screen.',{size:9});
- for(const [key,value] of [['Session',info.name],['Recorded',info.date],['Recording quality',info.status],['Report method','Color v2 / Movement v3; guidance v2']])text(key+': '+value);
+ for(const [key,value] of [['Session',info.name],['Recorded',info.date],['Recording quality',info.status],['Report method','Color v2 / Movement v3; guidance v3']])text(key+': '+value);
  heading('Summary and next step');text(info.guidance.conclusion || 'Personal observation');text(info.guidance.action||'');text(info.guidance.lines[2]||'');text('Camera measurements describe color or movement; they do not diagnose a condition. Session answers below were entered by the user at export.');
  heading('Your measurements');
  if(!info.metrics.length)text('No camera measurements included.');
@@ -37,7 +37,7 @@ export function makeMovementReport(info,{save=true}={}) {
    for(let i=1;i<selected.length;i++)doc.line(...pos(selected[i-1]),...pos(selected[i]));
    doc.setDrawColor(170,90,30);
    for(const t of info.tapTimes||[]){const tx=x+(t-first)/(last-first||1)*w;doc.line(tx,y+h-4,tx,y+h);}
-   y+=47;text('Orange ticks mark detected taps. Distance is estimated, not physical contact.',{size:8});text(`Time: ${first.toFixed(1)} to ${last.toFixed(1)} seconds. Signal range: ${min.toFixed(2)} to ${max.toFixed(2)}.`,{size:9});
+   y+=47;if(info.test==='tapping')text('Orange ticks mark detected taps. Distance is estimated, not physical contact.',{size:8});text(`Time: ${first.toFixed(1)} to ${last.toFixed(1)} seconds. Signal range: ${min.toFixed(2)} to ${max.toFixed(2)}.`,{size:9});
   }
  }
  if(info.chartImg){if(y+78>275)page();doc.addImage(info.chartImg,'PNG',20,y,170,65);y+=73;}
@@ -48,6 +48,7 @@ export function makeMovementReport(info,{save=true}={}) {
  page();heading('Interpretation and symptom context');heading(info.guidance.title);
  for(const line of info.guidance.lines)text(line,{size:10});
  if(info.guidance.note){heading('Your appointment notes');noteText(info.guidance.note);}
+ if(info.guidance.evidence){heading('Feature evidence and interpretation');text(info.guidance.evidence.interpretation);for(const row of info.guidance.evidence.rows)text(row.feature+' ['+row.status+']: '+row.detail,{size:9});text('Feature source: '+info.guidance.evidence.source,{size:8});text('Rule version: '+info.guidance.evidence.version,{size:8});text('These source-based features do not validate the app consultation rule. No disease probability is calculated.',{size:9});}
  heading('Your questionnaire answers');
  for(const row of info.guidance.answers||[])text(row.question+': '+row.answer,{size:9});
  text('Urgent symptom information: https://www.nhs.uk/symptoms/hand-pain/finger-pain/',{size:8});

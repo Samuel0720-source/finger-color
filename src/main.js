@@ -1,3 +1,4 @@
+import {setObservation} from './features.js';
 import {repeatSummary} from './research.js';
 import {mountSession, sessionContext, lockSession} from './session.js';
 import { mountGuidance, currentGuidance } from './guidance.js';
@@ -340,7 +341,7 @@ btnBaseline.onclick = () => {
   if (baselineBuffer) {
     baselineBuffer = null;
     lockSession(false);
-    btnBaseline.textContent = baseline ? 'Save normal color again' : 'Save normal color';
+    btnBaseline.textContent = baseline ? 'Save baseline color again' : 'Save baseline color';
     btnRecord.disabled = !baseline;
     statusEl.textContent = 'Baseline cancelled.';
     return;
@@ -395,7 +396,7 @@ function updateBaselineInfo() {
   }
   const when = new Date(baseline.savedAt).toLocaleString();
   baselineInfo.textContent = `Saved ${when}. Save again if the room or light changes.`;
-  btnBaseline.textContent = 'Save normal color again';
+  btnBaseline.textContent = 'Save baseline color again';
   markStep(1, 'done');
 }
 
@@ -404,7 +405,7 @@ function updateBaselineInfo() {
 btnRecord.onclick = () => (rec.isRecording() ? stopRecording() : startRecording());
 
 function startRecording() {
-  if (!baseline || baselineBuffer || !cameraOn) return; // the button stays disabled until a normal color is saved
+  if (!baseline || baselineBuffer || !cameraOn) return; // the button stays disabled until a baseline color is saved
   colorContext=sessionContext();colorStartedAt=new Date().toLocaleString();warmAt=null;lockSession(true);
   sessionName = todayName('recovery');
   rec.startRecording();
@@ -416,7 +417,7 @@ function startRecording() {
   keepScreenOn();
   markStep(2, 'active');
   resetChart();
-  lastResult = null;
+  lastResult = null;setObservation('color',null);
   btnRecord.textContent = 'Stop recording';
   btnRecord.classList.add('btn-recording');
   btnWarm.disabled = false;
@@ -455,6 +456,7 @@ function stopRecording() {
     lastResult.saved = saveSession({ test: 'color', result: lastResult.recoverySec === null ? null : lastResult.recoverySec / 60, algorithm: 2, context:colorContext });
     historyPanel.render();
   }
+  setObservation('color',{valid:!!lastResult?.ok,summary:FINGERS.map(f=>{const r=colorResults[f];return f+': '+(!r?.ok?'not scored':r.noChange?'no clear change to time':r.recoverySec===null?'return to baseline not observed':r.recoverySec.toFixed(1)+' s color-signal recovery');}).join('; ')+'. Experimental signal only; no clinical recovery cutoff.'});
   showResult(lastResult);
   if(lastResult?.ok)appendColorDetails();
   btnPdf.disabled = false; // A failed attempt can still be documented.
@@ -488,7 +490,7 @@ btnTemp.onclick = () => {
 function showResult(r) {
   if (!r) {
     resultEl.className = 'result muted';
-    resultEl.textContent = 'Save your normal color first to get results.';
+    resultEl.textContent = 'Save your baseline color first to get results.';
     return;
   }
   if (!r.ok) {
@@ -496,13 +498,13 @@ function showResult(r) {
     resultEl.textContent = 'Repeat needed: '+r.reason+' You can download an attempt report and review symptom guidance below.';
     return;
   }
-  let note = 'How long your middle finger took to return to its normal color after you came back into the warm.';
+  let note = 'How long your middle finger took to return to its baseline color after you came back into the warm.';
   if (r.noChange) {
     note = 'There was no clear color change to time. This session is not saved as a recovery time. Do not deliberately cool your hands to create a result.';
   } else if (r.recoverySec === null) {
-    note = 'Your middle finger had not returned to its normal color when you stopped. Next time, record for longer.';
+    note = 'Your middle finger had not returned to its baseline color when you stopped. Next time, record for longer.';
   } else if (r.startScore <= r.threshold) {
-    note = 'Your finger was already close to its normal color when you came in, so there was nothing to time. No recovery time can be inferred from this session. Do not deliberately cool your hands to create a result.';
+    note = 'Your finger was already close to its baseline color when you came in, so there was nothing to time. No recovery time can be inferred from this session. Do not deliberately cool your hands to create a result.';
   }
   resultEl.className = 'result';
   resultEl.innerHTML = `
@@ -521,7 +523,7 @@ function headlineText(r) {
   if (!r.ok) return r.reason;
   if (r.noChange) return 'No clear change to time';
   if (r.recoverySec === null) return 'Not observed in this recording';
-  if (r.startScore <= r.threshold) return 'Already normal';
+  if (r.startScore <= r.threshold) return 'Already near baseline';
   const min = r.recoverySec / 60;
   return min < 1 ? `${Math.round(r.recoverySec)} seconds` : `${min.toFixed(1)} minutes`;
 }
