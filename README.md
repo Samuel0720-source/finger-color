@@ -1,170 +1,107 @@
-# Finger Color Recovery
+# finger-color: should you see a doctor about your hands?
 
 **Live app:** https://finger-color.vercel.app
 
-A browser app with three hand tests that need only a phone camera:
+A browser app that compares a person's hand symptoms with the hallmark features of three common conditions, using published clinical criteria, guided self-tests and a phone camera. It ends with a clear next step (from "unlikely" to "get care today") and a PDF report to bring to an appointment.
 
-| Test | What it measures | Related condition (screening idea only) |
+> Student research project. Not a medical device. It does not diagnose any condition. Camera thresholds are engineering values that have not been validated on patients.
+
+## How a check works
+
+Every condition follows the same three steps:
+
+1. **Your symptoms.** Questions taken from the clinical criteria, plus warning signs that change the advice.
+2. **Measure.** The camera (and, for carpal tunnel, three guided tests) checks the features it can.
+3. **Result.** Each feature is marked *present*, *absent* or *not checked*, with how it was checked (your answer, guided test, or camera). The criteria then set one of five levels:
+
+| Level | Meaning |
+| --- | --- |
+| Unlikely | Few or no hallmark features |
+| Self-care | Mild pattern; self-care first, see a doctor if it does not improve |
+| Routine appointment | Criteria met; book a normal appointment |
+| See a doctor soon | Signs of more severe or secondary disease; within 1 to 2 weeks |
+| Get care today | Red-flag sign (for example a black fingertip or a hot, swollen finger) |
+
+The summary is generated from the table, for example: *"5 of 7 carpal tunnel features are present. Measured by camera: thumb could not reach the little finger. Guided test: Phalen test reproduces tingling (after 3 s). You reported: numbness at night ..."*
+
+## The three conditions
+
+| Condition | Criteria used | What the camera measures |
 | --- | --- | --- |
-| Color recovery | Time for fingertips to return to normal color after cold | Raynaud's phenomenon |
-| Finger catching | Middle-joint angle of each finger while making a fist; finds a stop-then-snap | Trigger finger |
-| Thumb tapping | Thumb-index taps in 10 s, speed and rhythm steadiness (CV) | Reduced dexterity, e.g. carpal tunnel syndrome |
+| Raynaud's phenomenon | International consensus criteria (Maverakis et al. 2014): cold sensitivity + white/blue color change, then at least 3 of 7 supporting features. Secondary-cause signs from the Merck Manual. | Color phases (white, blue, red) per finger, number of fingers involved, whether the thumb is spared, whether the border is sharp (tip changes, finger base does not), and recovery time after rewarming |
+| Trigger finger | Green grades I to IV | Catching (a stop then a snap while opening the fist), whether each finger and the thumb fully straighten and fully bend (largest and smallest joint angle) |
+| Carpal tunnel syndrome | CTS-6 (score of 12 or more of 26 = likely) and NHS urgent signs | Thumb reach (opposition) test: can the thumb touch each fingertip. Phalen, Tinel and two-point tests are guided self-tests. |
 
-It installs to the home screen as a web app (PWA) and keeps a history of results in the browser.
+## Camera methods
 
-> Personal research tool. Not a medical device. It does not diagnose any condition.
+**Finding the hand.** MediaPipe Hand Landmarker returns 21 landmarks per frame, both in image pixels and as 3D points in meters (world landmarks).
 
-## What it does
+**Color (Raynaud's).** Boxes on each fingertip, on each finger base and on the palm are averaged and converted sRGB → linear RGB → CIE XYZ → **CIELAB**. Each finger is compared with the palm in the same frame to reduce lighting effects. The change score is the CIELAB distance (ΔE) from a reference.
 
-1. **Finds the fingertips.** MediaPipe Hand Landmarker finds 21 hand landmarks in every video frame. The app places a sampling box between each fingertip and the joint below it, plus one on the palm.
-2. **Measures color.** Each box is averaged, converted from sRGB to linear RGB to CIE XYZ to **CIELAB** (a color space designed so that equal distances look like equal differences to people).
-3. **Reduces some lighting effects.** Each fingertip is compared with the palm of the same frame (`finger − palm`). This is not full lighting cancellation: exposure, shadows, and white balance still affect results. Optional grey-card correction is exported in CSV columns only and does not enter the recovery score.
-4. **Scores the change.** The user saves a "normal color" baseline while warm. The change score is the CIELAB distance (ΔE) from that baseline. The reference score of 3 is a UI heuristic, not a validated clinical cutoff.
-5. **Times recovery.** After the user presses *I'm Back in the Warm*, the middle-finger score is smoothed using a trailing, timestamp-based 10 s window. Recovery is the first moment it stays below a threshold for 30 s. The threshold is the larger of 10 % of the starting change and the user's own baseline noise (mean + 2 SD).
-6. **Reports.** A PDF report (chart, per-finger table, temperature log) and raw CSV files for research.
+- Reference: a saved "normal color" baseline, or, in episode mode, the last 10 s of the recording (when the hand has warmed back up).
+- A phase (white, blue, red) counts when ΔE is 6 or more in 2 of 3 consecutive samples. Red only counts after warming starts.
+- Sharp border: the finger base changed less than 40% as much as the tip.
+- Recovery: trailing 10 s average must stay below threshold for 30 s, at least 60 s after warming.
 
-Everything runs on the device. Video is never uploaded.
+**Joint angles (trigger finger).** The angle at each middle (PIP) joint, and at the thumb's IP joint, from 3D vectors (`src/angles.js`). A catch is a window of at least 150 ms with less than 8° movement in the 100–165° band, followed by a gain of 25° within 120 ms. A finger is flagged as "does not straighten" or "does not bend" only when at least two other fingers reached the position, so a lazy fist does not count. Scoring needs 10 cycles, 25+ fps and no frame gap over 100 ms.
 
-### Finger catching
-
-MediaPipe also returns **world landmarks**: 3D points in meters. The angle at each finger's middle (PIP) joint is computed from the 3D vectors to the joints on either side (`src/angles.js`). A catch is a window of at least 150 ms where the angle moves less than 8° (mid-range, 100–165°), followed by a gain of at least 25° within 120 ms (`src/tests/trigger-test.js`). A window is used instead of frame-to-frame speed because the model wobbles a few degrees every frame: a frame-to-frame rule never saw the finger as "stopped" in testing.
-
-### Thumb tapping
-
-The thumb-tip to index-tip distance is divided by hand size (wrist to middle knuckle), to reduce scale sensitivity. Camera position and tracking errors still matter. The current UI calibrates touching and open positions for each attempt, then uses separate touch/release thresholds to limit repeated counts from small wobbles (`src/tests/tap-test.js`).
-
-## Tech
-
-| Part | Choice | Why |
-| --- | --- | --- |
-| App | Vanilla JavaScript + Vite | Small, fast, no framework to learn first |
-| Hand tracking | MediaPipe Tasks Vision (WebAssembly, GPU with CPU fallback) | Runs in the browser at video frame rate |
-| Chart | Chart.js | Live chart of all five fingers |
-| PDF | jsPDF (loaded only when needed) | Report without a server |
-| Analysis | Python, pandas, NumPy, Matplotlib | Re-computes every session from CSV and checks it matches the app |
-| Hosting | Vercel | Free HTTPS hosting (the camera API needs HTTPS) |
+**Thumb reach (carpal tunnel).** The thumb-tip to fingertip distance divided by hand size. Below 0.2 for two frames counts as a touch; 6 s per fingertip, 20 s in total, and the hand must be tracked in at least 80% of frames. Not reaching the little finger is treated as possible thumb (thenar) weakness.
 
 ## Project structure
 
 ```
 src/
-  main.js       wires the page together (buttons, loop, sampling, baseline)
-  camera.js     opens the camera, tries to lock exposure and white balance
-  hand.js       loads MediaPipe and returns fingertip + palm boxes
-  color.js      pixel averaging, sRGB → linear → CIELAB, grey card correction
-  plain.js      turns a color difference into a plain label (Paler, Bluer, ...)
-  recovery.js   smoothing + recovery time algorithm
-  recorder.js   stores rows and events, exports CSV
-  livechart.js  live Chart.js chart
-  report.js     PDF report
-  angles.js     3D joint angles
-  draw.js       draws the hand on the video
-  history.js    saves finished tests in this browser
-  history-panel.js  history chart, table and CSV
+  main.js            page wiring: modes, camera loop, recording, results
+  questionnaire.js   Yes / No / Not sure questions, finger chips, warning signs
+  result-panel.js    verdict, score, feature table, why / what to do / limits
+  doctor-report.js   PDF report for a clinician
+  phase-strip.js     per-finger color phase chart (white / blue / red over time)
+  assess/
+    levels.js          the five levels, feature helper, generated summary
+    raynaud.js         consensus criteria + secondary-cause signs
+    trigger.js         Green grades
+    carpal.js          CTS-6 score + urgent signs
+    color-analysis.js  phases, fingers involved, border, recovery from a recording
   tests/
-    trigger-test.js   catch detection math
-    trigger-panel.js  finger catching screen
-    tap-test.js       tap counting math
-    tap-panel.js      thumb tapping screen
-analysis/
-  analyze.py    one session → recovery time, plot, temperature correlation
-  summarize.py  all sessions → summary.csv (--check compares with the app)
-  noise_check.py  how much the grey card reduces noise
-tests/
-  color.test.html  color conversion checks against reference values
+    trigger-test.js    catch detection math
+    trigger-panel.js   catching screen (five fingers including the thumb)
+    reach-panel.js     thumb reach test
+    cts-guided.js      Phalen (timed), Tinel and two-point cards
+  camera.js, hand.js, color.js, plain.js, recovery.js, recorder.js,
+  livechart.js, chart-theme.js, angles.js, draw.js, history.js, history-panel.js
+tests/               node --test unit tests (assessments, color analysis, detectors)
+validation/          synthetic signal benchmark (npm run benchmark)
+analysis/            Python re-analysis of exported CSV files
 ```
 
-## Run it locally
+## Run it
 
 ```bash
 npm install
-npm run dev        # opens https://localhost:5173 (self-signed certificate)
-```
-
-Open the Network URL on your phone (same Wi-Fi) to use the back camera.
-
-## Analyze recordings
-
-Download the CSV files from the app into `analysis/`, then:
-
-```bash
-cd analysis
-python analyze.py recovery_20261030_1752
-python summarize.py --check
-```
-
-`--check` confirms the Python result equals the number the app showed (the app writes its answer into the events file).
-
-## Limitations
-
-- Phone cameras change exposure and white balance by themselves. The app tries to lock them, and uses the palm as a reference, but results are still affected by lighting.
-- Skin tone, nail polish, and hand position change the readings. Always compare a person with their own baseline.
-- Not validated against clinical equipment yet.
-
-## Author
-
-Samuel Koo, Biomedical Engineering (Co-op), University of Waterloo
-
-
-## Redesign and reliability review (2026-10-31)
-
-All three tests, live camera/overlay, baseline, warming marker, optional temperature log,
-five-finger colors, charts, PDF, raw CSV, events CSV, and local history remain available.
-The new example-results dialog uses clearly labeled synthetic values and never writes history.
-The temperature log is under an expandable control. Data and events have separate download buttons
-because mobile browsers can block two downloads from one click.
-
-### Run the checks
-
-```bash
-npm ci
-npm test
+npm run dev        # https://localhost:5173 (self-signed certificate)
+npm test           # unit tests
+npm run benchmark  # synthetic detector benchmark
 npm run build
 ```
 
-### Measurement rules and limits
+Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 
-- Tapping speed is detected taps divided by the full ten-second window. A tap requires an
-  open-to-close transition; starting with fingers touching is not a tap.
-- A tapping score needs at least 90% tracked time, no tracking gap above 500 ms, and at
-  least 150 tracked samples. These are engineering quality rules, not clinical validation.
-- Catching needs ten middle-finger cycles and no tracking gaps above 500 ms; incomplete
-  recordings can export raw angles but are not saved as a successful score.
-- Color algorithm v2 needs at least 60 seconds after warming, no gaps above 2.5 seconds,
-  and 30 actual seconds below threshold. Missing data is never interpreted as recovery.
-  The exported algorithm_version event lets Python preserve the old algorithm for older files.
-- Hide the page during a test and the timed test is cancelled; color data remains downloadable
-  but is marked interrupted and not scored. Keep the same hand, camera, and lighting across sessions.
-- A grey card only affects extra CSV columns, not the palm-referenced score or baseline.
-- Do not deliberately expose hands to cold to obtain a result. Observe naturally occurring changes.
-- Existing history uses previous algorithms; do not treat old and new results as directly interchangeable.
+## What changed in November 2026
 
-This review does not establish accuracy on real iOS/Android cameras or clinical validity.
-Real-hand testing across frame rates, lighting, skin tones and camera models is still needed.
+- Added the feature table and five-level result for all three conditions, with criteria-based questions.
+- Added Raynaud's color phases, fingers involved, thumb sparing, sharp border and episode mode.
+- Added thumb tracking and per-finger range to the catching test.
+- Added the thumb reach test and guided Phalen, Tinel and two-point tests (CTS-6).
+- Added one doctor PDF per condition.
+- Removed the thumb tapping test: tapping speed is not part of any carpal tunnel criteria, so it could not support a recommendation.
 
-## Follow-up: interpretable movement measurements
+## Limits
 
-Tapping now calibrates touching and open positions before a 3-second countdown and 10-second test. Touch thumb and index together, not the screen. Invalid tracking does not save a score. The catching result identifies per-finger pause-and-release events with timestamps and rule evidence; it is not a diagnosis or severity grade. Catch scoring requires 25+ fps and no frame gaps above 100 ms.
+- Camera thresholds are engineering choices tested on synthetic signals and scripted e2e runs, not on real patients.
+- Phone cameras change exposure and white balance. Skin tone, nail polish, lighting and hand position change color readings. Compare a person with their own reference.
+- Self-done Phalen, Tinel and two-point tests are less reliable than when a clinician does them.
+- Do not expose hands to cold on purpose to get a result.
 
-All three tests export PDF reports. Movement PDFs include interpretation, symptom-based care guidance, and signal/event evidence; incomplete completed attempts can export a clearly unscored report. NHS-linked symptom explanations cover Raynaud's, trigger finger and carpal tunnel without estimating disease risk from scores. Updated movement results use algorithm version 3; legacy measurements remain exportable but are excluded from current-method charts.
+## Author
 
-See [the 50-scenario evaluation](validation/README.md) and run `npm run benchmark`. This is synthetic development testing, not measured real-camera or clinical accuracy.
-
-## Research context and consultation conclusions
-
-Profiles now collect optional age, sex category, measured/dominant hand and setup. The three consultation outputs are recommendation, no indication identified, and insufficient information. Incomplete or conflicting negative responses cannot create reassurance; an explicit referral reason remains visible even with other missing answers. Camera performance does not alter this symptom-based conclusion.
-
-The research panel cites Kwon et al. 2022 (DOI 10.3233/THC-228011), Table 3, with age-group spectral-frequency means. These are 15-second gyrosensor results, not interchangeable with this app's 10-second camera counts. The app deliberately does not calculate a difference, percentile, normal range or disease probability from incompatible metrics. No sex/dominance adjustment is fabricated. Color and catching show that a compatible reference is not configured.
-
-New tapping records snapshot demographic/hand/setup context at start; symptom answers are only included in the PDF at export. The latest three matching hand/dominance/setup records are summarized by median/range. Setup equivalence is self-reported, not verified. Records without context are excluded. This is descriptive repeatability, not an accuracy or clinical validation study.
-
-## Three-test workflow update (2026-11-01)
-
-- A shared preparation form records hand, dominance, camera/room label and optional demographics before any test. Context is frozen during measurements and included in local history and PDFs.
-- Color references are now session-only and invalidated when camera, hand or setup changes. Each finger has its own baseline noise and experimental recovery result. Incomplete attempts can export a report. The middle-finger history metric remains algorithm v2.
-- Catching waits for an open tracked hand and a three-second countdown before timing ten middle-finger cycles. Reports include tracking rate, largest gap, each finger's cycles/range/events, and the measurement context.
-- Tapping reports tracking coverage, sample count and gaps when an attempt cannot be scored. The detector remains algorithm v3.
-- All three tests summarize the last three matching hand/dominance/setup records. History filters by hand and test; charts separate setup/hand groups. Matching remains self-reported.
-- Symptom guidance retains three consultation categories, with urgent advice within the recommended category. Severe hand pain, inability to move/hold objects, or an icy cold/pale/blue hand triggers urgent advice independent of measurement. Sources: NHS finger pain, NHS inform wrist/hand/finger problems, and NHS cyanosis pages. This is not a validated emergency triage system.
-- A questionnaire-only PDF is available without camera access. Appointment notes, including non-Latin notes rendered with browser fonts, stay in memory and enter PDFs only. Existing measurements and symptom summaries have separate export buttons.
-- No disease probability, clinical normal range, or sensitivity/specificity claim is added. Thirty-six automated checks cover measurement math and questionnaire handling; actual camera and clinical performance remain unvalidated.
+Samuel Koo, Biomedical Engineering, University of Waterloo

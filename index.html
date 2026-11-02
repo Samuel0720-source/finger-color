@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>finger-color: hand tests with your phone camera</title>
+    <title>finger-color: hand check for Raynaud's, trigger finger and carpal tunnel</title>
     <meta
       name="description"
-      content="Three hand tests that run in your browser with your phone camera: fingertip color recovery after cold, finger catching, and thumb tapping. Video is never uploaded."
+      content="Check your hand symptoms against published clinical criteria for Raynaud's, trigger finger and carpal tunnel syndrome, measure what your phone camera can, and find out whether to see a doctor. Video is never uploaded."
     />
     <meta name="theme-color" content="#F3F5F4" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -14,217 +14,262 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="FingerColor" />
-    <meta property="og:title" content="finger-color" />
-    <meta property="og:description" content="Hand tests with your phone camera: color recovery, finger catching, thumb tapping." />
+    <meta property="og:title" content="finger-color hand check" />
+    <meta property="og:description" content="Raynaud's, trigger finger and carpal tunnel: compare your symptoms and camera measurements with clinical criteria." />
     <meta property="og:type" content="website" />
   </head>
   <body>
-    <a class="skip-link" href="#workspace">Skip to tests</a>
+    <a class="skip-link" href="#check">Skip to the check</a>
     <header class="site-header">
-      <a class="brand" href="/">
-        <img src="/favicon.svg" alt="" width="26" height="26" />
-        <span>finger<span class="brand-light">color</span><small>THE HAND OBSERVATORY</small></span>
-      </a>
+      <a class="brand" href="/"><img src="/favicon.svg" alt="" width="26" height="26" /><span>finger-color</span></a>
       <nav class="site-nav" aria-label="Page">
-        <a href="#workspace">Workspace</a><a href="#history">History</a><a href="#how">How it works</a>
+        <a href="#check">Check</a>
+        <a href="#how">How it works</a>
         <a href="#privacy">Privacy</a>
       </nav>
     </header>
 
     <main>
       <section class="intro">
-        <div>
-          <p class="eyebrow"><span class="live-dot"></span> PERSONAL HAND MEASUREMENTS</p>
-          <h1>A little more insight.<br><span>Right at your fingertips.</span></h1>
-          <p class="lede">Explore color, movement, and rhythm with your camera. Get a personal measurement, an explanation, and a PDF to discuss with a clinician. Results track observations; they do not tell you whether you have a disease.</p>
-          <div class="intro-actions"><a href="#workspace" class="btn btn-primary">Explore the tests <span aria-hidden="true">↗</span></a><button id="btn-demo" class="btn btn-quiet">See example results</button></div>
-          <p class="trust-line">No account needed <span>•</span> Video stays on your device <span>•</span> Free to use</p>
-        </div>
-        <aside class="intro-note"><span class="note-number">01 / 03</span><p>Small movements.<br>Meaningful observations.</p><span class="note-caption">Your own baseline. Your own history.<br>A student research project, not a diagnosis.</span><div class="color-spectrum" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></aside>
+        <h1>Should you see a doctor about your hands?</h1>
+        <p class="lede">
+          Answer questions taken from published clinical criteria, let your camera measure what it can, and see how your
+          hand compares with the hallmark features of three common conditions. You get a clear next step and a report to
+          bring to your appointment. It is not a diagnosis.
+        </p>
       </section>
-      <div class="workspace-heading" id="workspace"><div><p class="eyebrow">YOUR WORKSPACE</p><h2>What would you like to explore?</h2></div><span class="research-badge">Experimental · not clinically validated</span></div>
-      <p class="first-visit"><strong>First visit?</strong> Set your hand and setup → choose a test → follow the camera guide → review results and symptoms → download your PDF. No medical “normal” range is available for these experimental measurements.</p>
-      <section id="session-profile" class="session-profile" aria-label="Session preparation"></section>
-      <details class="care-notice"><summary>Before testing: when to get medical help</summary><p>Do not continue a movement that hurts or force a locked finger. Do not deliberately cool your hands.</p><p>For severe hand pain, inability to move or hold things, or an icy cold, pale or blue hand, seek urgent medical advice. Sudden blue/grey lips or face with breathing difficulty needs emergency help. Use your local emergency service; in Canada call 911 for an emergency.</p><a href="https://www.nhsinform.scot/illnesses-and-conditions/muscle-bone-and-joints/arm-shoulder-and-hand-problems-and-conditions/wrist-hand-finger-and-thumb-problems" target="_blank" rel="noopener">Hand symptom guidance</a> · <a href="https://www.nhs.uk/symptoms/blue-skin-or-lips-cyanosis/" target="_blank" rel="noopener">Blue/grey skin guidance</a></details>
-      <!-- ===== The instrument: test choice, camera, controls ===== -->
-      <section class="instrument" aria-label="Run a test">
-        <div class="test-switch" role="group" aria-label="Choose a test">
-          <button class="tab" data-mode="color" aria-pressed="false">
-            <span class="tab-index">01 <span aria-hidden="true">◒</span></span><strong>Color recovery</strong><span>Compare color with your baseline</span>
-          </button>
-          <button class="tab" data-mode="catching" aria-pressed="false">
-            <span class="tab-index">02 <span aria-hidden="true">⌁</span></span><strong>Finger catching</strong><span>Observe 10 bend-and-open cycles</span>
-          </button>
-          <button class="tab" data-mode="tapping" aria-pressed="false">
-            <span class="tab-index">03 <span aria-hidden="true">↔</span></span><strong>Thumb tapping</strong><span>Explore speed and rhythm in 10 seconds</span>
-          </button>
-        </div>
 
-        <div class="instrument-body">
-          <div class="viewer"><div class="viewer-heading"><span>CAMERA VIEW</span><span id="tracking-state">Camera off</span></div>
+      <nav class="conditions" id="check" aria-label="Choose a condition">
+        <button class="cond" data-mode="raynaud" aria-pressed="false">
+          <strong>Raynaud's</strong>
+          <span>Fingers turn white or blue in the cold</span>
+          <em>13 features · color recording</em>
+        </button>
+        <button class="cond" data-mode="trigger" aria-pressed="false">
+          <strong>Trigger finger</strong>
+          <span>A finger clicks, catches or locks</span>
+          <em>6 features · movement test</em>
+        </button>
+        <button class="cond" data-mode="carpal" aria-pressed="false">
+          <strong>Carpal tunnel</strong>
+          <span>Numb or tingling fingers, often at night</span>
+          <em>CTS-6 score · guided tests</em>
+        </button>
+      </nav>
+
+      <!-- ===== 1. Symptoms ===== -->
+      <section class="block" aria-labelledby="h-symptoms">
+        <header class="block-head">
+          <span class="num" aria-hidden="true">1</span>
+          <div>
+            <h2 id="h-symptoms">Your symptoms</h2>
+            <p class="block-sub" data-only="raynaud">Questions from the international consensus criteria for Raynaud's phenomenon (2014).</p>
+            <p class="block-sub" data-only="trigger">Questions that place trigger finger on the Green scale, grade I to IV.</p>
+            <p class="block-sub" data-only="carpal">Questions from the CTS-6, a 6-item clinical score for carpal tunnel syndrome.</p>
+          </div>
+        </header>
+        <div class="questions" id="q-raynaud" data-only="raynaud"></div>
+        <div class="questions" id="q-trigger" data-only="trigger"></div>
+        <div class="questions" id="q-carpal" data-only="carpal"></div>
+      </section>
+
+      <!-- ===== 2. Measure ===== -->
+      <section class="block" aria-labelledby="h-measure">
+        <header class="block-head">
+          <span class="num" aria-hidden="true">2</span>
+          <div>
+            <h2 id="h-measure">Measure</h2>
+            <p class="block-sub" data-only="raynaud">The camera looks for the white, blue and red phases, how many fingers change, a sharp border, and how long the color takes to recover.</p>
+            <p class="block-sub" data-only="trigger">The camera follows the middle joint of each finger and the thumb, looking for catches and for joints that do not fully straighten or bend.</p>
+            <p class="block-sub" data-only="carpal">Three guided self-tests from the CTS-6, plus a camera test of how well your thumb reaches each fingertip.</p>
+          </div>
+        </header>
+
+        <div class="instrument">
+          <div class="viewer">
             <div id="stage">
               <video id="video" playsinline muted></video>
               <canvas id="overlay" aria-label="Hand tracking overlay"></canvas>
               <div id="stage-empty" class="stage-empty">
-                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M18 11V6a2 2 0 0 0-4 0v0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8" />
                   <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
                 </svg>
-                <strong>Let’s get your hand in view.</strong>
-                <span>Allow camera access when prompted.<br>Video is processed here and never uploaded.</span>
-                <button id="btn-camera-start" class="btn btn-primary btn-big">Enable camera <span aria-hidden="true">↗</span></button>
+                <strong>Camera is off</strong>
+                <span>Your browser will ask for permission. The video stays on this device.</span>
+                <button id="btn-camera-start" class="btn btn-primary btn-big">Start camera</button>
               </div>
               <div id="timer" class="timer hidden">00:00</div>
+              <span id="tracking-state" class="tracking-state hidden"></span>
             </div>
             <div class="viewer-bar">
-              <p id="status" class="status" role="status" aria-live="polite">Tip: on a phone, use the back camera and hold the phone above your hand.</p>
+              <div class="hand-pick" role="group" aria-label="Hand in view">
+                <span>Hand in view</span>
+                <button type="button" class="seg" data-hand="Left">Left</button>
+                <button type="button" class="seg" data-hand="Right">Right</button>
+              </div>
               <button id="btn-camera" class="btn btn-quiet hidden">Turn off camera</button>
             </div>
+            <p id="status" class="status" role="status" aria-live="polite">On a phone, use the back camera and hold the phone above your hand.</p>
           </div>
 
-          <div class="controls"><p class="eyebrow">GUIDED SESSION</p>
-            <!-- Color recovery -->
-            <div data-only="color">
-              <h2 class="controls-title">Color recovery</h2>
+          <div class="controls">
+            <!-- Raynaud's -->
+            <div data-only="raynaud">
+              <h3 class="controls-title">Color recording</h3>
               <ol class="steps">
                 <li data-step="1">
                   <span class="step">1</span>
                   <div>
-                    <h3>Save your normal color</h3>
-                    <p class="hint">Warm hands, palm up, steady light. Keep still for 10 seconds.</p>
+                    <h4>Save your normal color <span class="optional">Optional</span></h4>
+                    <p class="hint">Do this when your hands are warm and normal, palm up, in steady light. Skip it if your fingers are changing color right now: the app will learn your normal color at the end of the recording instead.</p>
                     <button id="btn-baseline" class="btn btn-secondary" disabled>Save normal color</button>
-                    <p id="baseline-info" class="hint small">Not saved yet. Recording unlocks after this step.</p>
+                    <p id="baseline-info" class="hint small">Not saved. Recording is still possible.</p>
                   </div>
                 </li>
                 <li data-step="2">
                   <span class="step">2</span>
                   <div>
-                    <h3>Observe color as you warm up</h3>
-                    <p class="hint">For an ordinary, naturally occurring color change, start recording and mark when warming begins. Keep your hand in view for at least 60 seconds afterward. Do not deliberately cool your hands for this test.</p>
+                    <h4>Record an episode as it recovers</h4>
+                    <p class="hint">Start when your fingers are white or blue. Press <b>I'm warming up now</b> as soon as you start warming your hands, and keep recording until the color is back to normal (at least 60 seconds). Do not cool your hands on purpose.</p>
                     <div class="actions">
                       <button id="btn-record" class="btn btn-primary" disabled>Start recording</button>
-                      <button id="btn-warm" class="btn btn-warm" disabled>I'm back in the warm</button>
+                      <button id="btn-warm" class="btn btn-warm" disabled>I'm warming up now</button>
                     </div>
-                    <details class="advanced"><summary>Optional temperature log</summary><div class="temp-row">
-                      <input id="temp-input" type="number" step="0.1" min="0" max="50" inputmode="decimal" placeholder="Finger temperature, °C (optional)" aria-label="Middle finger temperature in °C" />
-                      <button id="btn-temp" class="btn btn-secondary" disabled>Log</button>
-                    </div></details>
+                    <details class="advanced"><summary>Log finger temperature (optional)</summary>
+                      <p class="hint small">If you have a skin thermometer, log the middle fingertip temperature every minute. It is saved with your data and lets you check the color signal against temperature.</p>
+                      <div class="temp-row">
+                        <input id="temp-input" type="number" step="0.1" min="0" max="50" inputmode="decimal" placeholder="Temperature, °C" aria-label="Middle finger temperature in °C" />
+                        <button id="btn-temp" class="btn btn-secondary" disabled>Log</button>
+                      </div>
+                    </details>
                   </div>
                 </li>
               </ol>
-              <details class="advanced"><summary>Optional research export: grey card</summary><p class="hint small">Before recording, tap a photo grey card in the video to export corrected color columns. These columns do not change the recovery estimate.</p></details>
             </div>
 
-            <!-- Finger catching -->
-            <div data-only="catching">
-              <h2 class="controls-title">Finger catching</h2>
-              <p class="hint">Palm toward the camera, whole hand in view. Slowly make a fist, then open it all the way. Repeat 10 times. Hold your hand open for the 3-second countdown. The test stops by itself.</p>
-              <p class="hint small">Follow the middle finger for progress. Other fingers may complete fewer cycles; their counts are shown separately.</p><p id="trig-live" class="live-readout">Start the camera first.</p>
+            <!-- Trigger finger -->
+            <div data-only="trigger">
+              <h3 class="controls-title">Movement test</h3>
+              <p class="hint">Palm toward the camera, whole hand in view. Hold it open for the countdown, then slowly make a fist and open it all the way, 10 times. The test stops by itself.</p>
+              <p id="trig-live" class="live-readout">Start the camera first.</p>
               <button id="trig-start" class="btn btn-primary full" disabled>Start test</button>
-              <p class="hint small fine">
-                This explores pauses followed by quick opening. Camera estimates cannot confirm or rule out a condition. Stop if a movement hurts.
-                The app tracks four fingers (not the thumb). Progress follows the middle finger. Allow about 20–60 seconds. A flag is a movement pattern, not proof of locking.
-              </p>
+              <p class="hint small fine">Stop if it hurts and never force a locked finger. A catch is a pause in mid-bend followed by a quick snap open.</p>
             </div>
 
-            <!-- Thumb tapping -->
-            <div data-only="tapping">
-              <h2 class="controls-title">Thumb tapping</h2>
-              <p class="hint small">Repeat at a comfortable pace. Rest between attempts and use the same hand and setup. Stop if you feel pain.</p>
-              <p class="hint">Keep thumb and index fingertips visible without overlap. First hold them touching, then apart to calibrate. After the countdown, touch and separate them repeatedly for 10 seconds. You are tapping your fingers together, not tapping the screen.</p>
-              <p id="tap-live" class="live-readout">Start the camera first.</p>
-              <div class="meter" aria-hidden="true"><div id="tap-meter-fill" class="meter-fill"></div></div>
-              <button id="tap-start" class="btn btn-primary full" disabled>Set up &amp; start test</button>
-              <p class="hint small fine">
-                Compare speed and rhythm across your own sessions using the same hand and setup. This test does not identify a cause or diagnose a condition.
-              </p>
+            <!-- Carpal tunnel -->
+            <div data-only="carpal">
+              <h3 class="controls-title">Thumb reach test</h3>
+              <p class="hint">Palm toward the camera. After the countdown, touch your thumb tip to the tip of your index, middle, ring and little finger, in that order. You have 6 seconds per finger.</p>
+              <p id="reach-live" class="live-readout">Start the camera first.</p>
+              <button id="reach-start" class="btn btn-primary full" disabled>Start thumb reach test</button>
+              <p class="hint small fine">The muscles that move the thumb across the palm are powered by the nerve that carpal tunnel squeezes. This checks reach, not strength.</p>
             </div>
           </div>
         </div>
-      </section>
 
-      <!-- ===== Color recovery readouts ===== -->
-      <section class="readout" data-only="color" data-step="3">
-        <div class="readout-head">
-          <h2>Your fingertips</h2>
-          <p class="legend-note">Left circle: your normal color. Right circle: now. The score is an experimental color difference, not a health rating.</p>
-        </div>
-        <div id="fingers" class="finger-grid"></div>
-        <div class="well chart-well"><div class="chart-box"><canvas id="chart" aria-label="Color change from normal over time for each finger" role="img"></canvas></div></div>
-      </section>
-
-      <section class="readout" data-only="color" data-step="4">
-        <div class="readout-head">
-          <h2>Result</h2>
-        </div>
-        <div class="results-row">
-          <div id="result" class="result muted">Finish a recording to see your recovery time here.</div>
-          <div class="result-actions">
-            <button id="btn-pdf" class="btn btn-primary" disabled>Download PDF report</button>
-            <button id="btn-csv" class="btn-link" disabled>Download raw data (CSV)</button><button id="btn-events" class="btn-link" disabled>Download events (CSV)</button>
+        <!-- Raynaud's readouts -->
+        <div class="readout" data-only="raynaud">
+          <div class="readout-head">
+            <h3>Your fingertips</h3>
+            <p class="legend-note">Left circle: normal color. Right circle: now.</p>
           </div>
+          <div id="fingers" class="finger-grid"></div>
+          <div id="color-analysis" class="hidden">
+            <div class="readout-head">
+              <h3>Color phases</h3>
+              <div class="phase-legend" id="phase-legend"></div>
+            </div>
+            <div class="well"><canvas id="phase-strip" class="phase-strip" aria-label="Color phase of each finger over time" role="img"></canvas></div>
+            <div id="color-detail"></div>
+          </div>
+          <div class="well chart-well"><div class="chart-box"><canvas id="chart" aria-label="Color change from normal over time for each finger" role="img"></canvas></div></div>
+          <div class="downloads"><button id="btn-csv" class="btn-link" disabled>Download color data (CSV)</button><button id="btn-events" class="btn-link" disabled>Download events (CSV)</button></div>
+        </div>
+
+        <!-- Trigger finger readouts -->
+        <div class="readout" data-only="trigger">
+          <div id="trig-detail"></div>
+          <div class="well chart-well"><div class="chart-box"><canvas id="trig-chart" aria-label="Joint angle over time for each finger" role="img"></canvas></div></div>
+          <div class="downloads"><button id="trig-csv" class="btn-link" disabled>Download joint angles (CSV)</button></div>
+        </div>
+
+        <!-- Carpal tunnel readouts -->
+        <div class="readout" data-only="carpal">
+          <div id="reach-detail"></div>
+          <div class="readout-head"><h3>Guided self-tests</h3><p class="legend-note">Each one is an item of the CTS-6 score. Skipped tests count as "not checked".</p></div>
+          <div id="cts-guided" class="guided-grid"></div>
         </div>
       </section>
 
-      <aside id="guidance-color" class="clinical-guide" data-only="color"></aside>
-      <!-- ===== Finger catching readout ===== -->
-      <section class="readout" data-only="catching">
-        <div class="readout-head">
-          <h2>Result</h2>
-          <button id="trig-pdf" class="btn btn-primary" disabled>Download PDF report</button>
-          <button id="trig-csv" class="btn-link" disabled>Download angles (CSV)</button>
-        </div>
-        <div id="trig-result" class="result muted">Finish a test to see your result here.</div>
-        <div class="well chart-well"><div class="chart-box"><canvas id="trig-chart" aria-label="Joint angle over time for each finger" role="img"></canvas></div></div>
+      <!-- ===== 3. Result ===== -->
+      <section class="block result-block" aria-labelledby="h-result">
+        <header class="block-head">
+          <span class="num" aria-hidden="true">3</span>
+          <div>
+            <h2 id="h-result">Result</h2>
+            <p class="block-sub">Updates as you answer and measure.</p>
+          </div>
+        </header>
+        <div id="result-raynaud" class="result-area" data-only="raynaud" aria-live="polite"></div>
+        <div id="result-trigger" class="result-area" data-only="trigger" aria-live="polite"></div>
+        <div id="result-carpal" class="result-area" data-only="carpal" aria-live="polite"></div>
       </section>
 
-      <aside id="guidance-catching" class="clinical-guide" data-only="catching"></aside>
-      <!-- ===== Thumb tapping readout ===== -->
-      <section class="readout" data-only="tapping">
-        <div class="readout-head">
-          <h2>Result</h2>
-          <button id="tap-pdf" class="btn btn-primary" disabled>Download PDF report</button>
-          <button id="tap-csv" class="btn-link" disabled>Download tap data (CSV)</button>
-        </div>
-        <div id="tap-result" class="result muted">Finish a test to see your result here.</div>
-      </section>
-      <aside id="guidance-tapping" class="clinical-guide" data-only="tapping"></aside>
-
-      <!-- ===== History (all tests) ===== -->
-      <section class="readout" id="history">
-        <div class="readout-head">
-          <h2>Your history</h2><label class="history-filter">Hand <select id="history-hand"><option value="">All hands</option><option>Left</option><option>Right</option></select></label>
+      <section class="block" id="history" aria-labelledby="h-history">
+        <header class="block-head plain">
+          <div>
+            <h2 id="h-history">Measurement history</h2>
+            <p class="block-sub">Completed camera measurements, kept in this browser only. Compare like with like: same hand, camera and room.</p>
+          </div>
           <button id="history-csv" class="btn-link" disabled>Download history (CSV)</button>
-        </div>
-        <p class="hint small">Charts show the selected test and hand. Camera and room changes can affect results. CSV includes all stored sessions and their context.</p><p id="history-empty" class="hint">Nothing saved yet. Finished tests are kept in this browser only.</p>
+        </header>
+        <p id="history-empty" class="hint">No measurements saved yet.</p>
         <div id="history-grid" class="history-grid">
           <div>
             <p id="history-chart-title" class="legend-note"></p>
             <div id="history-chart-wrap" class="chart-box small"><canvas id="history-chart" aria-label="Results over time" role="img"></canvas></div>
           </div>
-          <table class="mini-table">
-            <thead><tr><th>When</th><th>Test / hand</th><th>Result</th></tr></thead>
-            <tbody id="history-body"></tbody>
-          </table>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>When</th><th>Measurement</th><th>Result</th></tr></thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <section id="how" class="how">
-        <h2>How it works</h2>
-        <ol class="how-steps">
-          <li>
-            <h3>Find the hand</h3>
-            <p>A hand-tracking model (Google MediaPipe) finds 21 points on your hand in every video frame, both on the picture and in 3D.</p>
-          </li>
-          <li>
-            <h3>Measure</h3>
-            <p>Color is converted to CIELAB, a scale built around human vision, and compared with your palm to reduce some lighting effects. Camera exposure, skin tone, position, and tracking quality can still affect results. 3D landmarks estimate movement; they are not a calibrated clinical measurement.</p>
-          </li>
-          <li>
-            <h3>Score</h3>
-            <p>Recovery time after cold, the number of catches, and taps per second with rhythm steadiness. Review your own history using the same hand, camera, and lighting. Changes in setup can change the result.</p>
-          </li>
-        </ol>
+      <section id="how" class="how" aria-labelledby="h-how">
+        <h2 id="h-how">How the check works</h2>
+        <p class="how-lede">Each condition has a list of hallmark features from clinical criteria. The app marks each feature as present, absent or not checked, using your answers, guided tests and the camera, then applies the criteria to suggest a next step.</p>
+        <div class="how-grid">
+          <article>
+            <h3>Raynaud's</h3>
+            <p>Uses the 3-step international consensus criteria: cold sensitivity, a white and blue color change, and at least 3 of 7 supporting features. The camera can supply four of them: the color phases, a photo of an episode, a sharp border, and the red phase on rewarming. It also measures how many fingers change and how long they take to recover.</p>
+            <p class="how-red">See a doctor soon if it started after 40, affects one side, comes with fingertip sores or symptoms of autoimmune disease. Get care today if a finger turns black or stays white.</p>
+          </article>
+          <article>
+            <h3>Trigger finger</h3>
+            <p>Places your finger on the Green scale. Grade I is a tender spot at the base of the finger; II is catching you can straighten yourself; III needs your other hand or cannot bend fully; IV stays bent. The camera measures catches and how straight and how bent each joint gets, including the thumb.</p>
+            <p class="how-red">Get care today for a red, hot, swollen finger, which can be a tendon infection.</p>
+          </article>
+          <article>
+            <h3>Carpal tunnel</h3>
+            <p>Uses the CTS-6: numbness in the thumb to ring finger (3.5 points), waking at night (4), thumb muscle weakness (5), Phalen test (5), two-point discrimination (4.5) and Tinel sign (4). A score of 12 or more out of 26 means carpal tunnel is likely. The camera adds a thumb reach test.</p>
+            <p class="how-red">See a doctor soon for numbness that never goes away or a wasted thumb muscle.</p>
+          </article>
+        </div>
+        <details class="sources">
+          <summary>Sources and limits</summary>
+          <ul>
+            <li>Maverakis E, et al. International consensus criteria for the diagnosis of Raynaud's phenomenon. J Autoimmun. 2014. <a href="https://pubmed.ncbi.nlm.nih.gov/24491823/" target="_blank" rel="noopener">PubMed</a></li>
+            <li>Raynaud phenomenon. Merck Manual Professional Edition. <a href="https://www.merckmanuals.com/professional/cardiovascular-disorders/peripheral-artery-disorders/raynaud-phenomenon" target="_blank" rel="noopener">merckmanuals.com</a></li>
+            <li>Trigger finger: evaluation, management and outcomes (Green classification). <a href="https://surgicoll.scholasticahq.com/article/68065-trigger-finger-evaluation-management-and-outcomes" target="_blank" rel="noopener">Surgery Open Science / SurgiColl</a></li>
+            <li>Graham B, et al. The CTS-6. Carpal Tunnel Syndrome 6 calculator. <a href="https://www.mdcalc.com/calc/10631/carpal-tunnel-syndrome-6-cts-6" target="_blank" rel="noopener">MDCalc</a></li>
+            <li>Carpal tunnel syndrome referral criteria. NHS Scotland. <a href="https://www.rightdecisions.scot.nhs.uk/borders-ref-help-toolkit/orthopaedic/hand-and-wrist/carpal-tunnel-syndrome" target="_blank" rel="noopener">Right Decisions</a></li>
+          </ul>
+          <p>The criteria were written for clinicians examining a patient. Here you answer and test yourself, which is less reliable. Camera features use engineering thresholds checked only on synthetic signals so far, not on patients. The app never calculates a probability of disease.</p>
+        </details>
       </section>
     </main>
 
@@ -232,24 +277,16 @@
       <div class="footer-cols">
         <div>
           <h2>Privacy</h2>
-          <p>Video is analyzed on your device and never uploaded. Your history and measurement context are stored only in this browser. The current baseline, symptom answers and appointment notes stay in memory until the page closes. Clearing your browser data removes stored history.</p>
+          <p>Video is analyzed on your device and never uploaded. Your answers stay in this browser tab and are cleared when you close it. Measurement history is stored only in this browser.</p>
         </div>
         <div>
           <h2>Not a medical device</h2>
-          <p>This is a personal research tool built as a student project. It does not diagnose any condition. Share your report with a clinician if something worries you.</p>
+          <p>A student research project. It does not diagnose any condition or replace a doctor. If you are worried about a symptom, seek medical advice. In an emergency, call 911.</p>
         </div>
       </div>
       <p class="credit">Built by Samuel Koo, Biomedical Engineering, University of Waterloo.</p>
     </footer>
 
-    <dialog id="example-dialog" aria-labelledby="example-title">
-      <form method="dialog"><button class="btn btn-quiet close-dialog" aria-label="Close example results">Close ×</button></form>
-      <p class="eyebrow">ILLUSTRATIVE DATA ONLY</p><h2 id="example-title">A preview of your observations.</h2>
-      <p class="hint">These made-up examples show the format. They are not your measurements, normal ranges, or a medical interpretation. They are never saved to history.</p>
-      <div class="example-grid"><article><span>Color recovery</span><strong>82 <small>seconds</small></strong><p>An estimated return to the saved baseline.</p></article><article><span>Finger catching</span><strong>2 <small>events</small></strong><p>Catch-like patterns across recorded movements.</p></article><article><span>Thumb tapping</span><strong>3.2 <small>taps/s</small></strong><p>32 detected taps in a 10-second session.</p></article></div>
-      <p class="hint">Real sessions include available charts and exports. If tracking is incomplete, the app asks for another attempt instead of saving a score.</p>
-    </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
-

@@ -18,7 +18,7 @@ export function createChart(canvas) {
           ...lineStyle(name === 'middle'),
         })),
         {
-          label: 'Reference score (3)',
+          label: 'Barely visible change (3)',
           data: [],
           borderColor: MUTED,
           borderWidth: 1,
@@ -80,3 +80,23 @@ export function chartImage() {
   return chart ? chart.toBase64Image('image/png', 1) : null;
 }
 
+
+// Redraw the whole chart from analysed rows (used after an episode recording, when the reference
+// color is only known at the end).
+export function drawFromRows(rows) {
+  if (!chart) return;
+  resetChart();
+  const byT = new Map();
+  for (const r of rows) {
+    const t = Number(r.t);
+    if (!byT.has(t)) byT.set(t, {});
+    byT.get(t)[r.finger] = Number(r.change_score);
+  }
+  let last = 0;
+  for (const [t, m] of [...byT.entries()].sort((a, b) => a[0] - b[0])) {
+    FINGERS.forEach((f, i) => chart.data.datasets[i].data.push({ x: t / 60, y: Number.isFinite(m[f]) ? m[f] : null }));
+    last = t;
+  }
+  chart.data.datasets[FINGERS.length].data = [{ x: 0, y: NORMAL_LIMIT }, { x: Math.max(5, last / 60), y: NORMAL_LIMIT }];
+  chart.update('none');
+}

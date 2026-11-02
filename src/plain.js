@@ -3,7 +3,7 @@ const NAMES = {
   index: 'Index',
   middle: 'Middle',
   ring: 'Ring',
-  pinky: 'Pinky',
+  pinky: 'Little',
 };
 
 const TONES = {
@@ -54,7 +54,7 @@ export function renderFingers(container, views) {
         return `<div class="finger">
           ${swatches(null, now)}
           <span class="finger-name">${NAMES[name]}${key}</span>
-          <span class="finger-label muted">${now ? 'No normal color yet' : 'Waiting for hand'}</span>
+          <span class="finger-label muted">${now ? 'Live color' : 'Waiting for hand'}</span>
         </div>`;
       }
       const width = Math.min(100, (change.score / BAR_FULL_SCORE) * 100);

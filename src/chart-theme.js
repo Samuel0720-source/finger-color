@@ -4,7 +4,7 @@ import Chart from 'chart.js/auto';
 export const INK = '#16231F';
 export const MUTED = '#5A6964';
 export const GRID = 'rgba(22, 35, 31, 0.08)';
-export const FOCUS = '#265dd9'; // the line that matters (middle finger)
+export const FOCUS = '#0E6B63'; // the line that matters (middle finger)
 export const OTHER = '#B7C2BE'; // the other fingers, for context only
 export const ALERT = '#B3261E';
 

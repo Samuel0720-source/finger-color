@@ -2,19 +2,19 @@ import { Chart, FOCUS } from './chart-theme.js';
 import { loadHistory } from './history.js';
 import { downloadRows } from './recorder.js';
 
+// Completed camera measurements. Older methods stay in the table and CSV but are not charted with new ones.
 const TESTS = {
-  color: { name: 'Color recovery', unit: 'min', label: 'Recovery time (min)' },
-  catching: { name: 'Finger catching', unit: 'finger-events', label: 'Flagged finger-events per test' },
-  tapping: { name: 'Thumb tapping', unit: 'taps/s', label: 'Taps per second' },
+  color: { name: 'Color recovery', unit: 'min', label: 'Middle finger recovery time (min)', current: 3 },
+  catching: { name: 'Finger catching', unit: 'catches', label: 'Catches per movement test', current: 4 },
+  tapping: { name: 'Thumb tapping (retired)', unit: 'taps/s', label: '', current: null },
 };
+const MODE_TEST = { raynaud: 'color', trigger: 'catching', carpal: null };
 
 function format(s) {
   const t = TESTS[s.test];
-  if (!t) return '';
-  if (s.result === null || s.result === undefined) return 'Recovery not observed';
-  if (s.test === 'color' && s.result < 1) return `${Math.round(s.result * 60)} s`;
-  const value = s.test === 'catching' ? String(s.result) : Number(s.result).toFixed(1);
-  return `${value} ${t.unit}`;
+  if (s.result === null || s.result === undefined) return s.test === 'color' ? 'Not back to normal' : '–';
+  if (s.test === 'color') return s.result < 1 ? `${Math.round(s.result * 60)} s` : `${Number(s.result).toFixed(1)} min`;
+  return `${s.test === 'catching' ? s.result : Number(s.result).toFixed(1)} ${t.unit}`;
 }
 
 export function createHistoryPanel() {
@@ -25,12 +25,11 @@ export function createHistoryPanel() {
   const chartWrap = $('history-chart-wrap');
   const gridEl = $('history-grid');
   const btnCsv = $('history-csv');
-  let mode = 'color';
-  const handFilter=$('history-hand');handFilter.onchange=render;
+  let mode = 'raynaud';
 
   const chart = new Chart($('history-chart'), {
     type: 'line',
-    data: { labels: [], datasets: [{ data: [], borderColor: FOCUS, backgroundColor: FOCUS, borderWidth: 2, pointRadius: 4, spanGaps: false }] },
+    data: { labels: [], datasets: [] },
     options: {
       animation: false,
       responsive: true,
@@ -42,9 +41,9 @@ export function createHistoryPanel() {
 
   btnCsv.onclick = () => {
     const list = loadHistory();
-    if (list.length === 0) return;
+    if (!list.length) return;
     downloadRows(
-      list.map((s) => ({ saved_at: s.savedAt, test: s.test, result: s.result ?? '', unit: TESTS[s.test]?.unit ?? '', algorithm: s.algorithm ?? 1,hand:s.context?.hand||'',dominant:s.context?.dominant||'',setup:s.context?.setup||'',age:s.context?.age||'',sex:s.context?.sex||'' })),
+      list.map((s) => ({ saved_at: s.savedAt, test: s.test, result: s.result ?? '', unit: TESTS[s.test]?.unit ?? '', method_version: s.algorithm ?? 1, hand: s.context?.hand || '' })),
       'finger-color_history.csv'
     );
   };
@@ -54,24 +53,22 @@ export function createHistoryPanel() {
     emptyEl.classList.toggle('hidden', list.length > 0);
     gridEl.classList.toggle('hidden', list.length === 0);
     btnCsv.disabled = list.length === 0;
-
-    const visible=list.filter(s=>s.test===mode&&(!handFilter.value||s.context?.hand===handFilter.value));
-    tbody.innerHTML = visible
-      .slice(-8)
+    tbody.innerHTML = list
+      .slice(-10)
       .reverse()
-      .map((s) => `<tr><td>${new Date(s.savedAt).toLocaleString()}</td><td>${TESTS[s.test]?.name ?? 'Unknown'} / ${s.context?.hand==='Left'?'Left':s.context?.hand==='Right'?'Right':'Unspecified'}${s.algorithm !== (s.test === 'color' ? 2 : 3) ? ' (legacy)' : ''}</td><td>${format(s)}</td></tr>`)
+      .map((s) => {
+        const t = TESTS[s.test];
+        const old = t.current !== null && s.algorithm !== t.current ? ' <span class="muted">(older method)</span>' : '';
+        return `<tr><td>${new Date(s.savedAt).toLocaleString()}</td><td>${t.name}${s.context?.hand ? `, ${s.context.hand.toLowerCase()} hand` : ''}${old}</td><td>${format(s)}</td></tr>`;
+      })
       .join('');
 
-    const mine = visible.filter((s) => s.test === mode && s.algorithm === (mode === 'color' ? 2 : 3));
-    chartWrap.classList.toggle('hidden', mine.length === 0);
-    titleEl.textContent =
-      mine.length === 0
-        ? `No current-method ${TESTS[mode].name.toLowerCase()} results yet. Switch the hand filter or finish a test. Legacy records remain available in CSV.`
-        : `${TESTS[mode].label}, ${mine.length} session${mine.length === 1 ? '' : 's'}`;
+    const test = MODE_TEST[mode];
+    const mine = test ? list.filter((s) => s.test === test && s.algorithm === TESTS[test].current && Number.isFinite(s.result)) : [];
+    chartWrap.classList.toggle('hidden', mine.length < 2);
+    titleEl.textContent = !test ? 'Carpal tunnel results are not charted. Download your report after each check instead.' : mine.length < 2 ? `Chart appears after 2 ${TESTS[test].name.toLowerCase()} measurements.` : `${TESTS[test].label}, ${mine.length} measurements`;
     chart.data.labels = mine.map((s) => new Date(s.savedAt).toLocaleDateString());
-    const groups=[...new Set(mine.map(s=>(s.context?.hand||'Unspecified hand')+' · '+(s.context?.setup||'Unspecified setup')))];
-    chart.data.datasets=groups.map((label,i)=>({label,data:mine.map(s=>((s.context?.hand||'Unspecified hand')+' · '+(s.context?.setup||'Unspecified setup'))===label?s.result:null),borderColor:['#265dd9','#0c7770','#a85b25','#6941a5'][i%4],pointRadius:4,borderWidth:2,spanGaps:false}));
-    chart.options.plugins.legend.display=groups.length>1;
+    chart.data.datasets = [{ data: mine.map((s) => s.result), borderColor: FOCUS, backgroundColor: FOCUS, pointRadius: 4, borderWidth: 2 }];
     chart.update('none');
   }
 
@@ -83,4 +80,3 @@ export function createHistoryPanel() {
     },
   };
 }
-

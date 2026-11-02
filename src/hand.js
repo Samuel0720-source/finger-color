@@ -43,7 +43,18 @@ export function detectHand(videoEl, timeMs) {
   return { image: result.landmarks[0], world };
 }
 
-// Color sampling boxes (in pixels) for each fingertip and the palm.
+// Base of each finger (the segment next to the palm): [knuckle, next joint].
+// Raynaud's color change usually stops at a sharp line, so the base staying normal while the tip changes
+// is how the app detects that border.
+const BASES = {
+  thumb: [2, 3],
+  index: [5, 6],
+  middle: [9, 10],
+  ring: [13, 14],
+  pinky: [17, 18],
+};
+
+// Color sampling boxes (in pixels) for each fingertip, the base of each finger, and the palm.
 export function fingertipSpots(pts, w, h) {
   const spots = {};
   for (const [name, [tipIdx, jointIdx]] of Object.entries(FINGERS)) {
@@ -65,6 +76,16 @@ export function fingertipSpots(pts, w, h) {
     y: ((wrist.y + knuckle.y) / 2) * h,
     size: 30,
   };
-  return spots;
+  const bases = {};
+  for (const [name, [a, b]] of Object.entries(BASES)) {
+    const p = pts[a];
+    const q = pts[b];
+    bases[name] = {
+      x: ((p.x + q.x) / 2) * w,
+      y: ((p.y + q.y) / 2) * h,
+      size: Math.max(6, Math.round(Math.hypot((p.x - q.x) * w, (p.y - q.y) * h) * 0.35)),
+    };
+  }
+  return { tips: spots, bases };
 }
 
