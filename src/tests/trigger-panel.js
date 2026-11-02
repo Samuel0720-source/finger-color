@@ -1,3 +1,4 @@
+import {setObservation} from '../features.js';
 import {repeatSummary} from '../research.js';
 import {sessionContext} from '../session.js';
 import { Chart, lineStyle, ALERT } from '../chart-theme.js';
@@ -21,6 +22,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   const btnCsv = $('trig-csv');
   const btnPdf = $('trig-pdf');
   let report = null;
+  let reviews=[];
   const liveEl = $('trig-live');
   const resultEl = $('trig-result');
 
@@ -74,13 +76,13 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
   btnPdf.onclick = async () => {
     if (!report) return;
     btnPdf.disabled = true;
-    try { const { makeMovementReport } = await import('../movement-report.js'); makeMovementReport({ ...report, repeat:repeatSummary(loadHistory(),context,'catching'), guidance: currentGuidance('catching') }); }
+    try { const { makeMovementReport } = await import('../movement-report.js'); makeMovementReport({ ...report, events:[...report.events,...reviews.map(r=>r.label+' User review: '+r.answer)], repeat:repeatSummary(loadHistory(),context,'catching'), guidance: currentGuidance('catching') }); }
     catch (e) { setStatus('PDF could not be created. Try again: ' + e.message); }
     finally { btnPdf.disabled = false; }
   };
 
   function start() {
-    report = null;
+    report = null;reviews=[];setObservation('catching',null);
     btnPdf.disabled = true;
     running = true;preparing=true;readyAt=null;context=sessionContext();startedAt=new Date().toLocaleString();
     samples = [];
@@ -109,7 +111,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     btnStart.classList.remove('btn-recording');
     if (performance.now() - t0 - lastTracked > 500) trackingLost = true;
     report = {test:'catching',name:fileName('catching'),date:startedAt,measurementContext:context,status:'Not scored',metrics:[['Completed middle-finger cycles',cycles]],explanation:'This recording is incomplete. No disease conclusion or catch score is available.',events:[]};
-    btnPdf.disabled = false;
+    btnPdf.disabled = false;setObservation('catching',{valid:false,summary:'Incomplete recording or tracking quality checks failed; no catch score.'});
     if (samples.length < 30) {
       resultEl.className = 'result muted';
       resultEl.textContent = 'Not enough data. Keep your hand in view and try again.';
@@ -137,6 +139,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
     report.metrics = [...report.metrics,...FINGERS.map(f => [NAMES[f], `${perFinger[f].cycles} cycles; ${perFinger[f].catches.length} flagged finger-events; ${perFinger[f].rangeDeg.toFixed(0)} degree range`])];
     report.explanation = 'A flagged finger-event is a brief pause followed by rapid opening in the estimated joint angle. Events are summed across four fingers: three events do not mean three affected fingers, three episodes, or disease severity. Voluntary pauses and tracking errors can produce this pattern. Thumb catching is not measured.';
     report.events = FINGERS.flatMap(f => perFinger[f].catches.map(c => `${NAMES[f]} at ${(c.t/1000).toFixed(2)} s: pause ${c.pauseMs.toFixed(0)} ms, then opened ${c.deltaDeg.toFixed(1)} degrees in ${c.snapMs.toFixed(0)} ms.`));
+    setObservation('catching',{valid:true,summary:report.metrics.slice(4).map(([finger,value])=>finger+': '+value).join('; ')+'. Flags are angle patterns, not confirmed tendon catches.'});
+    mountReviews(perFinger);
     report.chartImg = chart.toBase64Image('image/png',1);
     const totalCatches = FINGERS.reduce((sum, f) => sum + perFinger[f].catches.length, 0);
     const saved = saveSession({ test: 'catching', algorithm: 3, result: totalCatches, cycles: perFinger.middle.cycles, context, perFinger:Object.fromEntries(FINGERS.map(f=>[f,{cycles:perFinger[f].cycles,events:perFinger[f].catches.length}])) });
@@ -169,6 +173,25 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, fileName }) {
       <details class="advanced"><summary>Why were events flagged?</summary>
       <p class="hint">Rule: less than 8° change for at least 150 ms in mid-bend, followed by at least 25° opening within 120 ms. These experimental thresholds are not clinical criteria.</p>
       <ul>${FINGERS.flatMap(f => perFinger[f].catches.map(c => `<li>${NAMES[f]} · ${(c.t/1000).toFixed(2)} s: paused ${c.pauseMs.toFixed(0)} ms, then opened ${c.deltaDeg.toFixed(1)}° in ${c.snapMs.toFixed(0)} ms.</li>`)).join('') || '<li>No events met the rule.</li>'}</ul></details>`;
+  }
+
+  function mountReviews(perFinger) {
+    const wrap=document.createElement('section');
+    const heading=document.createElement('h4');heading.textContent='Review flagged moments';wrap.append(heading);
+    const intro=document.createElement('p');intro.textContent='Review the measured angle around each flag. This is an angle trace, not a video replay. Your answer is a self-report and does not confirm tendon catching. Do not repeat painful movements.';wrap.append(intro);
+    for(const finger of FINGERS)for(const event of perFinger[finger].catches){
+      const item={label:`${NAMES[finger]} at ${(event.t/1000).toFixed(2)} s.`,answer:'Not reviewed'};reviews.push(item);
+      const card=document.createElement('div');card.className='event-review';
+      const title=document.createElement('p');title.textContent=item.label+' Joint angle (degrees), 0.5 seconds before and after flag';card.append(title);
+      const points=samples.filter(p=>Math.abs(p.t-event.t)<=500);
+      const poly=points.map(p=>`${20+(p.t-event.t+500)/1000*460},${90-Math.max(0,Math.min(180,p[finger]))/180*80}`).join(' ');
+      card.insertAdjacentHTML('beforeend',`<svg viewBox="0 0 500 100" role="img" aria-label="Joint angle trace around flagged event"><path d="M20 10V90H480" fill="none" stroke="#8a99a6"/><path d="M250 10V90" stroke="#be7428" stroke-dasharray="4 4"/><polyline points="${poly}" fill="none" stroke="#265dd9" stroke-width="2"/></svg>`);
+      const label=document.createElement('label');label.textContent='What do you recall at this moment?';const select=document.createElement('select');
+      for(const choice of ['Not reviewed','I felt sticking / locking','I paused intentionally','I am unsure']){const option=document.createElement('option');option.textContent=choice;select.append(option);}
+      select.onchange=()=>{item.answer=select.value;};label.append(select);card.append(label);wrap.append(card);
+    }
+    if(!reviews.length){const p=document.createElement('p');p.textContent='No angle events flagged. This does not exclude intermittent locking.';wrap.append(p);}
+    resultEl.append(wrap);
   }
 
   function drawFinalChart(times, perFinger) {

@@ -168,3 +168,15 @@ New tapping records snapshot demographic/hand/setup context at start; symptom an
 - Symptom guidance retains three consultation categories, with urgent advice within the recommended category. Severe hand pain, inability to move/hold objects, or an icy cold/pale/blue hand triggers urgent advice independent of measurement. Sources: NHS finger pain, NHS inform wrist/hand/finger problems, and NHS cyanosis pages. This is not a validated emergency triage system.
 - A questionnaire-only PDF is available without camera access. Appointment notes, including non-Latin notes rendered with browser fonts, stay in memory and enter PDFs only. Existing measurements and symptom summaries have separate export buttons.
 - No disease probability, clinical normal range, or sensitivity/specificity claim is added. Thirty-six automated checks cover measurement math and questionnaire handling; actual camera and clinical performance remain unvalidated.
+
+## Feature-based consultation guidance (2026-11-02)
+
+Guidance v3 separates user-reported symptoms, camera observations, unknown features and unassessed clinical findings. A clickable left/right finger map records symptom type and surface; unmarked fingers remain unknown. Maps and surveys are memory-only and exported on request.
+
+Raynaud context now records trigger, individual color phases, warming response and sores. Trigger-finger context records palm-side base pain and current locking. Carpal-tunnel context records sensory distribution, constant numbness and dropping objects. Tapping remains a dexterity observation, never a test of median-nerve compression. Source references: NIAMS Raynaud information and AAOS OrthoInfo trigger-finger/carpal-tunnel information (linked in the app).
+
+Consultation reasons explain characteristic symptom combinations and persistent/worsening/function-limiting symptoms. Urgent symptoms override missing responses; blanks and contradictory answers do not produce reassurance. These are educational referral rules, not validated triage criteria or disease probabilities. No three-phase requirement, recovery cutoff, percentile or temperature-validation claim is introduced.
+
+Completed recordings attach their actual quality and observations to feature evidence. Incomplete recordings are not scored. Catch flags can be reviewed using a local joint-angle trace and timestamp, with user confirmation exported to PDF; this is not recorded-video replay or clinical confirmation. Full reports include evidence provenance, interpretation, feature sources and rule version. Questionnaire-only PDFs explicitly exclude camera observations.
+
+Validation: 44 automated tests, including a matrix of 40 synthetic care cases. These check code behavior, not clinical accuracy. Clinical sensitivity/specificity and real-camera measurement accuracy remain unestablished.
