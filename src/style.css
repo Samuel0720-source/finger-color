@@ -117,6 +117,9 @@ h4 {
   font-size: 15px;
 }
 .site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--muted);
   text-decoration: none;
 }
@@ -333,7 +336,7 @@ h4 {
   margin-left: 4px;
   padding: 0 7px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
   vertical-align: 2px;
   color: var(--lv-urgent);
@@ -347,7 +350,8 @@ h4 {
 }
 .seg,
 .chip {
-  min-height: 38px;
+  min-height: 44px; /* 44 x 44 px minimum touch target: users may have stiff or numb fingers */
+  min-width: 44px;
   padding: 0 14px;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
@@ -562,7 +566,7 @@ h4 {
   margin-left: 4px;
   padding: 0 7px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--muted);
   background: var(--paper);
@@ -689,6 +693,7 @@ h4 {
   background: var(--red);
 }
 .btn-link {
+  min-height: 44px; /* same 44 px touch target as the other buttons; the underline keeps it looking like a link */
   padding: 4px 0;
   border: none;
   background: none;
@@ -833,7 +838,7 @@ h4 {
 .finger-key {
   padding: 0 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--act);
   background: var(--act-soft);
 }
@@ -1287,4 +1292,15 @@ span.status.st-unknown {
   .cond {
     transition: none;
   }
+}
+
+/* Read by screen readers, not shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

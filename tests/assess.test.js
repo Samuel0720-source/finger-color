@@ -117,6 +117,26 @@ test('Color analysis: a single noisy frame does not create a phase', () => {
   assert.ok(PHASE_MIN > 3);
 });
 
+test('Color analysis: episode mode refuses a hand that is still pale at the end (no false reassurance)', () => {
+  const rows = [];
+  for (let t = 0; t <= 150; t++) for (const f of ['thumb', 'index', 'middle', 'ring', 'pinky']) {
+    const d = ['index', 'middle', 'ring'].includes(f) ? { L: 15, a: -6, b: 0 } : { L: 0, a: 0, b: 0 }; // pale all the way
+    rows.push({ t: String(t), finger: f, palm_dL: d.L, palm_da: d.a, palm_db: d.b, prox_dL: d.L * 0.1, prox_da: d.a * 0.1, prox_db: d.b * 0.1 });
+  }
+  const r = analyzeColorRecording(rows, [{ type: 'warm_start', t: '40' }], null);
+  assert.equal(r.ok, false);
+  assert.deepEqual(r.notRecovered, ['index', 'middle', 'ring']);
+  // With a saved normal color the same recording is scored and shows the pale phase.
+  const baseline = { fingers: Object.fromEntries(['thumb', 'index', 'middle', 'ring', 'pinky'].map((f) => [f, { L: 0, a: 0, b: 0, prox: { L: 0, a: 0, b: 0 } }])), noise: 1, noiseByFinger: {} };
+  const s = analyzeColorRecording(rows, [{ type: 'warm_start', t: '40' }], baseline);
+  assert.equal(s.ok, true);
+  assert.deepEqual(s.pale, ['index', 'middle', 'ring']);
+});
+test('Color analysis: episode mode needs the warming mark and 60 s after it', () => {
+  assert.equal(analyzeColorRecording(episodeRows(), [], null).ok, false);
+  assert.equal(analyzeColorRecording(episodeRows(), [{ type: 'warm_start', t: '150' }], null).ok, false);
+});
+
 // ---------- Trigger finger ----------
 const tfNone = { catching: N, cantBend: N, stuckBent: N, pressTender: N };
 const open = (o = {}) => ({ catches: 0, maxAngle: 172, minAngle: 85, ...o });
@@ -200,3 +220,47 @@ test('Carpal: little finger only -> not median nerve, routine', () => {
 });
 test('Carpal: sudden after wrist injury -> urgent', () => assert.equal(carpal.assess({ acute: Y }).level, 'urgent'));
 test('Carpal: maximum score is 26', () => assert.equal(carpal.assess({ ...cts, thenar: Y, phalen: Y, tinel: Y, twoPoint: Y }).score.value, 26));
+
+// ---------- Fixes found by the simulated population test (validation/population.mjs) ----------
+const U = 'unsure';
+test('Raynaud: the urgent question is visible whatever the cold answer', () => {
+  const section = raynaud.QUESTIONS.find((q) => q.section === 'Warning signs');
+  for (const cold of [Y, N, U]) assert.equal(section.showIf({ cold }), true, cold);
+  assert.equal(section.showIf({}), false);
+});
+test('Raynaud: "not sure" about cold plus a camera-seen white phase is not "unlikely"', () => {
+  const r = raynaud.assess({ cold: U, white: U, blue: U }, cam());
+  assert.notEqual(r.level, 'low');
+  assert.equal(r.level, 'selfcare');
+});
+test('Raynaud: answering "no" to cold with nothing else stays "unlikely"', () => {
+  assert.equal(raynaud.assess({ cold: N, white: N, blue: N }).level, 'low');
+});
+test('Raynaud: sores raise "see a doctor soon" even when the blue phase was not confirmed', () => {
+  const r = raynaud.assess({ cold: Y, white: Y, blue: N, sores: Y, deadTissue: N });
+  assert.equal(r.level, 'soon');
+});
+test('Raynaud: secondary warning signs count with only a white phase', () => {
+  assert.equal(raynaud.assess({ cold: Y, white: Y, blue: N, after40: Y }).level, 'soon');
+});
+test('Color analysis: a recording that is too noisy (dim light) is not scored', () => {
+  const rows = [];
+  let s = 1;
+  const r = () => ((s = (s * 16807) % 2147483647) / 2147483647 - 0.5) * 2;
+  for (let t = 0; t <= 150; t++) for (const f of ['thumb', 'index', 'middle', 'ring', 'pinky']) {
+    rows.push({ t: String(t), finger: f, palm_dL: 6 * r(), palm_da: 6 * r(), palm_db: 6 * r() });
+  }
+  const a = analyzeColorRecording(rows, [{ type: 'warm_start', t: '40' }], null);
+  assert.equal(a.ok, false);
+  assert.equal(a.tooNoisy, true);
+});
+test('Carpal: "not sure" about numbness with a positive Phalen test is not "unlikely"', () => {
+  const r = carpal.assess({ numb: U, thenar: N, night: Y, phalen: Y, tinel: N, twoPoint: N });
+  assert.notEqual(r.level, 'low');
+});
+test('Carpal: a clear "no" to everything is still "unlikely"', () => {
+  assert.equal(carpal.assess({ numb: N, thenar: N }).level, 'low');
+});
+test('Raynaud: a camera result that was not scored is treated as no camera result', () => {
+  assert.doesNotThrow(() => raynaud.assess({ cold: Y, white: Y, blue: Y }, { ok: false, reason: 'too noisy' }));
+});

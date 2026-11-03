@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createReachCounter } from '../src/tests/reach-panel.js';
+import { createReachCounter, HOLD_FRAMES } from '../src/tests/reach-panel.js';
 import { computeRecovery } from '../src/recovery.js';
 import { loadHistory, saveSession } from '../src/history.js';
 import { toCSV } from '../src/recorder.js';
@@ -38,5 +38,23 @@ test('single-frame angle spike does not become a catch',()=>{const s=Array.from(
 test('missing angle frames cannot supply a pause-and-release',()=>{const s=[...Array.from({length:10},(_,i)=>({t:i*30,angle:120})),{t:800,angle:160},{t:830,angle:160}];assert.equal(findCatches(s).length,0);});
 
 const reachWorld=(target,gap)=>{const w=Array.from({length:21},()=>({x:0,y:0,z:0}));w[9]={x:0,y:1,z:0};w[4]={x:5,y:5,z:0};w[target]={x:5+gap,y:5,z:0};return w;};
-test('thumb reach needs two touching frames in a row and goes finger by finger',()=>{const c=createReachCounter();c.update(reachWorld(8,.1));assert.equal(c.target,'index');c.update(reachWorld(8,.1));assert.equal(c.target,'middle');c.update(reachWorld(12,.1));c.update(reachWorld(12,.5));c.update(reachWorld(12,.1));assert.equal(c.target,'middle');});
-test('thumb reach records unreached fingertips after skipping',()=>{const c=createReachCounter();for(const idx of [8,12,16]){c.update(reachWorld(idx,.1));c.update(reachWorld(idx,.1));}c.update(reachWorld(20,.6));c.skip();const r=c.result();assert.deepEqual(r.reached,{index:true,middle:true,ring:true,pinky:false});assert.ok(r.minGap.pinky>.5);});
+test('thumb reach needs HOLD_FRAMES touching frames in a row and goes finger by finger',()=>{
+  const c=createReachCounter();
+  for(let i=0;i<HOLD_FRAMES-1;i++)c.update(reachWorld(8,.1));
+  assert.equal(c.target,'index');
+  c.update(reachWorld(8,.1));
+  assert.equal(c.target,'middle');
+  // A jittery frame in between restarts the count.
+  for(let i=0;i<HOLD_FRAMES-1;i++)c.update(reachWorld(12,.1));
+  c.update(reachWorld(12,.5));
+  c.update(reachWorld(12,.1));
+  assert.equal(c.target,'middle');
+});
+test('thumb reach records unreached fingertips after skipping',()=>{
+  const c=createReachCounter();
+  for(const idx of [8,12,16])for(let i=0;i<HOLD_FRAMES;i++)c.update(reachWorld(idx,.1));
+  c.update(reachWorld(20,.6));c.skip();
+  const r=c.result();
+  assert.deepEqual(r.reached,{index:true,middle:true,ring:true,pinky:false});
+  assert.ok(r.minGap.pinky>.5);
+});

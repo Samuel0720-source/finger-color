@@ -1,0 +1,2600 @@
+{
+  "seed": 20261103,
+  "scope": "Synthetic people and skin optics; reference is the app criteria with perfect information, not clinical diagnosis.",
+  "summary": {
+    "raynaud": {
+      "people": 50,
+      "scored": 50,
+      "incomplete": 0,
+      "agree": 40,
+      "underTriage": 3,
+      "overTriage": 7,
+      "underCause": "answers 2, camera 0, both 1",
+      "overCause": "answers 7, camera 0, both 0"
+    },
+    "trigger": {
+      "people": 50,
+      "scored": 50,
+      "incomplete": 0,
+      "agree": 39,
+      "underTriage": 0,
+      "overTriage": 11,
+      "underCause": "answers 0, camera 0, both 0",
+      "overCause": "answers 11, camera 0, both 0"
+    },
+    "carpal": {
+      "people": 50,
+      "scored": 47,
+      "incomplete": 3,
+      "agree": 37,
+      "underTriage": 3,
+      "overTriage": 7,
+      "underCause": "answers 1, camera 2, both 0",
+      "overCause": "answers 7, camera 0, both 0"
+    },
+    "raynaudCameraBySkin": {
+      "1": {
+        "fingersSeen": "11/11",
+        "blueSeen": "4/4",
+        "unscored": 2,
+        "meanPeakMiddle": 15.8
+      },
+      "2": {
+        "fingersSeen": "21/21",
+        "blueSeen": "4/4",
+        "unscored": 1,
+        "meanPeakMiddle": 15.6
+      },
+      "3": {
+        "fingersSeen": "19/19",
+        "blueSeen": "5/5",
+        "unscored": 2,
+        "meanPeakMiddle": 13
+      },
+      "4": {
+        "fingersSeen": "15/15",
+        "blueSeen": "4/4",
+        "unscored": 1,
+        "meanPeakMiddle": 11.3
+      },
+      "5": {
+        "fingersSeen": "15/15",
+        "blueSeen": "2/2",
+        "unscored": 1,
+        "meanPeakMiddle": 12.5
+      },
+      "6": {
+        "fingersSeen": "3/3",
+        "blueSeen": "0/0",
+        "unscored": 1,
+        "meanPeakMiddle": 11.7
+      }
+    },
+    "raynaudFalseChanges": 0,
+    "triggerCameraByLight": {
+      "daylight": {
+        "seen": 4,
+        "total": 4,
+        "falseFlags": 0,
+        "healthy": 4,
+        "unscored": 0
+      },
+      "warm indoor": {
+        "seen": 4,
+        "total": 4,
+        "falseFlags": 0,
+        "healthy": 4,
+        "unscored": 0
+      },
+      "cool office": {
+        "seen": 4,
+        "total": 4,
+        "falseFlags": 0,
+        "healthy": 3,
+        "unscored": 0
+      },
+      "dim": {
+        "seen": 0,
+        "total": 0,
+        "falseFlags": 0,
+        "healthy": 0,
+        "unscored": 12
+      }
+    },
+    "reachByTruth": {
+      "mild": {
+        "failed": 2,
+        "total": 12
+      },
+      "none": {
+        "failed": 0,
+        "total": 15
+      },
+      "severe": {
+        "failed": 10,
+        "total": 10
+      },
+      "moderate": {
+        "failed": 2,
+        "total": 12
+      },
+      "none (stiff fingers)": {
+        "failed": 1,
+        "total": 1
+      }
+    },
+    "blueBySkin": {
+      "1 daylight": 1,
+      "1 warm indoor": 1,
+      "1 cool office": 1,
+      "2 daylight": 1,
+      "2 warm indoor": 1,
+      "2 cool office": 1,
+      "3 daylight": 1,
+      "3 warm indoor": 1,
+      "3 cool office": 1,
+      "4 daylight": 1,
+      "4 warm indoor": 1,
+      "4 cool office": 1,
+      "5 daylight": 1,
+      "5 warm indoor": 0.9,
+      "5 cool office": 1,
+      "6 daylight": 1,
+      "6 warm indoor": 0.7,
+      "6 cool office": 0.8
+    }
+  },
+  "people": [
+    {
+      "id": 1,
+      "skin": 1,
+      "light": "daylight",
+      "age": "18-29",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.3,
+        "referenceNoise": 1.7,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 16.5,
+        "scoreApp": 16.5,
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      }
+    },
+    {
+      "id": 2,
+      "skin": 2,
+      "light": "daylight",
+      "age": "30-44",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 15.1,
+        "referenceNoise": 1.7,
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "ring",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "ring"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 3,
+      "skin": 3,
+      "light": "daylight",
+      "age": "45-59",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 15.9,
+        "referenceNoise": 2.3,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "thumb",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 26,
+        "scoreApp": 26,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 4,
+      "skin": 4,
+      "light": "daylight",
+      "age": "60-74",
+      "hand": "small",
+      "stiff": true,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "index"
+        ],
+        "seenFingers": [
+          "index"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 3.4,
+        "referenceNoise": 1.8,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "middle",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 12.5,
+        "scoreApp": 4,
+        "reference": "soon",
+        "app": "selfcare",
+        "cause": "camera"
+      }
+    },
+    {
+      "id": 5,
+      "skin": 5,
+      "light": "daylight",
+      "age": "75+",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.5,
+        "referenceNoise": 1.8,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 16.5,
+        "scoreApp": 21.5,
+        "reference": "routine",
+        "app": "soon",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 6,
+      "skin": 6,
+      "light": "daylight",
+      "age": "18-29",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.6,
+        "referenceNoise": 1.9,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "selfcare",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "incomplete",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 7,
+      "skin": 1,
+      "light": "warm indoor",
+      "age": "30-44",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 15.6,
+        "referenceNoise": 3.6,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 12.5,
+        "scoreApp": 12.5,
+        "reference": "routine",
+        "app": "soon",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 8,
+      "skin": 2,
+      "light": "warm indoor",
+      "age": "45-59",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 16.4,
+        "referenceNoise": 3.5,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "middle",
+        "cameraCatching": [
+          "middle"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 16,
+        "scoreApp": 16,
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      }
+    },
+    {
+      "id": 9,
+      "skin": 3,
+      "light": "warm indoor",
+      "age": "60-74",
+      "hand": "small",
+      "stiff": true,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 14.5,
+        "referenceNoise": 3,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": false,
+        "scoreRef": 16.5,
+        "scoreApp": 16.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 10,
+      "skin": 4,
+      "light": "warm indoor",
+      "age": "75+",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 5,
+        "referenceNoise": 3.4,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 11.5,
+        "scoreApp": 7.5,
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 11,
+      "skin": 5,
+      "light": "warm indoor",
+      "age": "18-29",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 12.4,
+        "referenceNoise": 3.3,
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "IV",
+        "finger": "thumb",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "thumb"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 7.5,
+        "scoreApp": 7.5,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 12,
+      "skin": 6,
+      "light": "warm indoor",
+      "age": "30-44",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 5.9,
+        "referenceNoise": 3.2,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "incomplete",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 13,
+      "skin": 1,
+      "light": "cool office",
+      "age": "45-59",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.1,
+        "referenceNoise": 2.7,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 7.5,
+        "scoreApp": 7.5,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 14,
+      "skin": 2,
+      "light": "cool office",
+      "age": "60-74",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 16,
+        "referenceNoise": 2.4,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "ring",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "ring"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 5,
+        "scoreApp": 5,
+        "reference": "selfcare",
+        "app": "routine",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 15,
+      "skin": 3,
+      "light": "cool office",
+      "age": "75+",
+      "hand": "large",
+      "stiff": true,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "index"
+        ],
+        "seenFingers": [
+          "index"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 3.4,
+        "referenceNoise": 2.9,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 26,
+        "scoreApp": 22.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 16,
+      "skin": 4,
+      "light": "cool office",
+      "age": "18-29",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 14.1,
+        "referenceNoise": 2.5,
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 16.5,
+        "scoreApp": 16.5,
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      }
+    },
+    {
+      "id": 17,
+      "skin": 5,
+      "light": "cool office",
+      "age": "30-44",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 12.7,
+        "referenceNoise": 2.7,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "IV",
+        "finger": "ring",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "ring"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 26,
+        "scoreApp": 26,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 18,
+      "skin": 6,
+      "light": "cool office",
+      "age": "45-59",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.3,
+        "referenceNoise": 2.9,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "middle",
+        "cameraCatching": [
+          "middle"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 17,
+        "scoreApp": 13,
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      }
+    },
+    {
+      "id": 19,
+      "skin": 1,
+      "light": "dim",
+      "age": "60-74",
+      "hand": "small",
+      "stiff": true,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.9 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": false,
+        "scoreRef": 13.5,
+        "scoreApp": 13.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 20,
+      "skin": 2,
+      "light": "dim",
+      "age": "75+",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 5.4 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 5,
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 21,
+      "skin": 3,
+      "light": "dim",
+      "age": "18-29",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.8 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "selfcare",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 22,
+      "skin": 4,
+      "light": "dim",
+      "age": "30-44",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 7.7 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "index",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 23,
+      "skin": 5,
+      "light": "dim",
+      "age": "45-59",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "middle"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.7 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "soon",
+        "app": "low",
+        "cause": "both"
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "ring",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 5,
+        "scoreApp": 9,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 24,
+      "skin": 6,
+      "light": "dim",
+      "age": "60-74",
+      "hand": "medium",
+      "stiff": true,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.9 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": false,
+        "scoreRef": 17.5,
+        "scoreApp": 17.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 25,
+      "skin": 1,
+      "light": "daylight",
+      "age": "75+",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 16.9,
+        "referenceNoise": 2.3,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "middle",
+        "cameraCatching": [
+          "middle"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 21,
+        "scoreApp": 21,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 26,
+      "skin": 2,
+      "light": "daylight",
+      "age": "18-29",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.4,
+        "referenceNoise": 2.1,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 12.5,
+        "scoreApp": 5,
+        "reference": "routine",
+        "app": "selfcare",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 27,
+      "skin": 3,
+      "light": "daylight",
+      "age": "30-44",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 15.4,
+        "referenceNoise": 1.9,
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "ring",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 8.5,
+        "scoreApp": 8.5,
+        "reference": "selfcare",
+        "app": "routine",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 28,
+      "skin": 4,
+      "light": "daylight",
+      "age": "45-59",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 14.9,
+        "referenceNoise": 2.4,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 21,
+        "scoreApp": 21,
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      }
+    },
+    {
+      "id": 29,
+      "skin": 5,
+      "light": "daylight",
+      "age": "60-74",
+      "hand": "large",
+      "stiff": true,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.2,
+        "referenceNoise": 2.2,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "index",
+        "cameraCatching": [
+          "index"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 12.5,
+        "scoreApp": 7.5,
+        "reference": "soon",
+        "app": "selfcare",
+        "cause": "camera"
+      }
+    },
+    {
+      "id": 30,
+      "skin": 6,
+      "light": "daylight",
+      "age": "75+",
+      "hand": "medium",
+      "stiff": true,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 11.7,
+        "referenceNoise": 2,
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 8.5,
+        "scoreApp": 8.5,
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 31,
+      "skin": 1,
+      "light": "warm indoor",
+      "age": "18-29",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "middle"
+        ],
+        "seenFingers": [
+          "middle"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 15.5,
+        "referenceNoise": 3.7,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "ring",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "ring"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 3.5,
+        "scoreApp": 3.5,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 32,
+      "skin": 2,
+      "light": "warm indoor",
+      "age": "30-44",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 14.7,
+        "referenceNoise": 2.9,
+        "note": "",
+        "reference": "routine",
+        "app": "selfcare",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 21.5,
+        "scoreApp": 21.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 33,
+      "skin": 3,
+      "light": "warm indoor",
+      "age": "45-59",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 13.6,
+        "referenceNoise": 2.8,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "ring",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 21,
+        "scoreApp": 21,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 34,
+      "skin": 4,
+      "light": "warm indoor",
+      "age": "60-74",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 12.4,
+        "referenceNoise": 2.5,
+        "note": "",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 5,
+        "scoreApp": 5,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 35,
+      "skin": 5,
+      "light": "warm indoor",
+      "age": "75+",
+      "hand": "medium",
+      "stiff": true,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 11.9,
+        "referenceNoise": 3.9,
+        "note": "",
+        "reference": "soon",
+        "app": "routine",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "middle",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": false,
+        "scoreRef": 5,
+        "scoreApp": 5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 36,
+      "skin": 6,
+      "light": "warm indoor",
+      "age": "18-29",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 5.8,
+        "referenceNoise": 3.3,
+        "note": "",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "middle",
+        "cameraCatching": [
+          "middle"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 8.5,
+        "scoreApp": 5,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 37,
+      "skin": 1,
+      "light": "cool office",
+      "age": "30-44",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 15.3,
+        "referenceNoise": 2.3,
+        "note": "",
+        "reference": "routine",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "IV",
+        "finger": "middle",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "middle"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 21.5,
+        "scoreApp": 21.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 38,
+      "skin": 2,
+      "light": "cool office",
+      "age": "45-59",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 16.6,
+        "referenceNoise": 2.6,
+        "note": "",
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "middle",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "middle"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 22,
+        "scoreApp": 22,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 39,
+      "skin": 3,
+      "light": "cool office",
+      "age": "60-74",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 15.5,
+        "referenceNoise": 3.1,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 40,
+      "skin": 4,
+      "light": "cool office",
+      "age": "75+",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 11.9,
+        "referenceNoise": 3.5,
+        "note": "",
+        "reference": "routine",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "thumb",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "thumb"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "moderate",
+        "reachedLittle": true,
+        "scoreRef": 12,
+        "scoreApp": 12,
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      }
+    },
+    {
+      "id": 41,
+      "skin": 5,
+      "light": "cool office",
+      "age": "18-29",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": false,
+          "red": true
+        },
+        "peakMiddle": 13.1,
+        "referenceNoise": 2.4,
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "II",
+        "finger": "ring",
+        "cameraCatching": [
+          "ring"
+        ],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "incomplete",
+        "cause": "answers"
+      }
+    },
+    {
+      "id": 42,
+      "skin": 6,
+      "light": "cool office",
+      "age": "30-44",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 3.9,
+        "referenceNoise": 3.2,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 43,
+      "skin": 1,
+      "light": "dim",
+      "age": "45-59",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 5.4 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "thumb",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "routine",
+        "app": "routine",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 44,
+      "skin": 2,
+      "light": "dim",
+      "age": "60-74",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring",
+          "pinky"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.4 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "routine",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 0,
+        "scoreApp": 0,
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      }
+    },
+    {
+      "id": 45,
+      "skin": 3,
+      "light": "dim",
+      "age": "75+",
+      "hand": "small",
+      "stiff": true,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 5.6 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": false,
+        "scoreRef": 17.5,
+        "scoreApp": 17.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 46,
+      "skin": 4,
+      "light": "dim",
+      "age": "18-29",
+      "hand": "large",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.4 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "low",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "middle",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "none",
+        "reachedLittle": true,
+        "scoreRef": 4,
+        "scoreApp": 4,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 47,
+      "skin": 5,
+      "light": "dim",
+      "age": "30-44",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 6.4 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "I",
+        "finger": "index",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 21.5,
+        "scoreApp": 18,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 48,
+      "skin": 6,
+      "light": "dim",
+      "age": "45-59",
+      "hand": "medium",
+      "stiff": false,
+      "raynaud": {
+        "truth": "primary-white-red",
+        "trueFingers": [
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": null,
+        "seenPhases": null,
+        "peakMiddle": null,
+        "referenceNoise": null,
+        "note": "The light is too dim or flickering: even a still hand changed by 5.8 (4.5 or less needed), so real color changes cannot be told apart from noise. Record again in brighter, steady light.",
+        "reference": "selfcare",
+        "app": "soon",
+        "cause": "answers"
+      },
+      "trigger": {
+        "truth": "none",
+        "finger": "",
+        "cameraCatching": null,
+        "cameraCannotStraighten": null,
+        "cameraCannotBend": null,
+        "note": "not scored: tracking gap",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 8.5,
+        "scoreApp": 8.5,
+        "reference": "selfcare",
+        "app": "selfcare",
+        "cause": ""
+      }
+    },
+    {
+      "id": 49,
+      "skin": 1,
+      "light": "daylight",
+      "age": "60-74",
+      "hand": "small",
+      "stiff": true,
+      "raynaud": {
+        "truth": "none",
+        "trueFingers": [],
+        "seenFingers": [],
+        "seenPhases": {
+          "white": false,
+          "blue": false,
+          "red": false
+        },
+        "peakMiddle": 2.3,
+        "referenceNoise": 1.9,
+        "note": "",
+        "reference": "low",
+        "app": "low",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "III",
+        "finger": "middle",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "middle"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "mild",
+        "reachedLittle": true,
+        "scoreRef": 13.5,
+        "scoreApp": 8.5,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    },
+    {
+      "id": 50,
+      "skin": 2,
+      "light": "daylight",
+      "age": "75+",
+      "hand": "small",
+      "stiff": false,
+      "raynaud": {
+        "truth": "secondary",
+        "trueFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenFingers": [
+          "thumb",
+          "index",
+          "middle",
+          "ring"
+        ],
+        "seenPhases": {
+          "white": true,
+          "blue": true,
+          "red": true
+        },
+        "peakMiddle": 14.8,
+        "referenceNoise": 2,
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "trigger": {
+        "truth": "IV",
+        "finger": "thumb",
+        "cameraCatching": [],
+        "cameraCannotStraighten": [
+          "thumb"
+        ],
+        "cameraCannotBend": [],
+        "note": "",
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      },
+      "carpal": {
+        "truth": "severe",
+        "reachedLittle": false,
+        "scoreRef": 26,
+        "scoreApp": 22,
+        "reference": "soon",
+        "app": "soon",
+        "cause": ""
+      }
+    }
+  ]
+}

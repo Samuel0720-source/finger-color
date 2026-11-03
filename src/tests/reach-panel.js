@@ -14,7 +14,9 @@ export const TARGETS = [
 export const CONTACT = 0.2; // thumb-to-fingertip distance in hand sizes that counts as touching (engineering value)
 export const OPEN_START = 0.45; // thumb must start away from the index finger
 const LIMIT_MS = 20000;
-const HOLD_FRAMES = 2; // two frames in a row, so one jittery frame cannot count as a touch
+// Five frames in a row (about 0.17 s at 30 fps). With two frames, tracking jitter alone produced "touches" when the
+// thumb stopped just short of the fingertip (simulated population test), hiding thumb weakness.
+export const HOLD_FRAMES = 5;
 const NAMES = { index: 'index', middle: 'middle', ring: 'ring', pinky: 'little' };
 
 const dist = (p, q) => Math.hypot(p.x - q.x, p.y - q.y, p.z - q.z);
@@ -104,7 +106,7 @@ export function createReachPanel({ setStatus, setBusy, onResult }) {
     }
     const rows = TARGETS.map(([n]) => `<tr><th scope="row">${NAMES[n][0].toUpperCase() + NAMES[n].slice(1)} fingertip</th><td class="${r.reached[n] ? '' : 'flag'}">${r.reached[n] ? 'Reached' : 'Not reached'}</td><td>${Number.isFinite(r.minGap[n]) ? r.minGap[n].toFixed(2) : '–'}</td></tr>`).join('');
     detail.innerHTML = `<div class="table-scroll"><table class="data-table"><thead><tr><th>Target</th><th>Result</th><th>Closest gap</th></tr></thead><tbody>${rows}</tbody></table></div>
-      <p class="fine-print">Gap is the thumb-to-fingertip distance divided by hand size; under ${CONTACT} for two frames counts as a touch. Finished in ${seconds.toFixed(1)} s, hand tracked in ${(coverage * 100).toFixed(0)}% of frames.</p>`;
+      <p class="fine-print">Gap is the thumb-to-fingertip distance divided by hand size; under ${CONTACT} for ${HOLD_FRAMES} frames in a row counts as a touch. Finished in ${seconds.toFixed(1)} s, hand tracked in ${(coverage * 100).toFixed(0)}% of frames.</p>`;
     onResult({ ok: true, reached: r.reached, minGap: r.minGap, seconds });
     setStatus('Thumb reach test finished.');
   }

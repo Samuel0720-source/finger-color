@@ -1,13 +1,15 @@
 """Analyze one recording made by the web app.
 
 Usage:
-    python analyze.py recovery_20261030_1752
+    python analyze.py raynaud_20261103_1530
 
 It reads the two files the app downloads:
-    recovery_20261030_1752_data.csv     one row per finger per second
-    recovery_20261030_1752_events.csv   warm_start, temperatures, baseline_noise, app_recovery_sec
+    raynaud_20261103_1530_data.csv     one row per finger per second
+    raynaud_20261103_1530_events.csv   warm_start, temperatures, reference_noise, app_recovery_sec
 
-It uses the same steps as src/recovery.js, so the number should match the app.
+It repeats computeRecovery() in src/recovery.js (algorithm 2 and 3: trailing 10 s average, 30 s hold),
+so the number should match the app. Older recordings (no algorithm_version) use the original v1 steps.
+Recordings without a saved normal color use the reference noise the app wrote (reference_noise).
 """
 import sys
 
@@ -51,18 +53,21 @@ def analyze_session(sess, events, finger=FINGER):
     # change_score = how far this finger is from the saved normal color (palm-referenced CIELAB distance)
     sess = sess[sess["finger"] == finger].dropna(subset=["change_score"]).copy()
     if len(sess) == 0:
-        raise ValueError("No change_score values. Save your normal color in the app before recording.")
+        raise ValueError("No change_score values. Download the data file after the app has analysed the recording.")
 
-    noise = event_value(events, "baseline_noise")
+    noise = event_value(events, "reference_noise")
     if noise is None:
-        raise ValueError("No baseline_noise in the events file. Record again with the current app version.")
+        noise = event_value(events, "baseline_noise")
+    if noise is None:
+        raise ValueError("No reference_noise or baseline_noise in the events file. Record again with the current app version.")
 
     warm = events.loc[events["type"] == "warm_start", "t"]
     if len(warm) == 0:
         raise ValueError("No warm_start event.")
     t_warm = float(warm.iloc[0])
     version = event_value(events, "algorithm_version")
-    if version == 2:
+    modern = version is not None and version >= 2
+    if modern:
         if (events["type"] == "interrupted").any():
             raise ValueError("Recording interrupted.")
         sess = sess[np.isfinite(sess["t"]) & np.isfinite(sess["change_score"]) & (sess["change_score"] >= 0)].sort_values("t")
@@ -85,9 +90,9 @@ def analyze_session(sess, events, finger=FINGER):
     start = vals[0]
     threshold = max(RECOVERY_FRACTION * start, noise)
     recovery = None
-    if version == 2 and start <= threshold:
+    if modern and start <= threshold:
         pass
-    elif version == 2:
+    elif modern:
         below_since = None
         for t, v in zip(times, vals):
             if v > threshold:
@@ -154,7 +159,7 @@ def plot(name, res):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python analyze.py recovery_YYYYMMDD_HHMM")
+        print("Usage: python analyze.py raynaud_YYYYMMDD_HHMMSS")
         sys.exit(1)
     name = sys.argv[1]
     res = analyze_session(pd.read_csv(name + "_data.csv"), load_events(name + "_events.csv"))

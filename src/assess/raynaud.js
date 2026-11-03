@@ -15,7 +15,8 @@ export const QUESTIONS = [
   { id: 'white', text: 'During these episodes, do your fingers turn white or very pale?' },
   { id: 'blue', text: 'During these episodes, do your fingers turn blue or purple?' },
 
-  { section: 'About the episodes', showIf: (a) => yes(a, 'cold') },
+  // Follow-up questions also show for "Not sure", so an unsure answer never hides the rest of the check.
+  { section: 'About the episodes', showIf: (a) => a.cold === 'yes' || a.cold === 'unsure' },
   { id: 'red', text: 'When the fingers warm up, do they turn red before going back to normal?' },
   { id: 'sharpLine', text: 'Is there a sharp line between the pale or blue part and normal skin?' },
   { id: 'bothHands', text: 'Are both hands affected, even if not at the same time or equally?' },
@@ -24,7 +25,8 @@ export const QUESTIONS = [
   { id: 'otherSites', text: 'Do your nose, ears, feet or nipples ever change color the same way?' },
   { id: 'photos', text: 'Do you have photos of an episode?', help: 'Capturing an episode with the camera below also counts.' },
 
-  { section: 'Warning signs', showIf: (a) => yes(a, 'cold') },
+  // Always shown once the first question is answered: a black finger is urgent whatever the other answers.
+  { section: 'Warning signs', showIf: (a) => answered(a, 'cold') },
   { id: 'after40', text: 'Did these episodes first start after age 40?' },
   { id: 'oneSide', text: 'Do episodes affect only one hand, or one or two fingers only?' },
   { id: 'severePain', text: 'Are the episodes severely painful?' },
@@ -91,6 +93,7 @@ export function features(a, cam) {
 const STEP3 = ['otherTriggers', 'bothHands', 'numb', 'border', 'photo', 'otherSites', 'red'];
 
 export function assess(a, cam = null) {
+  if (!cam?.ok) cam = null; // a recording that was not scored (too short, too noisy) counts as no camera result
   const t = createTriage('low');
   const feats = features(a, cam);
   const f = Object.fromEntries(feats.map((x) => [x.id, x]));
@@ -103,14 +106,29 @@ export function assess(a, cam = null) {
   const out = (forced) => finish(t, forced, score, feats, cam, a);
 
   if (!answered(a, 'cold')) return out('incomplete');
-  if (!yes(a, 'cold')) {
-    t.note('Your fingers are not unusually sensitive to cold. This is the first step of the Raynaud\'s criteria.');
-    return out(null);
-  }
+  // Ulcers mean badly reduced blood supply, whether or not the full criteria are met.
+  if (yes(a, 'sores')) t.raise('soon', 'Fingertip sores or ulcers mean the blood supply is badly reduced. See a doctor within days, not weeks.');
+
   const white = f.white.status === 'yes';
   const blue = f.blue.status === 'yes';
+  const cameraSawChange = Boolean(cam?.ok && (cam.pale.length || cam.blue.length));
+
+  if (!yes(a, 'cold')) {
+    if (cameraSawChange) {
+      t.raise('selfcare', `The camera saw your fingers turn ${cam.pale.length ? 'white' : 'blue'}. The criteria need cold as the trigger and you answered "${a.cold === 'no' ? 'no' : 'not sure'}". Color changes like this are still worth mentioning to a doctor, especially if they come back.`);
+    } else if (a.cold === 'unsure' && (white || blue)) {
+      t.raise('selfcare', 'You were not sure whether cold brings it on. Notice what starts your next episode and capture it with the camera, then check again.');
+    } else {
+      t.note('Your fingers are not unusually sensitive to cold. This is the first step of the Raynaud\'s criteria.');
+    }
+    secondaryCheck(t, a, cam, white || blue);
+    return out(null);
+  }
   if (f.white.status === 'unknown' || f.blue.status === 'unknown') {
-    if (!(white && blue)) return out('incomplete');
+    if (!(white && blue)) {
+      secondaryCheck(t, a, cam, white || blue);
+      return out(t.level === 'low' ? 'incomplete' : null);
+    }
   }
 
   if (!(white && blue)) {
@@ -119,6 +137,7 @@ export function assess(a, cam = null) {
     } else {
       t.note('Your fingers do not change color, so Raynaud\'s phenomenon is unlikely. Cold sensitivity alone has many causes.');
     }
+    secondaryCheck(t, a, cam, white || blue);
     return out(null);
   }
 
@@ -130,8 +149,15 @@ export function assess(a, cam = null) {
   } else {
     t.raise('selfcare', `You have cold sensitivity and white and blue color change, but ${step3.length} of the 3 supporting features the criteria need. It may still be Raynaud's. Capturing episodes helps.`);
   }
+  secondaryCheck(t, a, cam, true);
+  if (cam?.ok && cam.thumbSpared) t.note('The thumb stayed normal while other fingers changed. This is the usual pattern in primary Raynaud\'s.');
+  return out(null);
+}
 
-  // Secondary Raynaud's: another condition may be causing it.
+// Secondary Raynaud's: another condition may be causing it. Checked whenever there is a color change,
+// even if the full criteria are not met, so a missed blue phase cannot hide these warning signs.
+function secondaryCheck(t, a, cam, colorChange) {
+  if (!colorChange) return;
   const secondary = [
     ['after40', 'it started after age 40'],
     ['oneSide', 'only one hand or one or two fingers are affected'],
@@ -139,12 +165,9 @@ export function assess(a, cam = null) {
     ['otherSymptoms', 'you have symptoms that can come with autoimmune disease'],
   ].filter(([id]) => yes(a, id));
   if (cam?.ok && cam.involved.length === 1) secondary.push(['camera', 'the camera saw only one finger change']);
-  if (yes(a, 'sores')) t.raise('soon', 'Fingertip sores or ulcers mean the blood supply is badly reduced. See a doctor within days, not weeks.');
   if (secondary.length) {
     t.raise('soon', `Signs that another condition may be causing it (secondary Raynaud's): ${secondary.map(([, s]) => s).join('; ')}. A doctor can check with blood tests and a look at the small blood vessels at your nail fold.`);
   }
-  if (cam?.ok && cam.thumbSpared) t.note('The thumb stayed normal while other fingers changed. This is the usual pattern in primary Raynaud\'s.');
-  return out(null);
 }
 
 function finish(t, forced, score, feats, cam, a) {
@@ -160,6 +183,8 @@ function finish(t, forced, score, feats, cam, a) {
     actions: actionsFor(level, a),
     limits: [
       'The camera sees one hand at a time, so it cannot compare both hands yet.',
+      'On darker skin the color change is smaller, so the camera can miss a blue phase, especially under indoor light (in a simulation: 7 to 8 of 10 seen on the darkest skin, 10 of 10 on lighter skin). If you saw blue yourself, answer Yes.',
+      'In dim light the camera cannot tell a real color change from noise, so those recordings are not scored.',
       'Recovery time is a camera color signal, not a blood flow measurement. Room light and camera exposure change it.',
       'A doctor separates primary from secondary Raynaud\'s with blood tests and nail fold capillaroscopy, which this app cannot do.',
     ],
