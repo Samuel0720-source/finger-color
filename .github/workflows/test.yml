@@ -1,0 +1,34 @@
+# Runs on every push and pull request. A red X on GitHub means something below failed.
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Synthetic detector benchmark
+        run: npm run benchmark
+      - name: Python analysis gives the same answer as the app
+        run: |
+          pip install pandas numpy
+          npm run parity
+      - name: Browser test of all three conditions
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
