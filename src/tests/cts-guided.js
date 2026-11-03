@@ -14,7 +14,7 @@ export function mountGuidedTests(root, { get, set }) {
         <li>Press <b>Tingling started</b> the moment you feel tingling or numbness in your thumb, index, middle or ring finger.</li>
       </ol>
       <div class="timer-row">
-        <span class="countdown" id="phalen-clock" aria-live="polite">60</span>
+        <span class="countdown" id="phalen-clock" role="timer" aria-label="Seconds left">60</span>
         <button class="btn btn-primary" id="phalen-start">Start 60-second timer</button>
         <button class="btn btn-warm" id="phalen-onset" disabled>Tingling started</button>
       </div>

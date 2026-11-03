@@ -60,8 +60,9 @@ function saveFile(text, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-export function downloadCSV(name) {
-  saveFile(toCSV(rows), name + '_data.csv');
+// list: the rows to save. After analysis this is the re-scored copy, so change_score matches what the app used.
+export function downloadCSV(name, list = rows) {
+  saveFile(toCSV(list), name + '_data.csv');
 }
 
 export function downloadEvents(name) {

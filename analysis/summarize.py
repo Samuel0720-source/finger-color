@@ -21,7 +21,8 @@ def main():
     rows = []
     mismatches = 0
 
-    for data_path in sorted(HERE.glob("recovery_*_data.csv")):
+    # raynaud_* is the current app; recovery_* are older recordings.
+    for data_path in sorted([*HERE.glob("raynaud_*_data.csv"), *HERE.glob("recovery_*_data.csv")]):
         session = data_path.name[: -len("_data.csv")]
         events_path = HERE / (session + "_events.csv")
         if not events_path.exists():

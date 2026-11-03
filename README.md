@@ -45,13 +45,13 @@ The summary is generated from the table, for example: *"5 of 7 carpal tunnel fea
 
 **Joint angles (trigger finger).** The angle at each middle (PIP) joint, and at the thumb's IP joint, from 3D vectors (`src/angles.js`). A catch is a window of at least 150 ms with less than 8° movement in the 100–165° band, followed by a gain of 25° within 120 ms. A finger is flagged as "does not straighten" or "does not bend" only when at least two other fingers reached the position, so a lazy fist does not count. Scoring needs 10 cycles, 25+ fps and no frame gap over 100 ms.
 
-**Thumb reach (carpal tunnel).** The thumb-tip to fingertip distance divided by hand size. Below 0.2 for two frames counts as a touch; 6 s per fingertip, 20 s in total, and the hand must be tracked in at least 80% of frames. Not reaching the little finger is treated as possible thumb (thenar) weakness.
+**Thumb reach (carpal tunnel).** The thumb-tip to fingertip distance divided by hand size. Below 0.2 for 5 frames in a row (about 0.17 s) counts as a touch; 6 s per fingertip, 20 s in total, and the hand must be tracked in at least 80% of frames. Not reaching the little finger is treated as possible thumb (thenar) weakness.
 
 ## Project structure
 
 ```
 src/
-  main.js            page wiring: modes, camera loop, recording, results
+  main.js            page wiring: modes, camera loop, results, PDF
   questionnaire.js   Yes / No / Not sure questions, finger chips, warning signs
   result-panel.js    verdict, score, feature table, why / what to do / limits
   doctor-report.js   PDF report for a clinician
@@ -64,25 +64,35 @@ src/
     color-analysis.js  phases, fingers involved, border, recovery from a recording
   tests/
     trigger-test.js    catch detection math
+    color-panel.js     Raynaud's recording screen (normal color, recording, warming, analysis)
     trigger-panel.js   catching screen (five fingers including the thumb)
     reach-panel.js     thumb reach test
     cts-guided.js      Phalen (timed), Tinel and two-point cards
   camera.js, hand.js, color.js, plain.js, recovery.js, recorder.js,
   livechart.js, chart-theme.js, angles.js, draw.js, history.js, history-panel.js
 tests/               node --test unit tests (assessments, color analysis, detectors)
-validation/          synthetic signal benchmark (npm run benchmark)
+tests/e2e/           browser test of all three conditions with a generated fake camera video
+validation/          synthetic benchmark, Python parity check, 50-person simulated population test
 analysis/            Python re-analysis of exported CSV files
+.github/workflows/   runs every check below on each push
 ```
 
 ## Run it
 
 ```bash
 npm install
-npm run dev        # https://localhost:5173 (self-signed certificate)
-npm test           # unit tests
-npm run benchmark  # synthetic detector benchmark
+npm run dev         # https://localhost:5173 (self-signed certificate)
+npm test            # unit tests (69)
 npm run build
+npm run benchmark   # synthetic detector benchmark
+npm run parity      # Python analysis gives the same recovery time as the app (needs pandas, numpy)
+npm run population  # 50 simulated people: skin types, lights, ages, imperfect answers
+npm run e2e         # real app in Chrome with a fake camera, all three conditions (about 2.5 min)
 ```
+
+GitHub runs all of these on every push (`.github/workflows/test.yml`).
+
+**Optional: serve the hand model yourself.** The app downloads the MediaPipe hand model (about 8 MB) from Google. To host it with the site, so it still works if that link changes, download [hand_landmarker.task](https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task) into `public/models/` and change `MODEL_URL` in `src/hand.js` to `'/models/hand_landmarker.task'`. Test with a real hand before pushing.
 
 Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 
@@ -94,12 +104,17 @@ Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 - Added the thumb reach test and guided Phalen, Tinel and two-point tests (CTS-6).
 - Added one doctor PDF per condition.
 - Removed the thumb tapping test: tapping speed is not part of any carpal tunnel criteria, so it could not support a recommendation.
+- A simulated population test (50 people) found and fixed: "Not sure" answers ending the check as "unlikely", the urgent Raynaud's question hidden behind a "Yes", warning signs ignored when the blue phase was missed, false color changes in dim light, and jitter faking thumb touches. Details: `validation/README.md`.
+- Episode mode now refuses to use the end of a recording as "normal" when a fingertip is still paler or bluer than the base of the finger.
+- The Python analysis matches the app again (it had fallen behind algorithm 3 and episode mode).
+- Accessibility: 44 px touch targets, no text under 12 px, and one short screen-reader announcement when a result changes. axe-core reports 0 issues.
 
 ## Limits
 
 - Camera thresholds are engineering choices tested on synthetic signals and scripted e2e runs, not on real patients.
 - Phone cameras change exposure and white balance. Skin tone, nail polish, lighting and hand position change color readings. Compare a person with their own reference.
 - Self-done Phalen, Tinel and two-point tests are less reliable than when a clinician does them.
+- On darker skin the camera can miss a blue phase under indoor light (simulation: 7–8 of 10 on Fitzpatrick VI, 10 of 10 on I–IV). Dim light is not scored at all.
 - Do not expose hands to cold on purpose to get a result.
 
 ## Author

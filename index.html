@@ -211,9 +211,11 @@
             <p class="block-sub">Updates as you answer and measure.</p>
           </div>
         </header>
-        <div id="result-raynaud" class="result-area" data-only="raynaud" aria-live="polite"></div>
-        <div id="result-trigger" class="result-area" data-only="trigger" aria-live="polite"></div>
-        <div id="result-carpal" class="result-area" data-only="carpal" aria-live="polite"></div>
+        <!-- One short sentence is announced when the conclusion changes, instead of re-reading the whole panel. -->
+        <p id="result-announce" class="sr-only" aria-live="polite"></p>
+        <div id="result-raynaud" class="result-area" data-only="raynaud"></div>
+        <div id="result-trigger" class="result-area" data-only="trigger"></div>
+        <div id="result-carpal" class="result-area" data-only="carpal"></div>
       </section>
 
       <section class="block" id="history" aria-labelledby="h-history">

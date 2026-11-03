@@ -26,3 +26,6 @@ dist-ssr
 # Recordings are personal health data. Keep them on your computer, not on GitHub.
 analysis/*.csv
 analysis/*_plot.png
+
+# Python cache from running analysis/*.py
+__pycache__/

@@ -16,8 +16,9 @@ export const QUESTIONS = [
   { section: 'Your symptoms' },
   { id: 'numb', text: 'Do you get numbness, tingling or pins and needles in your hand?' },
   { id: 'numbFingers', type: 'fingers', text: 'Where do you feel it most?', help: 'Tap every finger that is affected.', showIf: (a) => yes(a, 'numb') },
-  { id: 'night', text: 'Does it wake you up at night?', showIf: (a) => yes(a, 'numb') },
-  { id: 'flick', text: 'Does shaking or flicking your hand make it better?', showIf: (a) => yes(a, 'numb') },
+  // "Not sure" still shows the follow-ups, so an unsure answer does not hide the night question.
+  { id: 'night', text: 'Does it wake you up at night?', showIf: (a) => a.numb === 'yes' || a.numb === 'unsure' },
+  { id: 'flick', text: 'Does shaking or flicking your hand make it better?', showIf: (a) => a.numb === 'yes' || a.numb === 'unsure' },
   { id: 'thenar', text: 'Is the muscle at the base of your thumb flatter than on your other hand, or is your thumb weak (dropping things, trouble with buttons or jars)?' },
   {
     id: 'duration',
@@ -92,7 +93,10 @@ export function assess(a, camera = null) {
   if (missing(a, ['numb', 'thenar']).length || (yes(a, 'numb') && (!(a.numbFingers && a.numbFingers.length) || !answered(a, 'night')))) {
     return out('incomplete');
   }
-  if (!yes(a, 'numb') && !yes(a, 'thenar') && !s.items.thenar) {
+  // "Unlikely" needs a clear "no" to numbness and thumb weakness, and no positive guided test or night symptoms.
+  // A "Not sure", or a positive Phalen or Tinel test, keeps the CTS-6 scoring going.
+  const otherSigns = a.phalen === 'yes' || a.tinel === 'yes' || a.twoPoint === 'yes' || yes(a, 'night');
+  if (a.numb === 'no' && !yes(a, 'thenar') && !s.items.thenar && !otherSigns) {
     t.note('No numbness, tingling or thumb weakness. Carpal tunnel syndrome is unlikely.');
     return out(null);
   }
@@ -112,7 +116,7 @@ export function assess(a, camera = null) {
 
   if (s.items.thenar) {
     t.raise('soon', s.missed && s.missed.includes('pinky') && !yes(a, 'thenar')
-      ? 'In the camera test your thumb could not reach your little finger. Weak thumb muscles can mean the nerve is already damaged, so see a doctor soon.'
+      ? 'In the camera test your thumb could not reach your little finger. Weak thumb muscles can mean the nerve is already damaged, so see a doctor soon. Stiff or arthritic finger joints can also stop the thumb reaching; a doctor can tell these apart.'
       : 'A flatter or weaker thumb muscle can mean the nerve is already being damaged. Damage can become permanent, so see a doctor soon.');
   }
   if (yes(a, 'constant')) t.raise('soon', 'Numbness that never goes away is a sign of more severe nerve compression. See a doctor soon.');
