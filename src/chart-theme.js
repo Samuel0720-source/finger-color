@@ -1,11 +1,11 @@
 import Chart from 'chart.js/auto';
 
 // One place for how every chart looks, so the three tests match.
-export const INK = '#16231F';
-export const MUTED = '#5A6964';
-export const GRID = 'rgba(22, 35, 31, 0.08)';
-export const FOCUS = '#0E6B63'; // the line that matters (middle finger)
-export const OTHER = '#B7C2BE'; // the other fingers, for context only
+export const INK = '#0B1F3A';
+export const MUTED = '#4D5A6D';
+export const GRID = 'rgba(11, 31, 58, 0.1)';
+export const FOCUS = '#0B1F3A'; // the line that matters (middle finger)
+export const OTHER = '#BDB2A0'; // the other fingers, for context only
 export const ALERT = '#B3261E';
 
 Chart.defaults.font.family = "'Instrument Sans Variable', system-ui, sans-serif";

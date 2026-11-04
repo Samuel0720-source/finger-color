@@ -4,32 +4,38 @@
    ========================================================================== */
 
 :root {
-  --paper: #f3f5f4;
-  --surface: #ffffff;
-  --ink: #16231f;
-  --muted: #5a6964;
-  --line: #dce3e0;
-  --line-strong: #c4cfcb;
-  --stage: #0e1715;
+  /* The three brand colors. Change them here and the whole site follows. */
+  --navy: #0b1f3a; /* 60%: the page itself */
+  --cream: #fbf3e4; /* 30%: cards */
+  --coral: #ff7f66; /* 10%: only the button you should press next */
+  --coral-hover: #ff6a4d;
 
-  --act: #0e6b63;
-  --act-hover: #0a5650;
-  --act-soft: #e4f0ee;
-  --warm: #b5470f;
+  /* Default roles: what things look like when they sit directly on navy. */
+  --paper: var(--navy);
+  --surface: var(--navy);
+  --ink: var(--cream);
+  --muted: #c3c8ce;
+  --line: #2a3f5e;
+  --line-strong: #4a5d7a;
+  --stage: #06121f;
 
-  /* Recommendation levels */
-  --lv-incomplete: #6b7472;
+  --act: var(--cream);
+  --act-hover: #ffffff;
+  --act-soft: #1a3050;
+
+  /* Recommendation levels: these report a result, so they are not brand colors. */
+  --lv-incomplete: #6a6f78;
   --lv-low: #1d7a4c;
   --lv-selfcare: #2f7d5b;
-  --lv-routine: #0e6b63;
-  --lv-soon: #b5470f;
+  --lv-routine: #24508f;
+  --lv-soon: #8a5300;
   --lv-urgent: #b3261e;
 
-  /* Finger color states */
+  /* Finger color states: these describe the real color of the finger. */
   --ok: #1d7a4c;
   --pale: #6b7177;
   --blue: #2c56b8;
-  --red: #b3261e;
+  --red: #ffa8a8; /* lighter, so it is readable on navy */
   --dark: #8a4a12;
 
   --r-lg: 16px;
@@ -67,6 +73,29 @@ h4 {
   font-stretch: var(--narrow);
   letter-spacing: -0.01em;
 }
+/* Cream cards. Inside them, the same role names point at dark-on-light colors. */
+.cond,
+.q-section,
+.instrument,
+.well,
+.finger,
+.guided,
+.verdict,
+.history-grid,
+.sources,
+.skip-link {
+  --paper: #f1e6d1;
+  --surface: var(--cream);
+  --ink: var(--navy);
+  --muted: #4d5a6d;
+  --line: #e0d4bc;
+  --line-strong: #a89c86;
+  --act: var(--navy);
+  --act-hover: #16325a;
+  --act-soft: #ece3d1;
+  --red: #b3261e;
+  color: var(--ink); /* without this, text keeps the cream it inherited from body */
+}
 .hidden {
   display: none !important;
 }
@@ -74,7 +103,7 @@ h4 {
   color: var(--muted);
 }
 :focus-visible {
-  outline: 3px solid #7cc7bd;
+  outline: 3px solid var(--ink);
   outline-offset: 2px;
 }
 .skip-link {
@@ -189,7 +218,7 @@ h4 {
 }
 .cond[aria-pressed='true'] {
   border-color: var(--act);
-  box-shadow: inset 0 3px 0 var(--act), 0 8px 24px -14px rgba(14, 107, 99, 0.6);
+  box-shadow: inset 0 3px 0 var(--act), 0 8px 24px -14px rgba(11, 31, 58, 0.6);
 }
 .cond[aria-pressed='true'] strong {
   color: var(--act);
@@ -260,7 +289,7 @@ h4 {
   height: 34px;
   border-radius: 50%;
   font-weight: 700;
-  color: #fff;
+  color: var(--paper);
   background: var(--ink);
 }
 .block-head h2 {
@@ -414,6 +443,7 @@ h4 {
   }
 }
 #stage {
+  --ink: var(--cream);
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 3;
@@ -447,12 +477,12 @@ h4 {
   gap: 4px;
   padding: 24px;
   text-align: center;
-  color: #a9b8b3;
+  color: var(--cream);
   pointer-events: none;
 }
 .stage-empty svg {
   margin-bottom: 6px;
-  color: #7cc7bd;
+  color: var(--cream);
 }
 .stage-empty strong {
   font-size: 17px;
@@ -654,21 +684,23 @@ h4 {
 }
 .btn:disabled {
   cursor: not-allowed;
-  color: #8a9692;
+  color: #7a7466;
   background: var(--paper);
   border-color: var(--line);
 }
-.btn-primary {
-  color: #fff;
-  background: var(--act);
+.btn-primary,
+.btn-warm {
+  color: var(--navy); /* white on coral is too faint to read; navy is not */
+  background: var(--coral);
 }
-.btn-primary:hover:not(:disabled) {
-  background: var(--act-hover);
+.btn-primary:hover:not(:disabled),
+.btn-warm:hover:not(:disabled) {
+  background: var(--coral-hover);
 }
 .btn-secondary {
   color: var(--act);
   background: var(--surface);
-  border-color: #a9cfc9;
+  border-color: var(--act);
 }
 .btn-secondary:hover:not(:disabled) {
   background: var(--act-soft);
@@ -681,16 +713,11 @@ h4 {
 .btn-quiet:hover:not(:disabled) {
   background: var(--paper);
 }
-.btn-warm {
-  color: #fff;
-  background: var(--warm);
-}
-.btn-warm:hover:not(:disabled) {
-  background: #943a0c;
-}
+/* While recording, this is the Stop button. It goes navy so coral points at the next step. */
 .btn-recording,
 .btn-recording:hover:not(:disabled) {
-  background: var(--red);
+  color: var(--cream);
+  background: var(--navy);
 }
 .btn-link {
   min-height: 44px; /* same 44 px touch target as the other buttons; the underline keeps it looking like a link */
@@ -949,7 +976,7 @@ h4 {
   background: var(--surface);
 }
 .guided[data-state='done'] {
-  border-color: #a9cfc9;
+  border-color: var(--line-strong);
 }
 .guided header {
   display: flex;
@@ -1114,7 +1141,7 @@ span.status {
   font-weight: 650;
 }
 span.status.st-yes {
-  color: #fff;
+  color: var(--paper);
   background: var(--ink);
 }
 span.status.st-no {
