@@ -32,7 +32,7 @@ export function drawPhaseStrip(canvas, rows, tWarm) {
 
   FINGERS.forEach((f, i) => {
     const y = i * (rowH + 6);
-    ctx.fillStyle = '#5a6964';
+    ctx.fillStyle = '#4d5a6d';
     ctx.fillText(NAMES[f], 0, y + 15);
     const list = rows.filter((r) => r.finger === f).sort((p, q) => Number(p.t) - Number(q.t));
     list.forEach((r, k) => {
@@ -46,23 +46,23 @@ export function drawPhaseStrip(canvas, rows, tWarm) {
       ctx.fillRect(xa, y, Math.max(1, xb - xa + 0.5), rowH);
     });
     // Thin outline so a white phase is visible against the page.
-    ctx.strokeStyle = '#c4cfcb';
+    ctx.strokeStyle = '#a89c86';
     ctx.lineWidth = 1;
     ctx.strokeRect(labelW + 0.5, y + 0.5, width - labelW - 4, rowH - 1);
   });
 
   if (Number.isFinite(tWarm)) {
     const xw = x(tWarm);
-    ctx.strokeStyle = '#b5470f';
+    ctx.strokeStyle = '#0b1f3a';
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(xw, 0);
     ctx.lineTo(xw, FINGERS.length * (rowH + 6) - 6);
     ctx.stroke();
-    ctx.fillStyle = '#b5470f';
+    ctx.fillStyle = '#0b1f3a';
     ctx.fillText('Warming', Math.min(xw + 4, width - 56), height - 6);
   }
-  ctx.fillStyle = '#5a6964';
+  ctx.fillStyle = '#4d5a6d';
   ctx.fillText('0 s', labelW, height - 6);
   ctx.fillText(`${Math.round(t1 - t0)} s`, width - 36, height - 6);
 }
