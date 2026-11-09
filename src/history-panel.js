@@ -17,6 +17,20 @@ function format(s) {
   return `${s.test === 'catching' ? s.result : Number(s.result).toFixed(1)} ${t.unit}`;
 }
 
+// Saved measurements for the PDF report: [when, what, result], newest last.
+export function historyForReport(mode) {
+  const test = MODE_TEST[mode];
+  if (!test) return [];
+  return loadHistory()
+    .filter((s) => s.test === test)
+    .slice(-20)
+    .map((s) => [
+      new Date(s.savedAt).toLocaleString(),
+      `${TESTS[test].name}${s.context?.hand ? `, ${s.context.hand.toLowerCase()} hand` : ''}${s.algorithm !== TESTS[test].current ? ' (older method)' : ''}`,
+      format(s),
+    ]);
+}
+
 export function createHistoryPanel() {
   const $ = (id) => document.getElementById(id);
   const tbody = $('history-body');

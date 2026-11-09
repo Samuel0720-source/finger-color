@@ -96,9 +96,10 @@ async function triggerTest() {
   await page.evaluate(() => (window.__go = performance.now()));
   await page.waitForTimeout(22500);
   const r = await result(page, 'trigger');
+  const quality = clean(await page.textContent('#trig-detail .quality-note').catch(() => ''));
   const size = await pdf(page, 'trigger');
   await browser.close();
-  assert.equal(r.level, 'soon', r.verdict);
+  assert.equal(r.level, 'soon', quality ? `camera test not scored: ${quality}` : r.verdict);
   assert.match(r.score, /III/);
   assert.match(r.verdict, /catching or snapping \(ring\)/);
   assert.ok(size > 3000, 'PDF is almost empty');
@@ -139,7 +140,11 @@ async function carpalTest() {
 
 let failed = 0;
 const tests = { raynaud: raynaudTest, trigger: triggerTest, carpal: carpalTest };
-const outcomes = await Promise.allSettled(Object.values(tests).map((t) => t()));
+// The trigger test needs 25+ camera frames per second. Run it alone first: sharing a small CI machine
+// with the other two browsers dropped it to 16 fps, and the app (correctly) refused to score it.
+const [triggerOutcome] = await Promise.allSettled([triggerTest()]);
+const [raynaudOutcome, carpalOutcome] = await Promise.allSettled([raynaudTest(), carpalTest()]);
+const outcomes = [raynaudOutcome, triggerOutcome, carpalOutcome];
 Object.keys(tests).forEach((name, i) => {
   const o = outcomes[i];
   if (o.status === 'fulfilled') console.log(`ok   ${name}: ${o.value.level} | ${o.value.score}`);

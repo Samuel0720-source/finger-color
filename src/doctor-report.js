@@ -8,18 +8,18 @@ const LEVEL_RGB = {
   incomplete: [120, 130, 128],
   low: [29, 122, 76],
   selfcare: [29, 122, 76],
-  routine: [14, 107, 99],
-  soon: [181, 71, 15],
+  routine: [36, 80, 143],
+  soon: [138, 83, 0],
   urgent: [179, 38, 30],
 };
 const STATUS = { yes: 'Present', no: 'Absent', unknown: 'Not checked' };
 const METHOD = { camera: 'Camera', test: 'Guided test', answer: 'Reported' };
-const INK = [22, 35, 31];
+const INK = [11, 31, 58];
 const MUTED = [90, 105, 100];
 // Helvetica in jsPDF only has Latin-1; replace the few characters we use that it lacks.
 const clean = (s) => String(s ?? '').replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-').replace(/≥/g, '>=').replace(/≤/g, '<=');
 
-export function makeDoctorReport({ assessment: r, questions, answers, measurements = [], images = [], sources = [], fileName }, { save = true } = {}) {
+export function makeDoctorReport({ assessment: r, questions, answers, measurements = [], images = [], history = [], sources = [], fileName }, { save = true } = {}) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = 170;
   const X = 20;
@@ -50,7 +50,7 @@ export function makeDoctorReport({ assessment: r, questions, answers, measuremen
   const bullets = (list) => list.forEach((s) => text('- ' + s, { indent: 2 }));
 
   doc.setProperties({ title: `Hand check report: ${r.name}`, subject: 'Symptom and camera feature check', author: 'finger-color' });
-  doc.setFillColor(14, 107, 99);
+  doc.setFillColor(11, 31, 58);
   doc.rect(0, 0, 210, 6, 'F');
   text(`Hand check report: ${r.name}`, { bold: true, size: 18 });
   text(`${new Date().toLocaleString()}  |  finger-color.vercel.app  |  Self-assessment, not a diagnosis`, { size: 9, color: MUTED });
@@ -147,6 +147,12 @@ export function makeDoctorReport({ assessment: r, questions, answers, measuremen
       doc.addImage(img.src, 'PNG', X, y, W, h);
       y += h + 4;
     }
+  }
+
+  if (history.length) {
+    heading('Measurement history (saved in this browser)');
+    history.forEach(([when, what, result]) => text(`${when}  ${what}: ${result}`, { size: 9 }));
+    text('Compare like with like: same hand, camera and room.', { size: 8, color: MUTED });
   }
 
   heading('Answers given');
