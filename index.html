@@ -31,12 +31,30 @@
 
     <main>
       <section class="intro">
+        <!-- The glow fades through the three color phases of a Raynaud's episode: white, blue, red. -->
+        <div class="hero-glow" aria-hidden="true"><span class="glow-pale"></span><span class="glow-blue"></span><span class="glow-red"></span></div>
         <h1>Should you see a doctor about your hands?</h1>
-        <p class="lede">
-          Answer questions taken from published clinical criteria, let your camera measure what it can, and see how your
-          hand compares with the hallmark features of three common conditions. You get a clear next step and a report to
-          bring to your appointment. It is not a diagnosis.
-        </p>
+        <div class="hero-foot">
+          <div>
+            <p class="lede">
+              Answer questions taken from published clinical criteria, let your camera measure what it can, and see how your
+              hand compares with the hallmark features of three common conditions. You get a clear next step and a report to
+              bring to your appointment. It is not a diagnosis.
+            </p>
+            <a class="btn btn-primary btn-cta" href="#check">Start the check</a>
+          </div>
+          <svg class="seal" viewBox="0 0 160 160" aria-hidden="true">
+            <defs><path id="seal-ring" d="M80,80 m-60,0 a60,60 0 1,1 120,0 a60,60 0 1,1 -120,0" /></defs>
+            <circle cx="80" cy="80" r="78" class="seal-disc" />
+            <text class="seal-text"><textPath href="#seal-ring" textLength="350" lengthAdjust="spacing">Video is analyzed on your device and never uploaded</textPath></text>
+            <g transform="translate(56 56)" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+              <g transform="scale(2)">
+                <path d="M18 11V6a2 2 0 0 0-4 0v0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8" />
+                  <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+              </g>
+            </g>
+          </svg>
+        </div>
       </section>
 
       <nav class="conditions" id="check" aria-label="Choose a condition">
@@ -184,14 +202,24 @@
             <div id="color-detail"></div>
           </div>
           <div class="well chart-well"><div class="chart-box"><canvas id="chart" aria-label="Color change from normal over time for each finger" role="img"></canvas></div></div>
-          <div class="downloads"><button id="btn-csv" class="btn-link" disabled>Download color data (CSV)</button><button id="btn-events" class="btn-link" disabled>Download events (CSV)</button></div>
+          <div class="report-row">
+            <button type="button" class="btn btn-secondary" data-report="raynaud" disabled>Download PDF report</button>
+            <details class="raw-data"><summary>Raw data for analysis (CSV)</summary>
+              <div class="downloads"><button id="btn-csv" class="btn-link" disabled>Download color data (CSV)</button><button id="btn-events" class="btn-link" disabled>Download events (CSV)</button></div>
+            </details>
+          </div>
         </div>
 
         <!-- Trigger finger readouts -->
         <div class="readout" data-only="trigger">
           <div id="trig-detail"></div>
           <div class="well chart-well"><div class="chart-box"><canvas id="trig-chart" aria-label="Joint angle over time for each finger" role="img"></canvas></div></div>
-          <div class="downloads"><button id="trig-csv" class="btn-link" disabled>Download joint angles (CSV)</button></div>
+          <div class="report-row">
+            <button type="button" class="btn btn-secondary" data-report="trigger" disabled>Download PDF report</button>
+            <details class="raw-data"><summary>Raw data for analysis (CSV)</summary>
+              <div class="downloads"><button id="trig-csv" class="btn-link" disabled>Download joint angles (CSV)</button></div>
+            </details>
+          </div>
         </div>
 
         <!-- Carpal tunnel readouts -->
@@ -199,6 +227,9 @@
           <div id="reach-detail"></div>
           <div class="readout-head"><h3>Guided self-tests</h3><p class="legend-note">Each one is an item of the CTS-6 score. Skipped tests count as "not checked".</p></div>
           <div id="cts-guided" class="guided-grid"></div>
+          <div class="report-row">
+            <button type="button" class="btn btn-secondary" data-report="carpal" disabled>Download PDF report</button>
+          </div>
         </div>
       </section>
 
@@ -224,7 +255,7 @@
             <h2 id="h-history">Measurement history</h2>
             <p class="block-sub">Completed camera measurements, kept in this browser only. Compare like with like: same hand, camera and room.</p>
           </div>
-          <button id="history-csv" class="btn-link" disabled>Download history (CSV)</button>
+          <button type="button" id="history-pdf" class="btn btn-secondary" data-report="current" disabled>Download PDF report</button>
         </header>
         <p id="history-empty" class="hint">No measurements saved yet.</p>
         <div id="history-grid" class="history-grid">
@@ -239,6 +270,9 @@
             </table>
           </div>
         </div>
+        <details class="raw-data"><summary>Raw data for analysis (CSV)</summary>
+          <div class="downloads"><button id="history-csv" class="btn-link" disabled>Download history (CSV)</button></div>
+        </details>
       </section>
 
       <section id="how" class="how" aria-labelledby="h-how">
@@ -287,6 +321,7 @@
         </div>
       </div>
       <p class="credit">Built by Samuel Koo, Biomedical Engineering, University of Waterloo.</p>
+      <p class="wordmark" aria-hidden="true">finger-color</p>
     </footer>
 
     <script type="module" src="/src/main.js"></script>

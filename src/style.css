@@ -38,8 +38,11 @@
   --red: #ffa8a8; /* lighter, so it is readable on navy */
   --dark: #8a4a12;
 
-  --r-lg: 16px;
-  --r-md: 10px;
+  --focus: var(--cream);
+
+  --r-xl: 28px;
+  --r-lg: 22px;
+  --r-md: 14px;
   --r-sm: 6px;
   --page: 1120px;
   --gutter: clamp(16px, 4vw, 32px);
@@ -51,6 +54,7 @@
 }
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 84px; /* the sticky header would otherwise cover what a link jumps to */
 }
 body {
   margin: 0;
@@ -58,7 +62,8 @@ body {
   font-size: 16px;
   line-height: 1.55;
   color: var(--ink);
-  background: var(--paper);
+  /* Navy with a faint film grain, like the dark reference pages. */
+  background: var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E");
   -webkit-font-smoothing: antialiased;
   font-variant-numeric: tabular-nums;
 }
@@ -94,16 +99,20 @@ h4 {
   --act-hover: #16325a;
   --act-soft: #ece3d1;
   --red: #b3261e;
+  --focus: var(--navy);
   color: var(--ink); /* without this, text keeps the cream it inherited from body */
 }
 .hidden {
   display: none !important;
 }
+main {
+  overflow-x: clip; /* the glow is wider than a phone: cut it off at the screen edge */
+}
 .muted {
   color: var(--muted);
 }
 :focus-visible {
-  outline: 3px solid var(--ink);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 .skip-link {
@@ -121,12 +130,18 @@ h4 {
 
 /* ---------- Header and intro ---------- */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: 18px var(--gutter);
+  /* Full-width bar, content lined up with the page column. */
+  padding: 8px max(var(--gutter), calc((100% - var(--page)) / 2 + var(--gutter)));
+  border-bottom: 1px solid rgba(251, 243, 228, 0.08);
+  background: rgba(11, 31, 58, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 .brand {
   display: flex;
@@ -156,22 +171,111 @@ h4 {
   color: var(--ink);
 }
 .intro {
+  position: relative;
+  isolation: isolate;
   max-width: var(--page);
   margin: 0 auto;
-  padding: clamp(8px, 2.4vw, 28px) var(--gutter) 24px;
+  padding: clamp(36px, 7vw, 96px) var(--gutter) clamp(40px, 6vw, 72px);
 }
 .intro h1 {
-  max-width: 17ch;
-  font-size: clamp(32px, 5.2vw, 52px);
-  font-weight: 650;
-  line-height: 1.04;
-  letter-spacing: -0.025em;
+  position: relative;
+  max-width: 11ch;
+  font-size: clamp(54px, 10.4vw, 144px);
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+.hero-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-top: clamp(24px, 3.4vw, 40px);
 }
 .lede {
-  max-width: 66ch;
-  margin: 14px 0 0;
-  font-size: clamp(16px, 1.6vw, 18px);
+  max-width: 54ch;
+  margin: 0 0 24px;
+  font-size: clamp(16px, 1.5vw, 18px);
   color: var(--muted);
+}
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 30px;
+  font-size: 17px;
+  text-decoration: none;
+}
+
+/* The one moving thing on the page: a soft glow that fades white -> blue -> red, the phases of an episode. */
+.hero-glow {
+  position: absolute;
+  z-index: -1;
+  top: -6%;
+  right: -14%;
+  width: min(760px, 92vw);
+  aspect-ratio: 1;
+  filter: blur(48px);
+  pointer-events: none;
+}
+.hero-glow span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  animation: phase 18s ease-in-out infinite;
+}
+.glow-pale {
+  inset: 14% 22% 6% 4%;
+  background: radial-gradient(closest-side, rgba(233, 230, 223, 0.42), transparent);
+  animation-delay: -4s !important;
+}
+.glow-blue {
+  inset: 4% 8% 14% 14%;
+  background: radial-gradient(closest-side, rgba(61, 111, 214, 0.8), transparent);
+  animation-delay: 2s !important;
+}
+.glow-red {
+  inset: 12% 0 4% 22%;
+  background: radial-gradient(closest-side, rgba(168, 50, 58, 0.85), transparent);
+  animation-delay: 8s !important;
+}
+@keyframes phase {
+  0% { opacity: 0; transform: scale(0.86); }
+  16%, 34% { opacity: 1; transform: scale(1); }
+  52%, 100% { opacity: 0; transform: scale(1.08); }
+}
+
+/* Round seal, like the award badges on the reference sites, with a true privacy statement. */
+.seal {
+  flex: none;
+  width: clamp(112px, 12vw, 152px);
+  height: auto;
+  color: var(--navy);
+}
+.seal-disc {
+  fill: var(--cream);
+}
+.seal-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  fill: var(--navy);
+}
+@media (max-width: 640px) {
+  .hero-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .seal {
+    position: absolute;
+    top: 6px;
+    right: var(--gutter);
+    width: 92px;
+  }
+  .intro h1 {
+    max-width: 8ch;
+  }
 }
 
 /* ---------- Condition picker ---------- */
@@ -188,7 +292,7 @@ h4 {
   position: relative;
   display: grid;
   gap: 2px;
-  padding: 16px 18px 40px;
+  padding: 20px 22px 52px;
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   font: inherit;
@@ -196,12 +300,30 @@ h4 {
   color: var(--ink);
   background: var(--surface);
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 .cond strong {
-  font-size: 19px;
-  font-weight: 650;
-  font-stretch: var(--narrow);
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+/* The picked condition is a solid cream card; the others are see-through glass on the navy. */
+.cond[aria-pressed='false'] {
+  --ink: var(--cream);
+  --muted: #c3c8ce;
+  --paper: rgba(251, 243, 228, 0.1);
+  border-color: rgba(251, 243, 228, 0.18);
+  background: rgba(251, 243, 228, 0.05);
+}
+.cond[aria-pressed='false']:hover {
+  background: rgba(251, 243, 228, 0.1);
+  transform: translateY(-2px);
+}
+.cond:focus-visible {
+  outline-color: var(--cream);
+  outline-offset: 4px;
 }
 .cond span {
   color: var(--muted);
@@ -213,15 +335,8 @@ h4 {
   font-size: 13px;
   color: var(--muted);
 }
-.cond:hover {
-  border-color: var(--line-strong);
-}
 .cond[aria-pressed='true'] {
-  border-color: var(--act);
-  box-shadow: inset 0 3px 0 var(--act), 0 8px 24px -14px rgba(11, 31, 58, 0.6);
-}
-.cond[aria-pressed='true'] strong {
-  color: var(--act);
+  border-color: var(--cream);
 }
 /* Each card shows its current conclusion, so all three are visible at a glance. */
 .cond::after {
@@ -268,38 +383,39 @@ h4 {
 .block {
   max-width: var(--page);
   margin: 0 auto;
-  padding: 44px var(--gutter) 0;
+  padding: clamp(64px, 8vw, 104px) var(--gutter) 0;
 }
 .block-head {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: clamp(14px, 2vw, 24px);
+  margin-bottom: 24px;
 }
 .block-head.plain {
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
 }
+/* Big outlined step numbers: the page really is three steps in order. */
 .num {
-  display: inline-grid;
-  place-items: center;
   flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  font-size: clamp(64px, 8vw, 104px);
   font-weight: 700;
-  color: var(--paper);
-  background: var(--ink);
+  font-stretch: 75%;
+  line-height: 0.78;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--cream);
 }
 .block-head h2 {
-  font-size: 26px;
-  font-weight: 650;
-  line-height: 1.25;
+  font-size: clamp(32px, 4.2vw, 52px);
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
 }
 .block-sub {
   max-width: 70ch;
-  margin: 2px 0 0;
+  margin: 10px 0 0;
   font-size: 15px;
   color: var(--muted);
 }
@@ -419,9 +535,9 @@ h4 {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   border: 1px solid var(--line);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   background: var(--surface);
-  box-shadow: 0 1px 2px rgba(22, 35, 31, 0.04), 0 12px 32px -14px rgba(22, 35, 31, 0.14);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.55);
 }
 @media (max-width: 900px) {
   .instrument {
@@ -447,7 +563,7 @@ h4 {
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 3;
-  border-radius: var(--r-md);
+  border-radius: 18px;
   background: var(--stage);
 }
 #stage.is-live {
@@ -671,7 +787,7 @@ h4 {
   min-height: 46px;
   padding: 0 18px;
   border: 1px solid transparent;
-  border-radius: var(--r-md);
+  border-radius: 999px;
   font: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -748,7 +864,7 @@ h4 {
   min-height: 44px;
   padding: 0 12px;
   border: 1px solid var(--line-strong);
-  border-radius: var(--r-md);
+  border-radius: 999px;
   font: inherit;
 }
 
@@ -1044,7 +1160,7 @@ h4 {
   padding: 22px 24px;
   border: 1px solid color-mix(in srgb, var(--lv) 35%, var(--line));
   border-left: 6px solid var(--lv);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   background: color-mix(in srgb, var(--lv) 6%, var(--surface));
 }
 .lv-low { --lv: var(--lv-low); }
@@ -1200,12 +1316,15 @@ span.status.st-unknown {
 /* ---------- How it works ---------- */
 .how {
   max-width: var(--page);
-  margin: 72px auto 0;
+  margin: clamp(88px, 10vw, 128px) auto 0;
   padding: 0 var(--gutter);
 }
 .how > h2 {
-  font-size: 26px;
-  font-weight: 650;
+  font-size: clamp(32px, 4.2vw, 52px);
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
 }
 .how-lede {
   max-width: 72ch;
@@ -1228,8 +1347,9 @@ span.status.st-unknown {
   border-top: 2px solid var(--ink);
 }
 .how-grid h3 {
-  font-size: 19px;
-  font-weight: 650;
+  font-size: 24px;
+  font-weight: 700;
+  font-stretch: 75%;
 }
 .how-grid p {
   margin: 8px 0 0;
@@ -1291,6 +1411,47 @@ span.status.st-unknown {
   margin-top: 28px;
   font-size: 13px;
 }
+/* Giant faint name at the very bottom. */
+.wordmark {
+  margin: 32px 0 0 !important;
+  font-size: clamp(64px, 19vw, 262px) !important;
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: rgba(251, 243, 228, 0.09) !important;
+  user-select: none;
+}
+.site-footer {
+  padding-bottom: 0 !important;
+  overflow: hidden;
+}
+
+/* PDF report button where the CSV links used to be; the CSV files sit in a small drawer for analysis. */
+.report-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin-top: 16px;
+}
+.raw-data {
+  font-size: 14px;
+  color: var(--muted);
+}
+.raw-data summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+.raw-data .downloads {
+  margin-top: 0;
+}
+#history .raw-data {
+  margin-top: 8px;
+}
 
 @media (max-width: 560px) {
   .site-nav a:first-child {
@@ -1318,6 +1479,14 @@ span.status.st-unknown {
   .btn,
   .cond {
     transition: none;
+  }
+  .cond[aria-pressed='false']:hover {
+    transform: none;
+  }
+  /* No movement: show the three phases blended and still. */
+  .hero-glow span {
+    animation: none;
+    opacity: 0.7;
   }
 }
 
