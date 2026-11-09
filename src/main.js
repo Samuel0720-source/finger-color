@@ -9,7 +9,7 @@ import * as carpal from './assess/carpal.js';
 import { mountQuestionnaire } from './questionnaire.js';
 import { renderResult } from './result-panel.js';
 import { LEVELS } from './assess/levels.js';
-import { createHistoryPanel } from './history-panel.js';
+import { createHistoryPanel, historyForReport } from './history-panel.js';
 import { createTriggerPanel } from './tests/trigger-panel.js';
 import { createReachPanel } from './tests/reach-panel.js';
 import { createColorPanel } from './tests/color-panel.js';
@@ -52,6 +52,8 @@ let hand = loadHand();
 
 // Camera results that feed each assessment
 const camera = { raynaud: null, trigger: null, carpal: null };
+// A PDF needs at least one answer or measurement. ready[m] remembers that for each condition.
+const ready = {};
 
 const setStatus = (text) => (statusEl.textContent = text);
 window.onerror = (msg) => setStatus('Something went wrong: ' + msg);
@@ -80,6 +82,9 @@ function assessment(m) {
 function updateResult(m) {
   const r = assessment(m);
   renderResult($('result-' + m), r, { onPdf: (btn) => downloadReport(m, btn) });
+  ready[m] = r.summary.known > 0;
+  document.querySelectorAll(`[data-report="${m}"]`).forEach((b) => (b.disabled = !ready[m]));
+  if (m === mode) $('history-pdf').disabled = !ready[m];
   const card = document.querySelector(`.cond[data-mode="${m}"]`);
   if (card.dataset.level && card.dataset.level !== r.level && m === mode) {
     $('result-announce').textContent = `${CONDITIONS[m].NAME} result: ${LEVELS[r.level].headline}.`;
@@ -105,6 +110,7 @@ function setMode(next) {
   document.querySelectorAll('[data-only]').forEach((el) => el.classList.toggle('hidden', el.dataset.only !== mode));
   octx.clearRect(0, 0, overlay.width, overlay.height);
   historyPanel.setMode(mode);
+  $('history-pdf').disabled = !ready[mode];
 }
 
 // ---------- Hand in view ----------
@@ -273,6 +279,13 @@ function loop(now) {
 
 // ---------- Reports ----------
 
+// Every PDF button outside the Result panel has data-report: which condition it reports on,
+// or "current" for the History button, which follows the condition you picked.
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-report]');
+  if (btn && !btn.disabled) downloadReport(btn.dataset.report === 'current' ? mode : btn.dataset.report, btn);
+});
+
 async function downloadReport(m, btn) {
   btn.disabled = true;
   const label = btn.textContent;
@@ -286,6 +299,7 @@ async function downloadReport(m, btn) {
       answers: forms[m].answers,
       measurements,
       images,
+      history: historyForReport(m),
       sources: SOURCES[m],
       fileName: todayName(m + '_report'),
     });

@@ -47,8 +47,9 @@ export function renderResult(root, r, { onPdf } = {}) {
         ${actions ? `<h4>What to do</h4><ul class="actions-list">${actions}</ul>` : ''}
         <h4>What this check cannot do</h4>
         <ul class="limits">${r.limits.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-        ${onPdf && r.level !== 'incomplete' ? '<button type="button" class="btn btn-primary report-btn">Download report for your doctor (PDF)</button>' : ''}
+        ${onPdf ? `<button type="button" class="btn btn-primary report-btn"${r.summary.known ? '' : ' disabled'}>Download report for your doctor (PDF)</button>` : ''}
+        ${onPdf && r.level === 'incomplete' && r.summary.known ? '<p class="fine-print">The report will say the result is not complete yet. It still lists your answers and measurements.</p>' : ''}
       </section>
     </div>`;
-  if (onPdf && r.level !== 'incomplete') root.querySelector('.report-btn').onclick = (e) => onPdf(e.currentTarget);
+  if (onPdf) root.querySelector('.report-btn').onclick = (e) => onPdf(e.currentTarget);
 }
