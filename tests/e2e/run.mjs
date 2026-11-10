@@ -91,12 +91,20 @@ async function triggerTest() {
   await page.click('[data-hand="Left"]');
   await page.click('#btn-camera-start');
   await page.waitForTimeout(1500);
-  await page.click('#trig-start');
-  await page.waitForTimeout(3300);
-  await page.evaluate(() => (window.__go = performance.now()));
-  await page.waitForTimeout(22500);
+  // The app refuses to score a run with any frame gap over 100 ms. A shared CI machine sometimes
+  // stalls for one frame, so, like a real user, press Start again once if the run was not scored.
+  let quality = '';
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    await page.evaluate(() => (window.__go = undefined)); // fake hand held open during the countdown
+    await page.click('#trig-start');
+    await page.waitForTimeout(3300);
+    await page.evaluate(() => (window.__go = performance.now()));
+    await page.waitForTimeout(22500);
+    quality = clean(await page.textContent('#trig-detail .quality-note').catch(() => ''));
+    if (!quality) break;
+    console.log(`note trigger: attempt ${attempt} not scored (${quality.match(/This attempt: [^.]*/)?.[0] || quality})`);
+  }
   const r = await result(page, 'trigger');
-  const quality = clean(await page.textContent('#trig-detail .quality-note').catch(() => ''));
   const size = await pdf(page, 'trigger');
   await browser.close();
   assert.equal(r.level, 'soon', quality ? `camera test not scored: ${quality}` : r.verdict);
