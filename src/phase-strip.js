@@ -51,6 +51,13 @@ export function drawPhaseStrip(canvas, rows, tWarm) {
     ctx.strokeRect(labelW + 0.5, y + 0.5, width - labelW - 4, rowH - 1);
   });
 
+  // Time labels along the bottom. The end label sits flush right; "Warming" moves left of the
+  // marker when it would run into it, so the two never overlap.
+  const endText = `${Math.round(t1 - t0)} s`;
+  const endW = ctx.measureText(endText).width;
+  ctx.fillStyle = '#4d5a6d';
+  ctx.fillText('0 s', labelW, height - 6);
+  ctx.fillText(endText, width - 4 - endW, height - 6);
   if (Number.isFinite(tWarm)) {
     const xw = x(tWarm);
     ctx.strokeStyle = '#0b1f3a';
@@ -60,11 +67,13 @@ export function drawPhaseStrip(canvas, rows, tWarm) {
     ctx.lineTo(xw, FINGERS.length * (rowH + 6) - 6);
     ctx.stroke();
     ctx.fillStyle = '#0b1f3a';
-    ctx.fillText('Warming', Math.min(xw + 4, width - 56), height - 6);
+    const warmW = ctx.measureText('Warming').width;
+    const right = width - 4 - endW - 8; // keep 8 px clear of the end label
+    let lx = xw + 4; // normally just right of the marker
+    if (lx + warmW > right) lx = Math.min(xw - 4, right) - warmW; // too close to the end: end it before the marker and the end label
+    lx = Math.max(labelW + ctx.measureText('0 s').width + 8, lx); // and never on top of "0 s"
+    ctx.fillText('Warming', lx, height - 6);
   }
-  ctx.fillStyle = '#4d5a6d';
-  ctx.fillText('0 s', labelW, height - 6);
-  ctx.fillText(`${Math.round(t1 - t0)} s`, width - 36, height - 6);
 }
 
 export const PHASE_LEGEND = [

@@ -329,6 +329,24 @@ h3 {
   }
 }
 
+/* ---------- A real recording, so people see what the camera measures ---------- */
+.example {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.example img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-lg);
+}
+.example figcaption {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
 /* ---------- The three steps ---------- */
 .block {
   max-width: var(--container);
