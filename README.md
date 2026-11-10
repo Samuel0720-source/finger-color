@@ -109,6 +109,10 @@ Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 - The Python analysis matches the app again (it had fallen behind algorithm 3 and episode mode).
 - Accessibility: 44 px touch targets, no text under 12 px, and one short screen-reader announcement when a result changes. axe-core reports 0 issues.
 
+## Validation
+
+Each camera test has a fixed protocol and three reports: a dry run of the analysis, a 3-person pilot, and a 10-person study. Report 01 (dry run) is done for trigger finger and Raynaud's: the analysis recovered every answer built into simulated data. Reports 02 and 03 will be the first with real measurements. See [`docs/validation/`](docs/validation/README.md).
+
 ## Limits
 
 - Camera thresholds are engineering choices tested on synthetic signals and scripted e2e runs, not on real patients.

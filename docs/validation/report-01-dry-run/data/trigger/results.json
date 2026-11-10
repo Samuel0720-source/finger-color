@@ -1,0 +1,126 @@
+{
+  "agreement": {
+    "n": 240,
+    "bias": 5.768749999999999,
+    "sd": 4.634559836109249,
+    "loa_low": -3.3149872787741295,
+    "loa_high": 14.852487278774127,
+    "mean_abs_error": 6.212083333333334
+  },
+  "icc": 0.8497751138877213,
+  "found": {
+    "hits": 24,
+    "total": 30,
+    "rate": 0.8
+  },
+  "false_alarm": {
+    "hits": 15,
+    "total": 300,
+    "rate": 0.05
+  },
+  "unscored": {
+    "hits": 4,
+    "total": 40,
+    "rate": 0.1
+  },
+  "checks": {
+    "AC-1": {
+      "result": "Bias +5.8\u00b0",
+      "pass": false,
+      "rule": "Bias within \u00b15\u00b0"
+    },
+    "AC-2": {
+      "result": "-3.3\u00b0 to +14.9\u00b0",
+      "pass": true,
+      "rule": "Both 95% limits within \u00b115\u00b0"
+    },
+    "AC-3": {
+      "result": "ICC 0.85 (10 people)",
+      "pass": true,
+      "rule": "ICC 0.75 or higher"
+    },
+    "AC-4": {
+      "result": "24 of 30 (80%)",
+      "pass": true,
+      "rule": "80% or more of deliberate catches found"
+    },
+    "AC-5": {
+      "result": "15 of 300 (5%)",
+      "pass": true,
+      "rule": "10% or fewer smooth fists flagged"
+    },
+    "AC-6": {
+      "result": "4 of 40 (10%)",
+      "pass": true,
+      "rule": "Fewer than 1 in 5 runs not scored"
+    }
+  },
+  "by_condition": [
+    {
+      "condition": "Normal light",
+      "pairs": 240,
+      "too_small": false,
+      "n": 240,
+      "bias": 5.768749999999999,
+      "sd": 4.634559836109249,
+      "loa_low": -3.3149872787741295,
+      "loa_high": 14.852487278774127,
+      "mean_abs_error": 6.212083333333334
+    },
+    {
+      "condition": "Dim light",
+      "pairs": 24,
+      "too_small": false,
+      "n": 24,
+      "bias": 9.362499999999999,
+      "sd": 4.626935552684482,
+      "loa_low": 0.2937063167384153,
+      "loa_high": 18.431293683261583,
+      "mean_abs_error": 9.745833333333332
+    },
+    {
+      "condition": "Bright light",
+      "pairs": 24,
+      "too_small": false,
+      "n": 24,
+      "bias": 6.204166666666667,
+      "sd": 5.325123323059953,
+      "loa_low": -4.23307504653084,
+      "loa_high": 16.641408379864174,
+      "mean_abs_error": 7.104166666666665
+    },
+    {
+      "condition": "Skin tone: light",
+      "pairs": 96,
+      "too_small": false,
+      "n": 96,
+      "bias": 5.729166666666665,
+      "sd": 4.825849620678571,
+      "loa_low": -3.7294985898633337,
+      "loa_high": 15.187831923196665,
+      "mean_abs_error": 6.172916666666666
+    },
+    {
+      "condition": "Skin tone: medium",
+      "pairs": 72,
+      "too_small": false,
+      "n": 72,
+      "bias": 5.436111111111111,
+      "sd": 4.628792485606197,
+      "loa_low": -3.636322160677035,
+      "loa_high": 14.508544382899256,
+      "mean_abs_error": 6.000000000000001
+    },
+    {
+      "condition": "Skin tone: dark",
+      "pairs": 72,
+      "too_small": false,
+      "n": 72,
+      "bias": 6.154166666666665,
+      "sd": 4.410357128396749,
+      "loa_low": -2.4901333049909624,
+      "loa_high": 14.798466638324292,
+      "mean_abs_error": 6.476388888888888
+    }
+  ]
+}

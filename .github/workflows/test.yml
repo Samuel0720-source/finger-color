@@ -28,6 +28,8 @@ jobs:
         run: |
           pip install pandas numpy
           npm run parity
+      - name: Validation analysis finds the answers built into simulated data
+        run: python analysis/validation/dryrun.py check
       - name: Browser test of all three conditions
         run: |
           npx playwright install --with-deps chromium
