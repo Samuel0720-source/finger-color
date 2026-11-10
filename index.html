@@ -9,6 +9,7 @@
       content="Check your hand symptoms against published clinical criteria for Raynaud's, trigger finger and carpal tunnel syndrome, measure what your phone camera can, and find out whether to see a doctor. Video is never uploaded."
     />
     <meta name="theme-color" content="#0B1F3A" />
+    <link rel="stylesheet" href="./src/style.css" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -31,56 +32,35 @@
 
     <main>
       <section class="intro">
-        <!-- The glow fades through the three color phases of a Raynaud's episode: white, blue, red. -->
-        <div class="hero-glow" aria-hidden="true"><span class="glow-pale"></span><span class="glow-blue"></span><span class="glow-red"></span></div>
-        <h1>Should you see a doctor about your hands?</h1>
-        <div class="hero-foot">
-          <div>
-            <p class="lede">
-              Answer questions taken from published clinical criteria, let your camera measure what it can, and see how your
-              hand compares with the hallmark features of three common conditions. You get a clear next step and a report to
-              bring to your appointment. It is not a diagnosis.
-            </p>
-            <a class="btn btn-primary btn-cta" href="#check">Start the check</a>
-          </div>
-          <svg class="seal" viewBox="0 0 160 160" aria-hidden="true">
-            <defs><path id="seal-ring" d="M80,80 m-60,0 a60,60 0 1,1 120,0 a60,60 0 1,1 -120,0" /></defs>
-            <circle cx="80" cy="80" r="78" class="seal-disc" />
-            <text class="seal-text"><textPath href="#seal-ring" textLength="350" lengthAdjust="spacing">Video is analyzed on your device and never uploaded</textPath></text>
-            <g transform="translate(56 56)" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
-              <g transform="scale(2)">
-                <path d="M18 11V6a2 2 0 0 0-4 0v0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8" />
-                  <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-              </g>
-            </g>
-          </svg>
+        <div class="container intro-inner">
+          <h1>Should a doctor see your hands?</h1>
+          <p class="lead">Answer clinical questions, let your camera measure, and get your next step.</p>
+          <nav class="conditions" id="check" aria-label="Choose a condition">
+            <button class="cond" data-mode="raynaud" aria-pressed="false">
+              <strong>Raynaud's</strong>
+              <span>Fingers turn white or blue in the cold</span>
+              <em>13 features and a color recording</em>
+            </button>
+            <button class="cond" data-mode="trigger" aria-pressed="false">
+              <strong>Trigger finger</strong>
+              <span>A finger clicks, catches or locks</span>
+              <em>6 features and a movement test</em>
+            </button>
+            <button class="cond" data-mode="carpal" aria-pressed="false">
+              <strong>Carpal tunnel</strong>
+              <span>Numb or tingling fingers, often at night</span>
+              <em>The CTS-6 score and guided tests</em>
+            </button>
+          </nav>
+          <p class="intro-note">It is not a diagnosis.</p>
         </div>
       </section>
 
-      <nav class="conditions" id="check" aria-label="Choose a condition">
-        <button class="cond" data-mode="raynaud" aria-pressed="false">
-          <strong>Raynaud's</strong>
-          <span>Fingers turn white or blue in the cold</span>
-          <em>13 features · color recording</em>
-        </button>
-        <button class="cond" data-mode="trigger" aria-pressed="false">
-          <strong>Trigger finger</strong>
-          <span>A finger clicks, catches or locks</span>
-          <em>6 features · movement test</em>
-        </button>
-        <button class="cond" data-mode="carpal" aria-pressed="false">
-          <strong>Carpal tunnel</strong>
-          <span>Numb or tingling fingers, often at night</span>
-          <em>CTS-6 score · guided tests</em>
-        </button>
-      </nav>
-
       <!-- ===== 1. Symptoms ===== -->
-      <section class="block" aria-labelledby="h-symptoms">
+      <section class="block block-form" aria-labelledby="h-symptoms">
         <header class="block-head">
-          <span class="num" aria-hidden="true">1</span>
           <div>
-            <h2 id="h-symptoms">Your symptoms</h2>
+            <h2 id="h-symptoms">1. Your symptoms</h2>
             <p class="block-sub" data-only="raynaud">Questions from the international consensus criteria for Raynaud's phenomenon (2014).</p>
             <p class="block-sub" data-only="trigger">Questions that place trigger finger on the Green scale, grade I to IV.</p>
             <p class="block-sub" data-only="carpal">Questions from the CTS-6, a 6-item clinical score for carpal tunnel syndrome.</p>
@@ -94,9 +74,8 @@
       <!-- ===== 2. Measure ===== -->
       <section class="block" aria-labelledby="h-measure">
         <header class="block-head">
-          <span class="num" aria-hidden="true">2</span>
           <div>
-            <h2 id="h-measure">Measure</h2>
+            <h2 id="h-measure">2. Measure</h2>
             <p class="block-sub" data-only="raynaud">The camera looks for the white, blue and red phases, how many fingers change, a sharp border, and how long the color takes to recover.</p>
             <p class="block-sub" data-only="trigger">The camera follows the middle joint of each finger and the thumb, looking for catches and for joints that do not fully straighten or bend.</p>
             <p class="block-sub" data-only="carpal">Three guided self-tests from the CTS-6, plus a camera test of how well your thumb reaches each fingertip.</p>
@@ -236,9 +215,8 @@
       <!-- ===== 3. Result ===== -->
       <section class="block result-block" aria-labelledby="h-result">
         <header class="block-head">
-          <span class="num" aria-hidden="true">3</span>
           <div>
-            <h2 id="h-result">Result</h2>
+            <h2 id="h-result">3. Result</h2>
             <p class="block-sub">Updates as you answer and measure.</p>
           </div>
         </header>
@@ -276,8 +254,16 @@
       </section>
 
       <section id="how" class="how" aria-labelledby="h-how">
-        <h2 id="h-how">How the check works</h2>
-        <p class="how-lede">Each condition has a list of hallmark features from clinical criteria. The app marks each feature as present, absent or not checked, using your answers, guided tests and the camera, then applies the criteria to suggest a next step.</p>
+        <div class="how-head">
+          <h2 id="h-how">How the check works</h2>
+          <p class="how-lede">Each condition has a list of hallmark features from clinical criteria. The app marks each feature as present, absent or not checked, using your answers, guided tests and the camera, then applies the criteria to suggest a next step.</p>
+        </div>
+        <ol class="flow" aria-label="Diagram: how the check gets from your answers to a next step">
+          <li><strong>Your answers, guided tests and the camera</strong></li>
+          <li><strong>Hallmark features</strong><span>Each marked present, absent or not checked</span></li>
+          <li><strong>Clinical criteria</strong><span>Applied to those features</span></li>
+          <li><strong>A next step</strong><span>And a PDF report for your doctor</span></li>
+        </ol>
         <div class="how-grid">
           <article>
             <h3>Raynaud's</h3>
@@ -310,10 +296,11 @@
     </main>
 
     <footer id="privacy" class="site-footer">
+      <p class="footer-statement">Video is analyzed on your device and never uploaded.</p>
       <div class="footer-cols">
         <div>
           <h2>Privacy</h2>
-          <p>Video is analyzed on your device and never uploaded. Your answers stay in this browser tab and are cleared when you close it. Measurement history is stored only in this browser.</p>
+          <p>Your answers stay in this browser tab and are cleared when you close it. Measurement history is stored only in this browser.</p>
         </div>
         <div>
           <h2>Not a medical device</h2>
@@ -321,7 +308,6 @@
         </div>
       </div>
       <p class="credit">Built by Samuel Koo, Biomedical Engineering, University of Waterloo.</p>
-      <p class="wordmark" aria-hidden="true">finger-color</p>
     </footer>
 
     <script type="module" src="/src/main.js"></script>

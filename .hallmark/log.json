@@ -1,0 +1,34 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "page",
+  "shape": "kept steps, Map / Diagram how-it-works",
+  "theme": "brand",
+  "axes": "dark/display-condensed/warm",
+  "hero": "Corridor",
+  "nav": "edge-aligned",
+  "footer": "statement",
+  "imagery": "product (the live check itself)",
+  "photos": [],
+  "entry": "condition picker in the hero",
+  "fingerprint": "corridor-picker-form-showcase-table-index-diagram-rows-statement",
+  "sections": [
+   "Hero (condition picker)",
+   "Form (symptoms)",
+   "Showcase (measure)",
+   "Table (result)",
+   "Index (history)",
+   "Diagram + Rows (how it works)",
+   "Footer statement"
+  ],
+  "signature": "the three conditions as the hero action, each row showing its live result",
+  "waived": [
+   "77",
+   "28b",
+   "49b"
+  ],
+  "prompt": "a free hand check for Raynauds, trigger finger and carpal tunnel: clinical questions, a camera measurement, a next step and a PDF report",
+  "date": "2026-11-10"
+ }
+]

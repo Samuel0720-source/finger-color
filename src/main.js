@@ -1,6 +1,5 @@
 // Font served from this site (no request to Google). Variable width + weight.
 import '@fontsource-variable/instrument-sans/wdth.css';
-import './style.css';
 import { startCamera, stopCamera, isFrontCamera, tryLockCamera } from './camera.js';
 import { loadHandModel, detectHand } from './hand.js';
 import * as raynaud from './assess/raynaud.js';
