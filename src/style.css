@@ -217,7 +217,31 @@ h3 {
 
 /* ---------- Hero: one centred column, and the action is choosing what is wrong ---------- */
 .intro {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
   padding-block: var(--space-2xl) var(--space-3xl);
+}
+/* The real recording sits faded behind the hero and fades out at both edges,
+   so it reads as the page's texture, not a separate box. */
+.intro-bg {
+  position: absolute;
+  z-index: -1;
+  bottom: 0;
+  left: 50%;
+  width: min(1400px, 160%);
+  height: auto;
+  opacity: 0.22;
+  filter: blur(3px) saturate(1.2); /* soft enough that its own words do not read */
+  transform: translateX(-50%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 45%, black 70%, transparent),
+    linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent, black 45%, black 70%, transparent),
+    linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+  mask-composite: intersect;
+  pointer-events: none;
+  user-select: none;
 }
 .intro-inner {
   display: grid;
@@ -262,12 +286,12 @@ h3 {
   font: inherit;
   text-align: left;
   color: var(--ink);
-  background: var(--color-glass);
+  background: var(--color-paper-2); /* solid, so the photo behind never shows through the text */
   cursor: pointer;
   transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
 }
 .cond:hover {
-  background: var(--color-glass-hover);
+  background: var(--color-paper-3);
 }
 .cond:active {
   transform: translateY(1px);
@@ -327,24 +351,6 @@ h3 {
   .cond em {
     display: none;
   }
-}
-
-/* ---------- A real recording, so people see what the camera measures ---------- */
-.example {
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--gutter);
-}
-.example img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--r-lg);
-}
-.example figcaption {
-  margin-top: var(--space-sm);
-  font-size: var(--text-sm);
-  color: var(--muted);
 }
 
 /* ---------- The three steps ---------- */
