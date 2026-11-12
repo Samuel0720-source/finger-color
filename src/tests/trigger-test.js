@@ -8,6 +8,18 @@ export const SMOOTH_SAMPLES = 3; // ~0.1 s at 30 fps. A 10-sample window would b
 
 export const OPEN_ANGLE = 150; // PIP angle above this = finger open
 export const CLOSED_ANGLE = 120; // PIP angle below this = finger bent
+export const START_MIN_ANGLE = 135; // the countdown starts once the middle finger reads at least this
+export const OPEN_MARGIN = 12; // "open again" = within this many degrees of the person's own open hand
+export const BEND_MARGIN = 30; // "bent" = at least this many degrees below the person's own open hand
+
+// Fist lines for one finger, set from how straight that finger read during the countdown.
+// Some hands never read above about 150-155° with the palm toward the camera (pilot: app 152°
+// while a goniometer read the same finger as straight), so fixed lines missed real fists.
+// The lines only ever get easier than the fixed ones, never stricter.
+export function cycleLimits(openRef) {
+  if (!Number.isFinite(openRef)) return { open: OPEN_ANGLE, closed: CLOSED_ANGLE };
+  return { open: Math.min(OPEN_ANGLE, openRef - OPEN_MARGIN), closed: Math.min(CLOSED_ANGLE, openRef - BEND_MARGIN) };
+}
 
 // samples: [{ t: ms, angle: degrees }, ...] for one finger
 // Checks a whole time window instead of two frames, because the model wobbles a few degrees every frame.
@@ -38,14 +50,14 @@ export function findCatches(samples) {
   return catches;
 }
 
-// One cycle = finger goes from bent (below CLOSED_ANGLE) back to open (above OPEN_ANGLE).
+// One cycle = finger goes from bent (below the closed line) back to open (above the open line).
 // Two limits instead of one so wobbling around a single limit is not counted many times.
-export function countCycles(angles) {
+export function countCycles(angles, limits = cycleLimits()) {
   let bent = false;
   let cycles = 0;
   for (const a of angles) {
-    if (!bent && a < CLOSED_ANGLE) bent = true;
-    else if (bent && a > OPEN_ANGLE) {
+    if (!bent && a < limits.closed) bent = true;
+    else if (bent && a > limits.open) {
       bent = false;
       cycles++;
     }
@@ -54,7 +66,7 @@ export function countCycles(angles) {
 }
 
 // times: ms, rawAngles: degrees for ONE finger
-export function summarizeFinger(times, rawAngles) {
+export function summarizeFinger(times, rawAngles, limits = cycleLimits()) {
   if (times.length < 2) return { cycles: 0, catches: [], rangeDeg: 0, maxOpenSpeed: 0, maxAngle: NaN, minAngle: NaN, smoothed: rawAngles };
   const angles = smooth(rawAngles, SMOOTH_SAMPLES);
   const samples = times.map((t, i) => ({ t, angle: angles[i] }));
@@ -68,7 +80,7 @@ export function summarizeFinger(times, rawAngles) {
   }
 
   return {
-    cycles: countCycles(angles),
+    cycles: countCycles(angles, limits),
     catches: findCatches(samples),
     rangeDeg: Math.max(...angles) - Math.min(...angles),
     maxAngle: Math.max(...angles), // how straight it got (trigger finger grade III/IV if low)
