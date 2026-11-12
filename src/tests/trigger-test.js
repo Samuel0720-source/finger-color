@@ -4,6 +4,8 @@ export const STUCK_RANGE = 8; // degrees: moved less than this during MIN_STUCK_
 export const MIN_STUCK_MS = 150;
 export const SNAP_DEG = 25; // degrees gained...
 export const SNAP_MS = 120; // ...within this time after being stuck = finger snapped open
+export const FIST_LOOKBACK_MS = 1500; // look this far back for the bottom of the fist
+export const ABOVE_FIST_DEG = 15; // a catch pause must sit at least this far above that bottom
 export const SMOOTH_SAMPLES = 3; // ~0.1 s at 30 fps. A 10-sample window would blur the snap away.
 
 export const OPEN_ANGLE = 150; // PIP angle above this = finger open
@@ -34,7 +36,12 @@ export function findCatches(samples) {
     if(now.t-samples[start].t>=MIN_STUCK_MS){
       const window=samples.slice(start,i+1).map(s=>s.angle);
       const lo=Math.min(...window),hi=Math.max(...window),mid=(lo+hi)/2;
-      if(hi-lo<STUCK_RANGE&&mid>100&&mid<165)lastStuck={t:now.t,angle:mid,pauseMs:now.t-samples[start].t};
+      // The pause must be on the way OUT of a fist, not the fist itself. Pilot P01: thumb and
+      // little finger fists read 100-130°, inside the mid-bend range, so every held fist
+      // followed by a quick opening was counted as a catch.
+      let bottom=lo;
+      for(let j=start-1;j>=0&&samples[start].t-samples[j].t<=FIST_LOOKBACK_MS;j--)if(Number.isFinite(samples[j].angle))bottom=Math.min(bottom,samples[j].angle);
+      if(hi-lo<STUCK_RANGE&&mid>100&&mid<165&&mid-bottom>=ABOVE_FIST_DEG)lastStuck={t:now.t,angle:mid,pauseMs:now.t-samples[start].t};
     }
     if(lastStuck&&now.t>lastStuck.t&&now.t-lastStuck.t<=SNAP_MS){
       const gained=now.angle-lastStuck.angle;
