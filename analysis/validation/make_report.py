@@ -151,8 +151,9 @@ def block_replay(d):
     out += ["**Middle-finger cycles counted (10 fists were made)**", "",
             "| Person | Run | Open hand read | With the old fixed lines (150° / 120°) | With the person's own open hand |", "| --- | --- | --- | --- | --- |"]
     for _, r in cy.iterrows():
-        out.append(f"| {r['participant']} | {r['run']} | {r['open_ref_deg']:.0f}° | {int(r['cycles_fixed_lines'])} | {int(r['cycles_own_open_hand'])} |")
-    out += ["", "The fixed lines are what the app used before 12 Nov (c74e3a4). Replaying cannot test the countdown start, because the recording begins after it.", ""]
+        est = "" if r.get("open_ref_source", "screen") == "screen" else " (estimated)"
+        out.append(f"| {r['participant']} | {r['run']} | {r['open_ref_deg']:.0f}°{est} | {int(r['cycles_fixed_lines'])} | {int(r['cycles_own_open_hand'])} |")
+    out += ["", "\"(estimated)\" means the screen value was not written down, so the open hand was taken as the middle finger's median in the first second of the file. The fixed lines are what the app used before 12 Nov (c74e3a4). Replaying cannot test the countdown start, because the recording begins after it.", ""]
 
     # 3. Every catch found
     out += ["**Every catch the detector found in the recordings**", "",
@@ -160,9 +161,14 @@ def block_replay(d):
     for _, r in ev.iterrows():
         out.append(f"| {r['participant']} | {r['run']} | {r['kind']} | {r['finger'].capitalize()} | {r['t_s']:.1f} s | {r['angle_deg']:.0f}° | {r['pause_ms']:.0f} ms | {r['gain_deg']:.0f}° in {r['snap_ms']:.0f} ms | {int(r['others_closed'])} |")
     if len(ev):
-        out += ["", f"\"Others still closed\" counts the other four fingers that had not yet risen 15° from the lowest point of their fist when the pause ended. "
-                f"In {int((ev['others_closed'] >= 2).sum())} of {len(ev)} events at least 2 were still closed; in {int((ev['others_closed'] >= 3).sum())} of {len(ev)}, at least 3. "
-                "A real catch happens while the hand is opening, so this may separate the two. It is a description of these recordings, not a tested rule."]
+        real = ev[(ev["kind"] == "catch") & (ev["finger"] == "middle")]["others_closed"]
+        false = ev[(ev["kind"] == "smooth") & (ev["finger"] == "thumb")]["others_closed"]
+        out += ["", "\"Others still closed\" counts the other four fingers that had not yet risen 15° from the lowest point of their fist when the pause ended. "
+                "A rule \"ignore a pause while 2 or more others are still closed\" was the candidate for the thumb problem. "
+                f"Deliberate middle-finger catches (these should be kept) had {', '.join(str(int(x)) for x in real)} others closed; "
+                f"thumb catches in smooth runs (these should be dropped) had {', '.join(str(int(x)) for x in false)}. "
+                + ("The two groups overlap, so this rule would drop real catches. " if len(real) and len(false) and real.max() >= 2 else "The two groups do not overlap. ")
+                + "It is a description of these recordings, not a rule in the app."]
     return "\n".join(out)
 
 

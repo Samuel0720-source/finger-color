@@ -1,36 +1,36 @@
 {
   "agreement": {
-    "n": 8,
-    "bias": 1.5,
-    "sd": 9.913915184512842,
-    "loa_low": -17.93127376164517,
-    "loa_high": 20.93127376164517,
-    "mean_abs_error": 6.75
+    "n": 16,
+    "bias": 1.6875,
+    "sd": 8.692669325356855,
+    "loa_low": -15.350131877699436,
+    "loa_high": 18.725131877699436,
+    "mean_abs_error": 5.5625
   },
   "icc": NaN,
   "found": {
-    "hits": 3,
-    "total": 3,
+    "hits": 9,
+    "total": 9,
     "rate": 1.0
   },
   "false_alarm": {
     "hits": 0,
-    "total": 37,
+    "total": 51,
     "rate": 0.0
   },
   "unscored": {
     "hits": 2,
-    "total": 6,
-    "rate": 0.3333333333333333
+    "total": 8,
+    "rate": 0.25
   },
   "checks": {
     "AC-1": {
-      "result": "Bias +1.5\u00b0",
+      "result": "Bias +1.7\u00b0",
       "pass": true,
       "rule": "Bias within \u00b15\u00b0"
     },
     "AC-2": {
-      "result": "-17.9\u00b0 to +20.9\u00b0",
+      "result": "-15.4\u00b0 to +18.7\u00b0",
       "pass": false,
       "rule": "Both 95% limits within \u00b115\u00b0"
     },
@@ -40,17 +40,17 @@
       "rule": "ICC 0.75 or higher"
     },
     "AC-4": {
-      "result": "3 of 3 (100%)",
+      "result": "9 of 9 (100%)",
       "pass": true,
       "rule": "80% or more of deliberate catches found"
     },
     "AC-5": {
-      "result": "0 of 37 (0%)",
+      "result": "0 of 51 (0%)",
       "pass": true,
       "rule": "10% or fewer smooth fists flagged"
     },
     "AC-6": {
-      "result": "2 of 6 (33%)",
+      "result": "2 of 8 (25%)",
       "pass": false,
       "rule": "Fewer than 1 in 5 runs not scored"
     }
@@ -58,14 +58,14 @@
   "by_condition": [
     {
       "condition": "Normal light",
-      "pairs": 8,
+      "pairs": 16,
       "too_small": false,
-      "n": 8,
-      "bias": 1.5,
-      "sd": 9.913915184512842,
-      "loa_low": -17.93127376164517,
-      "loa_high": 20.93127376164517,
-      "mean_abs_error": 6.75
+      "n": 16,
+      "bias": 1.6875,
+      "sd": 8.692669325356855,
+      "loa_low": -15.350131877699436,
+      "loa_high": 18.725131877699436,
+      "mean_abs_error": 5.5625
     }
   ]
 }
