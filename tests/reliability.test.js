@@ -6,7 +6,7 @@ import { loadHistory, saveSession } from '../src/history.js';
 import { toCSV } from '../src/recorder.js';
 import { correctWithCard, toLinear, linearToLab, averageRGB } from '../src/color.js';
 import { startCamera } from '../src/camera.js';
-import { findCatches, countCycles } from '../src/tests/trigger-test.js';
+import { findCatches, countCycles, cycleLimits } from '../src/tests/trigger-test.js';
 
 const world = gap => {
   const w = Array.from({ length: 21 }, () => ({ x: 0, y: 0, z: 0 }));
@@ -32,6 +32,18 @@ test('sRGB conversion preserves black, D65 white and primary red',()=>{const b=l
 test('sampling outside the canvas returns null',()=>assert.equal(averageRGB({canvas:{width:100,height:100}},150,150,10),null));
 test('camera tracks stop if video playback fails',async()=>{let stopped=false;Object.defineProperty(globalThis,'navigator',{configurable:true,value:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:()=>stopped=true}]})}}});const video={play:async()=>{throw Error('blocked')}};await assert.rejects(startCamera(video));assert.equal(stopped,true);assert.equal(video.srcObject,null);});
 test('cycle hysteresis ignores jitter and counts a full bend/open',()=>assert.equal(countCycles([170,119,125,118,130,151,149,151]),1));
+test('a hand that reads only about 150° when open still has its fists counted',()=>{
+  // Pilot, 11 Nov 2026: the app read 152° for a straight middle finger that a goniometer read as straight.
+  const fists=[150,90,145,92,148,88,143,95,149];
+  assert.equal(countCycles(fists),0); // fixed lines: opening never passes 150°, so nothing counts
+  assert.equal(countCycles(fists,cycleLimits(150)),4);
+});
+test('fist lines never get stricter than the fixed ones',()=>{
+  assert.deepEqual(cycleLimits(178),{open:150,closed:120});
+  assert.deepEqual(cycleLimits(150),{open:138,closed:120});
+  assert.deepEqual(cycleLimits(140),{open:128,closed:110});
+  assert.deepEqual(cycleLimits(NaN),{open:150,closed:120});
+});
 test('catch detector identifies a sustained pause followed by a snap',()=>{const samples=Array.from({length:12},(_,i)=>({t:i*30,angle:i<10?120:160}));assert.equal(findCatches(samples).length,1);});
 
 test('single-frame angle spike does not become a catch',()=>{const s=Array.from({length:20},(_,i)=>({t:i*33,angle:i===12?160:120}));assert.equal(findCatches(s).length,0);});

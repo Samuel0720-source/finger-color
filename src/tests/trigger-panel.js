@@ -1,7 +1,7 @@
 import { Chart, lineStyle, ALERT } from '../chart-theme.js';
 import { JOINTS, pipAngles } from '../angles.js';
 import { FINGER_CHAINS, drawChain, drawDot } from '../draw.js';
-import { summarizeFinger, OPEN_ANGLE, CLOSED_ANGLE } from './trigger-test.js';
+import { summarizeFinger, cycleLimits, START_MIN_ANGLE } from './trigger-test.js';
 import { downloadRows } from '../recorder.js';
 import { saveSession } from '../history.js';
 
@@ -11,10 +11,17 @@ const TARGET_CYCLES = 10;
 const MAX_MS = 60000;
 const CHART_EVERY_MS = 100;
 const EXTRA_MS = 500; // keep recording a little after the last cycle so the smoothed angle also reaches 'open'
+const COUNTDOWN_MS = 3000;
+const DIP_GRACE_MS = 400; // a short wobble below the start line does not restart the countdown
 
 // Quality rules from the reliability review: a score needs 10 cycles, 25+ fps and no gap over 100 ms.
 export const MIN_FPS = 25;
 export const MAX_GAP_MS = 100;
+
+function median(values) {
+  const v = values.filter(Number.isFinite).sort((a, b) => a - b);
+  return v.length ? v[Math.floor(v.length / 2)] : NaN;
+}
 
 export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, fileName, getContext }) {
   const $ = (id) => document.getElementById(id);
@@ -26,6 +33,10 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
   let running = false;
   let preparing = false;
   let readyAt = null;
+  let lastOpenAt = 0;
+  let openSamples = []; // angles seen during the countdown
+  let openRef = {}; // each finger's own "open" angle, the median of the countdown
+  let limits = cycleLimits(); // middle finger fist lines used for the live count
   let t0 = 0;
   let samples = [];
   let bent = false;
@@ -63,6 +74,9 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     running = true;
     preparing = true;
     readyAt = null;
+    openSamples = [];
+    openRef = {};
+    limits = cycleLimits();
     samples = [];
     bent = false;
     cycles = 0;
@@ -112,7 +126,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     }
     const times = samples.map((s) => s.t);
     const perFinger = {};
-    for (const f of FINGERS) perFinger[f] = summarizeFinger(times, samples.map((s) => s[f]));
+    for (const f of FINGERS) perFinger[f] = summarizeFinger(times, samples.map((s) => s[f]), cycleLimits(openRef[f]));
     showDetail(perFinger);
     drawFinalChart(times, perFinger);
     const totalCatches = FINGERS.reduce((sum, f) => sum + perFinger[f].catches.length, 0);
@@ -141,7 +155,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
         <thead><tr><th>Finger</th><th>Straightest</th><th>Most bent</th><th>Cycles</th><th>Catches</th></tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
-      <p class="fine-print">Recording quality: ${quality.fps.toFixed(0)} fps, largest gap ${quality.maxFrameGap.toFixed(0)} ms, ${quality.cycles} middle-finger cycles. A catch is a pause of 150 ms or more in mid-bend (100 to 165°) followed by opening at least 25° within 120 ms. Engineering rule, not a clinical cut-off.</p>`;
+      <p class="fine-print">Recording quality: ${quality.fps.toFixed(0)} fps, largest gap ${quality.maxFrameGap.toFixed(0)} ms, ${quality.cycles} middle-finger cycles. Your open hand read ${openRef.middle.toFixed(0)}° for the middle finger, so a fist counted below ${limits.closed.toFixed(0)}° and opening above ${limits.open.toFixed(0)}°. A catch is a pause of 150 ms or more in mid-bend (100 to 165°) followed by opening at least 25° within 120 ms. Engineering rule, not a clinical cut-off.</p>`;
   }
 
   function drawFinalChart(times, perFinger) {
@@ -170,7 +184,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     const angles = pipAngles(hand.world);
 
     for (const f of FINGERS) {
-      const color = angles[f] > OPEN_ANGLE ? '#22c55e' : angles[f] < CLOSED_ANGLE ? '#f97316' : '#facc15';
+      const lim = cycleLimits(openRef[f]);
+      const color = angles[f] > lim.open ? '#22c55e' : angles[f] < lim.closed ? '#f97316' : '#facc15';
       drawChain(octx, hand.image, FINGER_CHAINS[f], color);
       drawDot(octx, hand.image[JOINTS[f][1]], color);
     }
@@ -180,14 +195,22 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
       return;
     }
     if (preparing) {
-      if (!FINGERS.every((f) => Number.isFinite(angles[f])) || angles.middle < OPEN_ANGLE) {
+      const open = FINGERS.every((f) => Number.isFinite(angles[f])) && angles.middle >= START_MIN_ANGLE;
+      if (open) lastOpenAt = now;
+      if (!open && (readyAt === null || now - lastOpenAt > DIP_GRACE_MS)) {
         readyAt = null;
-        liveEl.textContent = 'Hold your hand open, palm toward the camera, to start the countdown.';
+        openSamples = [];
+        liveEl.textContent = Number.isFinite(angles.middle)
+          ? `Open your hand fully, palm toward the camera. Middle finger ${angles.middle.toFixed(0)}°; the countdown starts at ${START_MIN_ANGLE}°.`
+          : 'Hold your hand open, palm toward the camera, to start the countdown.';
         return;
       }
       if (readyAt === null) readyAt = now;
-      liveEl.textContent = 'Keep it open. Starting in ' + Math.max(1, Math.ceil((3000 - (now - readyAt)) / 1000));
-      if (now - readyAt < 3000) return;
+      if (open) openSamples.push(angles);
+      liveEl.textContent = 'Keep it open. Starting in ' + Math.max(1, Math.ceil((COUNTDOWN_MS - (now - readyAt)) / 1000));
+      if (now - readyAt < COUNTDOWN_MS) return;
+      for (const f of FINGERS) openRef[f] = median(openSamples.map((s) => s[f]));
+      limits = cycleLimits(openRef.middle);
       preparing = false;
       t0 = now;
       setStatus('Bend and open at a comfortable speed. Stop if it hurts.');
@@ -202,8 +225,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     lastTracked = t;
     samples.push({ t, ...angles });
 
-    if (!bent && angles.middle < CLOSED_ANGLE) bent = true;
-    else if (bent && angles.middle > OPEN_ANGLE) {
+    if (!bent && angles.middle < limits.closed) bent = true;
+    else if (bent && angles.middle > limits.open) {
       bent = false;
       cycles++;
     }

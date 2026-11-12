@@ -264,3 +264,14 @@ test('Carpal: a clear "no" to everything is still "unlikely"', () => {
 test('Raynaud: a camera result that was not scored is treated as no camera result', () => {
   assert.doesNotThrow(() => raynaud.assess({ cold: Y, white: Y, blue: Y }, { ok: false, reason: 'too noisy' }));
 });
+
+test('a finger that stays bent is found even when the camera reads the open hand as only about 150°', () => {
+  const low = (o = {}) => open({ maxAngle: 152, ...o });
+  const r = trigger.assess(tfNone, camFingers({ thumb: thumbOpen({ maxAngle: 150 }), index: low(), middle: low({ maxAngle: 149 }), ring: low({ maxAngle: 154 }), pinky: low({ maxAngle: 128 }) }));
+  assert.deepEqual(r.camera.cannotStraighten, ['pinky']);
+});
+test('a hand that reads about 150° when open is not flagged as unable to straighten', () => {
+  const low = (o = {}) => open({ maxAngle: 152, ...o });
+  const r = trigger.assess(tfNone, camFingers({ thumb: thumbOpen({ maxAngle: 150 }), index: low(), middle: low({ maxAngle: 147 }), ring: low({ maxAngle: 154 }), pinky: low({ maxAngle: 145 }) }));
+  assert.deepEqual(r.camera.cannotStraighten, []);
+});
