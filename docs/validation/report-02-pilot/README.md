@@ -12,6 +12,7 @@ Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.2. Raynaud's part not st
 | 11 Nov 2026 | P01 | Smooth fists and deliberate catches, 2 runs | c74e3a4 | Neither run scored: the countdown did not start on the first tries, then 9 and 7 of 10 fists were counted. Cause and fix below. |
 | 12 Nov 2026 | P02 (friend of the author) | Run 1 smooth fists | d75db24 | Scored on the first try, 60 fps, open middle finger read 141°. Middle 0 catches; thumb 3 (false). Raw CSV saved. No still angles or catch run yet. |
 | 12 Nov 2026 | P01 | Run 5 smooth fists, after the thumb fix | d75db24 | Scored, 59 fps, open hand 154°. Middle 0 catches. Thumb 2 (was 6), all other fingers 0. |
+| 12 Nov 2026 | P01, P02 | P01 run 6 and P02 run 2: deliberate catches on fists 3, 6, 9 (raw CSVs); a second sheet of 8 still-angle pairs (entered as P01 session 2) | not recorded | Replay finds 3 of 3 middle-finger catches in each run. Bent pairs within 5° of the goniometer; straight pair 21° short. The thumb rule tested on these runs failed, so it was not added. |
 | 12 Nov 2026 | P01 | Run 3 smooth fists, run 4 catches on fists 3, 6 and 9 | c9727ef | Both scored, 60 fps. Open hand read 146° and 151°. Middle finger: 0 false catches, 3 of 3 deliberate catches found. Thumb and little finger flagged held fists as catches; fixed below. |
 
 ## What the first session found
