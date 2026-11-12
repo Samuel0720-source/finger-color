@@ -6,7 +6,7 @@ import { loadHistory, saveSession } from '../src/history.js';
 import { toCSV } from '../src/recorder.js';
 import { correctWithCard, toLinear, linearToLab, averageRGB } from '../src/color.js';
 import { startCamera } from '../src/camera.js';
-import { findCatches, countCycles, cycleLimits } from '../src/tests/trigger-test.js';
+import { findCatches, countCycles, cycleLimits, ABOVE_FIST_DEG } from '../src/tests/trigger-test.js';
 
 const world = gap => {
   const w = Array.from({ length: 21 }, () => ({ x: 0, y: 0, z: 0 }));
@@ -44,7 +44,22 @@ test('fist lines never get stricter than the fixed ones',()=>{
   assert.deepEqual(cycleLimits(140),{open:128,closed:110});
   assert.deepEqual(cycleLimits(NaN),{open:150,closed:120});
 });
-test('catch detector identifies a sustained pause followed by a snap',()=>{const samples=Array.from({length:12},(_,i)=>({t:i*30,angle:i<10?120:160}));assert.equal(findCatches(samples).length,1);});
+// Fist at 85°, then out to 120°, paused there, then snapped open: a catch on the way out.
+const fistPauseSnap=(fist,pause)=>[
+  ...Array.from({length:15},(_,i)=>({t:i*30,angle:fist})),
+  ...Array.from({length:10},(_,i)=>({t:450+i*30,angle:pause})),
+  {t:750,angle:160},{t:780,angle:160}];
+test('catch detector identifies a sustained pause followed by a snap',()=>{assert.equal(findCatches(fistPauseSnap(85,120)).length,1);});
+test('a held fist that reads in mid-bend is not a catch',()=>{
+  // Pilot P01: thumb and little finger fists read 100-130°. Holding the fist, then opening fast,
+  // is a normal fist, not a pause on the way out.
+  assert.equal(findCatches(fistPauseSnap(120,120)).length,0);
+  assert.equal(findCatches(fistPauseSnap(110,118)).length,0);
+});
+test('a pause must sit at least ABOVE_FIST_DEG above the fist',()=>{
+  assert.equal(findCatches(fistPauseSnap(120-ABOVE_FIST_DEG,120)).length,1);
+  assert.equal(findCatches(fistPauseSnap(120-ABOVE_FIST_DEG+2,120)).length,0);
+});
 
 test('single-frame angle spike does not become a catch',()=>{const s=Array.from({length:20},(_,i)=>({t:i*33,angle:i===12?160:120}));assert.equal(findCatches(s).length,0);});
 test('missing angle frames cannot supply a pause-and-release',()=>{const s=[...Array.from({length:10},(_,i)=>({t:i*30,angle:120})),{t:800,angle:160},{t:830,angle:160}];assert.equal(findCatches(s).length,0);});
