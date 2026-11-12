@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Version | 1.0, 10 Nov 2026 |
+| Version | 1.1, 11 Nov 2026 (changes at the end) |
 | Author | Samuel Koo |
 | Applies to | Reports 01 (dry run), 02 (pilot) and 03 (full study) |
 
@@ -35,7 +35,7 @@ Set before any data is collected.
 
 - finger-color web app; record the Git commit and the browser.
 - One laptop or phone camera, the same one for every session.
-- Finger goniometer with 1° marks.
+- Goniometer, placed on the back of the finger. Write down whether it reads 0° or 180° for a straight finger and the size of its marks.
 
 The app reads 180° for a straight finger and the goniometer reads 0°, so the analysis uses app bend = 180° − app angle.
 
@@ -47,9 +47,9 @@ Adults (18+) with no hand injury, ideally with a mix of skin tones and hand size
 
 Hand 30 to 40 cm from the camera, palm facing it, plain background, normal room light.
 
-1. **Still angles.** The person holds the middle finger straight, at about 45°, at about 90° and fully bent. At each position, write down the app's live angle and the goniometer reading at the middle joint (PIP). Repeat with the index finger.
+1. **Still angles.** Start the camera only (not the test). The person holds the middle finger in at least 8 positions from fully straight to fully bent. At each position, read the app's live "Middle finger" angle three times about a second apart and keep the middle value, then place the goniometer on the back of the finger over the middle joint (PIP) and read it. Exact angles do not matter; a spread from straight to fully bent does.
 2. **Smooth fists.** Run the app's trigger finger test: 10 slow, smooth fists. Write down whether it was scored, how many catches it found (should be 0), and the frames per second.
-3. **Deliberate catches.** Run the test again. On fists 3, 6 and 9, pause halfway for about half a second, then snap the finger open. Write down which fists were flagged.
+3. **Deliberate catches.** Run the test again. On fists 3, 6 and 9, make a full fist, open halfway, pause for about half a second, then snap the finger open. (A real trigger finger usually catches on the way out of a fist. A half-bend that never reaches a fist is not counted as a fist.) Write down the catch lines the app lists.
 4. **Repeat** steps 1 and 2 on two more days (3 sessions in total).
 5. **Light.** For 3 people, repeat step 1 in dim light and in bright window light.
 
@@ -82,3 +82,10 @@ No data point is removed unless the report says which one and why.
 - Bland JM, Altman DG. Statistical methods for assessing agreement between two methods of clinical measurement. *Lancet*, 1986.
 - Koo TK, Li MY. A guideline of selecting and reporting intraclass correlation coefficients for reliability research. *Journal of Chiropractic Medicine*, 2016.
 - Shrout PE, Fleiss JL. Intraclass correlations: uses in assessing rater reliability. *Psychological Bulletin*, 1979.
+
+## Changes
+
+| Version | Date | Change | Why |
+| --- | --- | --- | --- |
+| 1.1 | 11 Nov 2026 | Still angles: middle finger only, at least 8 positions, three readings per position. Catch step: full fist first, then pause on the way out. Goniometer type recorded. | Pilot P01: the app shows a live angle for the middle finger only; a half-bend catch was not counted as a fist; the goniometer used reads 180° for straight. |
+| 1.0 | 10 Nov 2026 | First version | |

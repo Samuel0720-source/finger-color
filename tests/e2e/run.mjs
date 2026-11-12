@@ -8,7 +8,7 @@ import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { writeEpisodeVideo, writeBlankVideo } from './video.mjs';
-import { colorHand, triggerHand, reachHand } from './fake-hands.mjs';
+import { colorHand, triggerHand, pilotHand, reachHand } from './fake-hands.mjs';
 
 const dir = mkdtempSync(join(tmpdir(), 'finger-color-e2e-'));
 const episode = join(dir, 'episode.y4m');
@@ -85,8 +85,8 @@ async function raynaudTest() {
   return r;
 }
 
-async function triggerTest() {
-  const { browser, page, errors } = await openApp(blank, triggerHand, '#trigger');
+async function triggerTest(hand = triggerHand) {
+  const { browser, page, errors } = await openApp(blank, hand, '#trigger');
   await answer(page, 'trigger', [['catching', 'yes'], ['fingers', 'ring'], ['fingers', 'pinky'], ['needHelp', 'no'], ['cantBend', 'no'], ['stuckBent', 'no'], ['morning', 'yes'], ['duration', 'lt6w'], ['pressTender', 'yes'], ['infection', 'no'], ['injury', 'no'], ['diabetes', 'no']]);
   await page.click('[data-hand="Left"]');
   await page.click('#btn-camera-start');
@@ -147,13 +147,15 @@ async function carpalTest() {
 }
 
 let failed = 0;
-const tests = { raynaud: raynaudTest, trigger: triggerTest, carpal: carpalTest };
-// The trigger test needs 25+ camera frames per second. Run it alone first: sharing a small CI machine
-// with the other two browsers dropped it to 16 fps, and the app (correctly) refused to score it.
+const names = ['raynaud', 'trigger', 'trigger, pilot-like hand', 'carpal'];
+// The trigger tests need 25+ camera frames per second. Run them alone first, one at a time: sharing a
+// small CI machine with other browsers dropped it to 16 fps, and the app (correctly) refused to score it.
+// The pilot-like hand reads only ~150° when open, as a real hand did on 11 Nov 2026.
 const [triggerOutcome] = await Promise.allSettled([triggerTest()]);
+const [pilotOutcome] = await Promise.allSettled([triggerTest(pilotHand)]);
 const [raynaudOutcome, carpalOutcome] = await Promise.allSettled([raynaudTest(), carpalTest()]);
-const outcomes = [raynaudOutcome, triggerOutcome, carpalOutcome];
-Object.keys(tests).forEach((name, i) => {
+const outcomes = [raynaudOutcome, triggerOutcome, pilotOutcome, carpalOutcome];
+names.forEach((name, i) => {
   const o = outcomes[i];
   if (o.status === 'fulfilled') console.log(`ok   ${name}: ${o.value.level} | ${o.value.score}`);
   else {

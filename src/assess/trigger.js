@@ -46,17 +46,30 @@ const LIMITS = {
 };
 export const MARGIN = 15;
 
+// The hand counts as opened only if the other fingers reach at least this (degrees).
+export const HAND_OPEN_MIN = 135;
+
+const middleValue = (v) => [...v].sort((x, y) => x - y)[Math.floor((v.length - 1) / 2)];
+
 // camera: { fingers: { thumb: { catches, maxAngle, minAngle }, ... } }
 export function cameraFindings(camera) {
   if (!camera || !camera.fingers) return null;
   const out = { catching: [], cannotStraighten: [], cannotBend: [], measured: Object.keys(camera.fingers) };
   const entries = Object.entries(camera.fingers);
-  const opened = entries.filter(([n, f]) => f.maxAngle >= LIMITS[n].open).length;
   const fisted = entries.filter(([n, f]) => f.minAngle <= LIMITS[n].fist).length;
   for (const [n, f] of entries) {
     if (f.catches > 0) out.catching.push(n);
-    // Only flag a finger when most others did reach the position, so a bad camera angle does not flag every finger.
-    if (f.maxAngle < LIMITS[n].open - MARGIN && opened >= 2) out.cannotStraighten.push(n);
+    // "Straight" is judged against this hand's other fingers, not only a fixed 155°: with the palm toward
+    // the camera some hands read about 150° when fully straight (pilot, 11 Nov 2026), so a fixed line
+    // missed a finger that stayed bent. The line is never stricter than the fixed one.
+    const others = entries.filter(([m]) => m !== n && m !== 'thumb').map(([, g]) => g.maxAngle).filter(Number.isFinite);
+    if (others.length >= 2) {
+      const handOpen = middleValue(others);
+      const openLine = Math.min(LIMITS[n].open, handOpen);
+      const opened = others.filter((m) => m >= Math.min(LIMITS.middle.open, handOpen) - 5).length;
+      // Only flag a finger when the hand really opened and most others did, so a bad camera angle does not flag every finger.
+      if (handOpen >= HAND_OPEN_MIN && opened >= 2 && f.maxAngle < openLine - MARGIN) out.cannotStraighten.push(n);
+    }
     if (f.minAngle > LIMITS[n].fist + MARGIN && fisted >= 2) out.cannotBend.push(n);
   }
   return out;
