@@ -19,9 +19,9 @@
     "rate": 0.0
   },
   "unscored": {
-    "hits": 0,
-    "total": 3,
-    "rate": 0.0
+    "hits": 2,
+    "total": 5,
+    "rate": 0.4
   },
   "checks": {
     "AC-1": {
@@ -35,8 +35,8 @@
       "rule": "Both 95% limits within \u00b115\u00b0"
     },
     "AC-3": {
-      "result": "ICC nan (1 people)",
-      "pass": false,
+      "result": "Not assessed: needs 2+ sessions and 2+ people",
+      "pass": null,
       "rule": "ICC 0.75 or higher"
     },
     "AC-4": {
@@ -50,8 +50,8 @@
       "rule": "10% or fewer smooth fists flagged"
     },
     "AC-6": {
-      "result": "0 of 3 (0%)",
-      "pass": true,
+      "result": "2 of 5 (40%)",
+      "pass": false,
       "rule": "Fewer than 1 in 5 runs not scored"
     }
   },
