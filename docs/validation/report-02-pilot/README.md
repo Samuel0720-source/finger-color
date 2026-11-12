@@ -1,6 +1,8 @@
 # Report 02: pilot (in progress)
 
-Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.1. Raynaud's part not started.
+**Trigger finger report:** [trigger-finger.md](trigger-finger.md) (tables and figures rebuild from the CSV files). **For volunteers:** [volunteer-guide.md](volunteer-guide.md). This page is the session log.
+
+Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.2. Raynaud's part not started.
 
 ## Session log
 
@@ -38,7 +40,7 @@ Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.1. Raynaud's part not st
 | AC-3 | ICC 0.75 or higher | needs 3 sessions | not yet |
 | AC-4 | 80% or more catches found | 3 of 3 | PASS |
 | AC-5 | 10% or fewer false alarms | 0 of 27 | PASS (but see thumb below) |
-| AC-6 | Fewer than 1 in 5 not scored | 0 of 3 | PASS |
+| AC-6 | Fewer than 1 in 5 not scored | 2 of 5 (both on the first build, 0 of 3 since) | FAIL as counted |
 
 **After the fix (run 5):** thumb false catches fell from 6 to 2; the little finger went to 0. The two left are the thumb lifting slightly inside a held fist and then opening. The thumb moves sideways to the camera and folds differently from the fingers, so one rule may not fit both. Not tuned further on one person's runs: next step is to save the raw CSV of smooth runs and test any thumb rule on those recordings.
 

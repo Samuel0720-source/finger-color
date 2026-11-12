@@ -1,0 +1,16 @@
+participant,session,run,kind,build,open_ref_deg,finger,cycles,catches
+P01,1,3,smooth,c9727ef,146,thumb,7,6
+P01,1,3,smooth,c9727ef,146,index,10,0
+P01,1,3,smooth,c9727ef,146,middle,10,0
+P01,1,3,smooth,c9727ef,146,ring,10,0
+P01,1,3,smooth,c9727ef,146,little,10,1
+P01,1,4,catch,c9727ef,151,thumb,3,3
+P01,1,4,catch,c9727ef,151,index,10,3
+P01,1,4,catch,c9727ef,151,middle,10,3
+P01,1,4,catch,c9727ef,151,ring,10,5
+P01,1,4,catch,c9727ef,151,little,10,9
+P01,1,5,smooth,d75db24,154,thumb,9,2
+P01,1,5,smooth,d75db24,154,index,10,0
+P01,1,5,smooth,d75db24,154,middle,10,0
+P01,1,5,smooth,d75db24,154,ring,10,0
+P01,1,5,smooth,d75db24,154,little,10,0

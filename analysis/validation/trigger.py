@@ -53,7 +53,9 @@ def analyze(folder):
     checks = {
         "AC-1": (f"Bias {agree['bias']:+.1f}°", abs(agree["bias"]) <= 5),
         "AC-2": (f"{agree['loa_low']:+.1f}° to {agree['loa_high']:+.1f}°", agree["loa_low"] >= -15 and agree["loa_high"] <= 15),
-        "AC-3": (f"ICC {icc:.2f} ({len(table)} people)", icc >= 0.75),
+        # One session per person (the pilot) cannot give a repeatability number. That is "not
+        # assessed", not a failure, so the table says so instead of printing FAIL.
+        "AC-3": (f"ICC {icc:.2f} ({len(table)} people)" if icc == icc else "Not assessed: needs 2+ sessions and 2+ people", (icc >= 0.75) if icc == icc else None),
         "AC-4": (f"{found['hits']} of {found['total']} ({found['rate']:.0%})", found["rate"] >= 0.80),
         "AC-5": (f"{false_alarm['hits']} of {false_alarm['total']} ({false_alarm['rate']:.0%})", false_alarm["rate"] <= 0.10),
         "AC-6": (f"{unscored['hits']} of {unscored['total']} ({unscored['rate']:.0%})", unscored["rate"] < 0.20),
@@ -70,7 +72,7 @@ def analyze(folder):
         by_condition.append({"condition": label, "pairs": len(rows), "too_small": len(rows) < 5, **(a or {})})
 
     return {"agreement": agree, "icc": icc, "found": found, "false_alarm": false_alarm, "unscored": unscored,
-            "checks": {k: {"result": v[0], "pass": bool(v[1]), "rule": CRITERIA[k]} for k, v in checks.items()},
+            "checks": {k: {"result": v[0], "pass": None if v[1] is None else bool(v[1]), "rule": CRITERIA[k]} for k, v in checks.items()},
             "by_condition": by_condition, "static": static}
 
 
@@ -103,7 +105,7 @@ def figures(result, out, label=""):
 def markdown(result):
     lines = ["| ID | Rule | Result | Pass |", "| --- | --- | --- | --- |"]
     for k, c in result["checks"].items():
-        lines.append(f"| {k} | {c['rule']} | {c['result']} | {'PASS' if c['pass'] else 'FAIL'} |")
+        lines.append(f"| {k} | {c['rule']} | {c['result']} | {'NOT ASSESSED' if c['pass'] is None else 'PASS' if c['pass'] else 'FAIL'} |")
     return "\n".join(lines)
 
 
