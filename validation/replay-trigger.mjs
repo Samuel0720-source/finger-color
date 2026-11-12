@@ -27,7 +27,7 @@ if (fs.existsSync(fc)) {
 }
 
 const catchRows = ['participant,run,kind,finger,t_s,angle_deg,pause_ms,gain_deg,snap_ms,others_closed'];
-const cycleRows = ['participant,run,kind,open_ref_deg,cycles_fixed_lines,cycles_own_open_hand'];
+const cycleRows = ['participant,run,kind,open_ref_deg,open_ref_source,cycles_fixed_lines,cycles_own_open_hand'];
 
 for (const file of fs.readdirSync(rawDir).filter((f) => f.endsWith('.csv')).sort()) {
   const [, p, run, kind] = file.match(/^(P\d+)_run(\d+)_(smooth|catch)\.csv$/) || [];
@@ -52,10 +52,15 @@ for (const file of fs.readdirSync(rawDir).filter((f) => f.endsWith('.csv')).sort
     }
   });
 
-  const ref = refs[`${p}_${run}`];
   const mid = rows.map((r) => r[3]);
-  cycleRows.push([p, run, kind, Number.isFinite(ref) ? ref : '', summarizeFinger(t, mid, cycleLimits()).cycles,
-    Number.isFinite(ref) ? summarizeFinger(t, mid, cycleLimits(ref)).cycles : ''].join(','));
+  // The open-hand angle the app showed, if it was written down. If not, estimate it the same
+  // way a person would: the middle finger's median over the first second (hand held open).
+  const shown = refs[`${p}_${run}`];
+  const first = mid.filter((_, k) => t[k] <= 1000).sort((a, b) => a - b);
+  const ref = Number.isFinite(shown) ? shown : Math.round(first[Math.floor(first.length / 2)]);
+  const source = Number.isFinite(shown) ? 'screen' : 'estimated from first second';
+  cycleRows.push([p, run, kind, ref, source, summarizeFinger(t, mid, cycleLimits()).cycles,
+    summarizeFinger(t, mid, cycleLimits(ref)).cycles].join(','));
 }
 
 fs.writeFileSync(path.join(folder, 'replay_catches.csv'), catchRows.join('\n') + '\n');
