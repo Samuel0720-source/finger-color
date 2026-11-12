@@ -59,6 +59,18 @@ export function detectHand() {
 }
 export function fingertipSpots() { return null; }`;
 
+// Like the pilot hand (11 Nov 2026): a straight middle finger reads only 146-154° and wobbles,
+// fists reach about 90°. With fixed 150°/120° lines the countdown never started and fists were missed.
+// The ring finger makes one catch on the way out of a fist: pause at 120°, then snap open.
+export const pilotHand = triggerHand
+  .replace("function base(ms) { const u = (ms % 2000) / 2000; return u < 0.5 ? 175 - 90 * (u / 0.5) : 85 + 90 * ((u - 0.5) / 0.5); }",
+    "function wob() { return 150 + 4 * Math.sin(performance.now() / 70); }\nfunction base(ms) { const u = (ms % 2000) / 2000; return u < 0.5 ? wob() - 60 * (u / 0.5) : 90 + (wob() - 90) * ((u - 0.5) / 0.5); }")
+  .replace("if (v < 0.35) return 85 + 45 * (v / 0.35);", "if (v < 0.35) return 90 + 30 * (v / 0.35);")
+  .replace("if (v < 0.6) return 130;", "if (v < 0.6) return 120;")
+  .replace("if (v < 0.66) return 130 + 45 * ((v - 0.6) / 0.06);\n  return 175;", "if (v < 0.66) return 120 + 30 * ((v - 0.6) / 0.06);\n  return 150;")
+  .replace("const a = ms < 0 ? 175 : base(ms);", "const a = ms < 0 ? wob() : base(ms);")
+  .replace("chain(w, 13, 0.01, ms < 0 ? 175 : ringAngle(ms));", "chain(w, 13, 0.01, ms < 0 ? wob() : ringAngle(ms));");
+
 // Carpal tunnel: the thumb touches the index, middle and ring fingertips but stops short of the little finger.
 export const reachHand = `
 export async function loadHandModel() {}
