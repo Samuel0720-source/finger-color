@@ -2,6 +2,7 @@ participant,session,finger,position,app_deg,gonio_deg,light,skin_group
 P01,1,middle,straight,152,5,normal,not_recorded
 P01,1,middle,45,147,35,normal,not_recorded
 P01,1,middle,45,136,50,normal,not_recorded
+P01,1,middle,45,122,52,normal,not_recorded
 P01,1,middle,45,115,61,normal,not_recorded
 P01,1,middle,90,110,70,normal,not_recorded
 P01,1,middle,90,100,87,normal,not_recorded

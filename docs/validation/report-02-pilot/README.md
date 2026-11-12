@@ -6,13 +6,14 @@ Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.1. Raynaud's part not st
 
 | Date | Who | What | App build | Notes |
 | --- | --- | --- | --- | --- |
-| 11 Nov 2026 | P01 (author) | Still angles, middle finger, 8 positions | live site, commit c74e3a4 | 180°-type goniometer, read by the author. Position 4: app value unreadable on the sheet, left out. |
+| 11 Nov 2026 | P01 (author) | Still angles, middle finger, 8 positions | live site, commit c74e3a4 | 180°-type goniometer, read by the author. Position 4: app value unreadable on the sheet; the author recalled 122° on 12 Nov and it was added. |
 | 11 Nov 2026 | P01 | Smooth fists and deliberate catches, 2 runs | c74e3a4 | Neither run scored: the countdown did not start on the first tries, then 9 and 7 of 10 fists were counted. Cause and fix below. |
+| 12 Nov 2026 | P01 | Run 5 smooth fists, after the thumb fix | d75db24 | Scored, 59 fps, open hand 154°. Middle 0 catches. Thumb 2 (was 6), all other fingers 0. |
 | 12 Nov 2026 | P01 | Run 3 smooth fists, run 4 catches on fists 3, 6 and 9 | c9727ef | Both scored, 60 fps. Open hand read 146° and 151°. Middle finger: 0 false catches, 3 of 3 deliberate catches found. Thumb and little finger flagged held fists as catches; fixed below. |
 
 ## What the first session found
 
-**Still angles (7 pairs, `data/trigger/static_angles.csv`):** with the finger bent, the app agreed with the goniometer within 7° (bias −2.8°, 6 pairs). With the finger straight, the app read 152° while the goniometer read straight (175° on its 180° scale): 23° short.
+**Still angles (8 pairs, `data/trigger/static_angles.csv`):** with the finger bent, the app agreed with the goniometer (bias −1.6°, limits −11.7° to +8.5°, 7 pairs). With the finger straight, the app read 152° while the goniometer read straight (175° on its 180° scale): 23° short.
 
 **Why the fist test failed:** the app needed a straight finger to read above 150° to start the countdown and to count each fist as opened. This hand read 146° to 155° when fully open, so the countdown kept restarting and opened fists were missed. A half-bend catch also never counted as a fist.
 
@@ -32,16 +33,18 @@ Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.1. Raynaud's part not st
 
 | ID | Rule | Result | |
 | --- | --- | --- | --- |
-| AC-1 | Bias within ±5° | +0.9° (7 pairs) | PASS |
-| AC-2 | Limits within ±15° | −19.8° to +21.5° | FAIL: the straight finger reads 23° short |
+| AC-1 | Bias within ±5° | +1.5° (8 pairs) | PASS |
+| AC-2 | Limits within ±15° | −17.9° to +20.9° | FAIL: the straight finger reads 23° short |
 | AC-3 | ICC 0.75 or higher | needs 3 sessions | not yet |
 | AC-4 | 80% or more catches found | 3 of 3 | PASS |
-| AC-5 | 10% or fewer false alarms | 0 of 17 | PASS (but see thumb above) |
-| AC-6 | Fewer than 1 in 5 not scored | 0 of 2 | PASS |
+| AC-5 | 10% or fewer false alarms | 0 of 27 | PASS (but see thumb below) |
+| AC-6 | Fewer than 1 in 5 not scored | 0 of 3 | PASS |
+
+**After the fix (run 5):** thumb false catches fell from 6 to 2; the little finger went to 0. The two left are the thumb lifting slightly inside a held fist and then opening. The thumb moves sideways to the camera and folds differently from the fingers, so one rule may not fit both. Not tuned further on one person's runs: next step is to save the raw CSV of smooth runs and test any thumb rule on those recordings.
 
 ## Still to do
 
-- Redo one smooth-fist run on the build with the thumb fix and check the thumb shows 0 catches.
+- Save raw CSVs of smooth runs (all volunteers) to test a thumb-specific catch rule on real recordings.
 - Raynaud's part.
 - Two more volunteers.
 

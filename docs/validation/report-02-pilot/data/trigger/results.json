@@ -1,11 +1,11 @@
 {
   "agreement": {
-    "n": 7,
-    "bias": 0.8571428571428571,
-    "sd": 10.526610271570036,
-    "loa_low": -19.775013275134413,
-    "loa_high": 21.489298989420128,
-    "mean_abs_error": 6.857142857142857
+    "n": 8,
+    "bias": 1.5,
+    "sd": 9.913915184512842,
+    "loa_low": -17.93127376164517,
+    "loa_high": 20.93127376164517,
+    "mean_abs_error": 6.75
   },
   "icc": NaN,
   "found": {
@@ -15,22 +15,22 @@
   },
   "false_alarm": {
     "hits": 0,
-    "total": 17,
+    "total": 27,
     "rate": 0.0
   },
   "unscored": {
     "hits": 0,
-    "total": 2,
+    "total": 3,
     "rate": 0.0
   },
   "checks": {
     "AC-1": {
-      "result": "Bias +0.9\u00b0",
+      "result": "Bias +1.5\u00b0",
       "pass": true,
       "rule": "Bias within \u00b15\u00b0"
     },
     "AC-2": {
-      "result": "-19.8\u00b0 to +21.5\u00b0",
+      "result": "-17.9\u00b0 to +20.9\u00b0",
       "pass": false,
       "rule": "Both 95% limits within \u00b115\u00b0"
     },
@@ -45,12 +45,12 @@
       "rule": "80% or more of deliberate catches found"
     },
     "AC-5": {
-      "result": "0 of 17 (0%)",
+      "result": "0 of 27 (0%)",
       "pass": true,
       "rule": "10% or fewer smooth fists flagged"
     },
     "AC-6": {
-      "result": "0 of 2 (0%)",
+      "result": "0 of 3 (0%)",
       "pass": true,
       "rule": "Fewer than 1 in 5 runs not scored"
     }
@@ -58,14 +58,14 @@
   "by_condition": [
     {
       "condition": "Normal light",
-      "pairs": 7,
+      "pairs": 8,
       "too_small": false,
-      "n": 7,
-      "bias": 0.8571428571428571,
-      "sd": 10.526610271570036,
-      "loa_low": -19.775013275134413,
-      "loa_high": 21.489298989420128,
-      "mean_abs_error": 6.857142857142857
+      "n": 8,
+      "bias": 1.5,
+      "sd": 9.913915184512842,
+      "loa_low": -17.93127376164517,
+      "loa_high": 20.93127376164517,
+      "mean_abs_error": 6.75
     }
   ]
 }
