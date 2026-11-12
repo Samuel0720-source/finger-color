@@ -15,13 +15,13 @@
   },
   "false_alarm": {
     "hits": 0,
-    "total": 27,
+    "total": 37,
     "rate": 0.0
   },
   "unscored": {
     "hits": 2,
-    "total": 5,
-    "rate": 0.4
+    "total": 6,
+    "rate": 0.3333333333333333
   },
   "checks": {
     "AC-1": {
@@ -45,12 +45,12 @@
       "rule": "80% or more of deliberate catches found"
     },
     "AC-5": {
-      "result": "0 of 27 (0%)",
+      "result": "0 of 37 (0%)",
       "pass": true,
       "rule": "10% or fewer smooth fists flagged"
     },
     "AC-6": {
-      "result": "2 of 5 (40%)",
+      "result": "2 of 6 (33%)",
       "pass": false,
       "rule": "Fewer than 1 in 5 runs not scored"
     }

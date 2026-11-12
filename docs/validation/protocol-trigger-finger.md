@@ -66,7 +66,7 @@ runs.csv           participant,session,run,scored,fps,light,build
 finger_catches.csv participant,session,run,kind,build,open_ref_deg,finger,cycles,catches
 ```
 
-`position` is `straight`, `45`, `90` or `108` (full bend). `light` is `normal`, `dim` or `bright`. `build` is the app's Git commit. `kind` is `smooth` or `catch`. Every run is written to `runs.csv`, scored or not; only scored runs have catch counts.
+`position` is `straight`, `45`, `90` or `108` (full bend). `light` is `normal`, `dim` or `bright`. `build` is the app's Git commit. `kind` is `smooth` or `catch`. Every run is written to `runs.csv`, scored or not; only scored runs have catch counts. When possible, save the app's "Raw data for analysis" CSV for every run as `raw/<participant>_run<N>_<smooth|catch>.csv`; `validation/replay-trigger.mjs` replays these through the app's detector.
 
 ## Analysis
 
