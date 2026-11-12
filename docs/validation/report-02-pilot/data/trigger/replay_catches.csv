@@ -1,0 +1,6 @@
+participant,run,kind,finger,t_s,angle_deg,pause_ms,gain_deg,snap_ms,others_closed
+P01,5,smooth,thumb,10.4,133,150,28,66,3
+P01,5,smooth,thumb,17.7,128,150,29,116,4
+P02,1,smooth,thumb,10.5,130,150,27,100,2
+P02,1,smooth,thumb,13.9,107,150,36,117,4
+P02,1,smooth,thumb,17.6,129,150,33,66,4
