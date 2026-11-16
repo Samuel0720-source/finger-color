@@ -138,7 +138,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
       events: FINGERS.flatMap((f) => perFinger[f].catches.map((c) => `${NAMES[f]} at ${(c.t / 1000).toFixed(1)} s: paused ${c.pauseMs.toFixed(0)} ms, then opened ${c.deltaDeg.toFixed(0)}° in ${c.snapMs.toFixed(0)} ms`)),
       chartImg: chart.toBase64Image('image/png', 1),
     });
-    setStatus(saved ? 'Test finished. Your result is below.' : 'Test finished. Browser storage is unavailable; download your report.');
+    setStatus(saved ? 'Test finished. Your result is in step 3.' : 'Test finished. Browser storage is unavailable; download your report.');
   }
 
   function showQuality() {

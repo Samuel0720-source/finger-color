@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>finger-color: hand check for Raynaud's, trigger finger and carpal tunnel</title>
     <meta
       name="description"
@@ -22,7 +22,7 @@
   <body>
     <a class="skip-link" href="#check">Skip to the check</a>
     <header class="site-header">
-      <a class="brand" href="/"><img src="/favicon.svg" alt="" width="26" height="26" /><span>finger-color</span></a>
+      <a class="brand" href="/"><img src="/favicon.svg" alt="" width="28" height="28" /><span>finger-color</span></a>
       <nav class="site-nav" aria-label="Page">
         <a href="#check">Check</a>
         <a href="#how">How it works</a>
@@ -31,12 +31,10 @@
     </header>
 
     <main>
-      <section class="intro">
-        <!-- A real recording from this check, faded behind the hero as texture. -->
-        <img class="intro-bg" src="/recording-example.webp" width="2320" height="767" alt="" aria-hidden="true" decoding="async" />
-        <div class="container intro-inner">
+      <section class="hero">
+        <div class="hero-copy">
           <h1>Should a doctor see your hands?</h1>
-          <p class="lead">Answer clinical questions, let your camera measure, and get your next step.</p>
+          <p class="lead">Pick what is bothering you. Answer a few questions, let your camera measure your hand, and get a plain next step.</p>
           <nav class="conditions" id="check" aria-label="Choose a condition">
             <button class="cond" data-mode="raynaud" aria-pressed="false">
               <strong>Raynaud's</strong>
@@ -54,35 +52,87 @@
               <em>The CTS-6 score and guided tests</em>
             </button>
           </nav>
-          <p class="intro-note">It is not a diagnosis.</p>
+          <div class="hero-cta">
+            <button type="button" id="btn-begin" class="btn btn-primary btn-big">Start the check</button>
+            <p class="hero-note">It is not a diagnosis. Your video stays on this device.</p>
+          </div>
+        </div>
+        <figure class="hero-hand">
+          <div class="hh-stage" id="hero-hand"></div>
+          <figcaption>A drawing of the points the camera follows on your hand. Not a real measurement.</figcaption>
+        </figure>
+      </section>
+
+      <section class="promise" aria-label="What this check does and does not do">
+        <div>
+          <h2>What it does</h2>
+          <ul>
+            <li>Compares your answers with published clinical criteria</li>
+            <li>Measures color, joint angles and thumb reach with your camera</li>
+            <li>Suggests a next step and makes a PDF for your doctor</li>
+          </ul>
+        </div>
+        <div>
+          <h2>What it does not do</h2>
+          <ul>
+            <li>Diagnose a condition or replace a doctor</li>
+            <li>Upload your video: it is analyzed on your device</li>
+            <li>Claim to be tested on patients: it is a student research project</li>
+          </ul>
         </div>
       </section>
 
+      <section class="workspace" id="workspace" aria-label="The check">
+        <div class="work-top">
+          <p class="work-title"><span id="work-name">Raynaud's</span> check</p>
+          <a class="work-change" href="#check">Change condition</a>
+        </div>
+        <div class="stepbar" role="tablist" aria-label="Steps of the check">
+          <button type="button" role="tab" class="steptab" id="tab-symptoms" data-go="symptoms" aria-controls="panel-symptoms" aria-selected="true">
+            <span class="steptab-n" aria-hidden="true">1</span>
+            <span class="steptab-t">Symptoms</span>
+            <span class="steptab-m" id="meta-symptoms"></span>
+          </button>
+          <button type="button" role="tab" class="steptab" id="tab-measure" data-go="measure" aria-controls="panel-measure" aria-selected="false" tabindex="-1">
+            <span class="steptab-n" aria-hidden="true">2</span>
+            <span class="steptab-t">Measure</span>
+            <span class="steptab-m" id="meta-measure"></span>
+          </button>
+          <button type="button" role="tab" class="steptab" id="tab-result" data-go="result" aria-controls="panel-result" aria-selected="false" tabindex="-1">
+            <span class="steptab-n" aria-hidden="true">3</span>
+            <span class="steptab-t">Result</span>
+            <span class="steptab-m" id="meta-result"></span>
+          </button>
+        </div>
+
       <!-- ===== 1. Symptoms ===== -->
-      <section class="block block-form" aria-labelledby="h-symptoms">
-        <header class="block-head">
-          <div>
-            <h2 id="h-symptoms">1. Your symptoms</h2>
+      <section class="panel" id="panel-symptoms" role="tabpanel" aria-labelledby="tab-symptoms">
+        <div class="sheet">
+          <header class="panel-head">
+            <h2 id="h-symptoms">A few questions first</h2>
             <p class="block-sub" data-only="raynaud">Questions from the international consensus criteria for Raynaud's phenomenon (2014).</p>
             <p class="block-sub" data-only="trigger">Questions that place trigger finger on the Green scale, grade I to IV.</p>
             <p class="block-sub" data-only="carpal">Questions from the CTS-6, a 6-item clinical score for carpal tunnel syndrome.</p>
-          </div>
-        </header>
-        <div class="questions" id="q-raynaud" data-only="raynaud"></div>
-        <div class="questions" id="q-trigger" data-only="trigger"></div>
-        <div class="questions" id="q-carpal" data-only="carpal"></div>
+          </header>
+          <div class="questions" id="q-raynaud" data-only="raynaud"></div>
+          <div class="questions" id="q-trigger" data-only="trigger"></div>
+          <div class="questions" id="q-carpal" data-only="carpal"></div>
+          <footer class="panel-foot">
+            <button type="button" class="btn btn-primary" data-go="measure">Continue to measuring</button>
+            <button type="button" class="btn-link" data-go="result">Skip to the result</button>
+          </footer>
+        </div>
       </section>
 
       <!-- ===== 2. Measure ===== -->
-      <section class="block" aria-labelledby="h-measure">
-        <header class="block-head">
-          <div>
-            <h2 id="h-measure">2. Measure</h2>
+      <section class="panel" id="panel-measure" role="tabpanel" aria-labelledby="tab-measure">
+        <div class="sheet">
+          <header class="panel-head">
+            <h2 id="h-measure">Measure</h2>
             <p class="block-sub" data-only="raynaud">The camera looks for the white, blue and red phases, how many fingers change, a sharp border, and how long the color takes to recover.</p>
             <p class="block-sub" data-only="trigger">The camera follows the middle joint of each finger and the thumb, looking for catches and for joints that do not fully straighten or bend.</p>
             <p class="block-sub" data-only="carpal">Three guided self-tests from the CTS-6, plus a camera test of how well your thumb reaches each fingertip.</p>
-          </div>
-        </header>
+          </header>
 
         <div class="instrument">
           <div class="viewer">
@@ -212,25 +262,36 @@
             <button type="button" class="btn btn-secondary" data-report="carpal" disabled>Download PDF report</button>
           </div>
         </div>
+          <footer class="panel-foot">
+            <button type="button" class="btn btn-secondary" id="btn-to-result" data-go="result">See your result</button>
+            <button type="button" class="btn-link" data-go="symptoms">Back to your symptoms</button>
+          </footer>
+        </div>
       </section>
 
       <!-- ===== 3. Result ===== -->
-      <section class="block result-block" aria-labelledby="h-result">
-        <header class="block-head">
-          <div>
-            <h2 id="h-result">3. Result</h2>
+      <section class="panel result-block" id="panel-result" role="tabpanel" aria-labelledby="tab-result">
+        <div class="sheet">
+          <header class="panel-head">
+            <h2 id="h-result">Your result</h2>
             <p class="block-sub">Updates as you answer and measure.</p>
-          </div>
-        </header>
-        <!-- One short sentence is announced when the conclusion changes, instead of re-reading the whole panel. -->
-        <p id="result-announce" class="sr-only" aria-live="polite"></p>
-        <div id="result-raynaud" class="result-area" data-only="raynaud"></div>
-        <div id="result-trigger" class="result-area" data-only="trigger"></div>
-        <div id="result-carpal" class="result-area" data-only="carpal"></div>
+          </header>
+          <!-- One short sentence is announced when the conclusion changes, instead of re-reading the whole panel. -->
+          <p id="result-announce" class="sr-only" aria-live="polite"></p>
+          <div id="result-raynaud" class="result-area" data-only="raynaud"></div>
+          <div id="result-trigger" class="result-area" data-only="trigger"></div>
+          <div id="result-carpal" class="result-area" data-only="carpal"></div>
+          <footer class="panel-foot">
+            <button type="button" class="btn-link" data-go="symptoms">Back to your symptoms</button>
+            <button type="button" class="btn-link" data-go="measure">Back to measuring</button>
+            <a class="btn-link" href="#check">Check another condition</a>
+          </footer>
+        </div>
+      </section>
       </section>
 
-      <section class="block" id="history" aria-labelledby="h-history">
-        <header class="block-head plain">
+      <section class="band" id="history" aria-labelledby="h-history">
+        <header class="band-head">
           <div>
             <h2 id="h-history">Measurement history</h2>
             <p class="block-sub">Completed camera measurements, kept in this browser only. Compare like with like: same hand, camera and room.</p>
@@ -269,18 +330,27 @@
         <div class="how-grid">
           <article>
             <h3>Raynaud's</h3>
-            <p>Uses the 3-step international consensus criteria: cold sensitivity, a white and blue color change, and at least 3 of 7 supporting features. The camera can supply four of them: the color phases, a photo of an episode, a sharp border, and the red phase on rewarming. It also measures how many fingers change and how long they take to recover.</p>
-            <p class="how-red">See a doctor soon if it started after 40, affects one side, comes with fingertip sores or symptoms of autoimmune disease. Get care today if a finger turns black or stays white.</p>
+            <dl>
+              <div><dt>Criteria</dt><dd>The 3-step international consensus criteria: cold sensitivity, a white and blue color change, and at least 3 of 7 supporting features.</dd></div>
+              <div><dt>What the camera adds</dt><dd>Four of those features: the color phases, a photo of an episode, a sharp border, and the red phase on rewarming. It also measures how many fingers change and how long they take to recover.</dd></div>
+              <div class="how-red"><dt>Do not wait</dt><dd>See a doctor soon if it started after 40, affects one side, or comes with fingertip sores or symptoms of autoimmune disease. Get care today if a finger turns black or stays white.</dd></div>
+            </dl>
           </article>
           <article>
             <h3>Trigger finger</h3>
-            <p>Places your finger on the Green scale. Grade I is a tender spot at the base of the finger; II is catching you can straighten yourself; III needs your other hand or cannot bend fully; IV stays bent. The camera measures catches and how straight and how bent each joint gets, including the thumb.</p>
-            <p class="how-red">Get care today for a red, hot, swollen finger, which can be a tendon infection.</p>
+            <dl>
+              <div><dt>Criteria</dt><dd>The Green scale. Grade I is a tender spot at the base of the finger; II is catching you can straighten yourself; III needs your other hand or cannot bend fully; IV stays bent.</dd></div>
+              <div><dt>What the camera adds</dt><dd>Catches, and how straight and how bent each joint gets, including the thumb.</dd></div>
+              <div class="how-red"><dt>Do not wait</dt><dd>Get care today for a red, hot, swollen finger, which can be a tendon infection.</dd></div>
+            </dl>
           </article>
           <article>
             <h3>Carpal tunnel</h3>
-            <p>Uses the CTS-6: numbness in the thumb to ring finger (3.5 points), waking at night (4), thumb muscle weakness (5), Phalen test (5), two-point discrimination (4.5) and Tinel sign (4). A score of 12 or more out of 26 means carpal tunnel is likely. The camera adds a thumb reach test.</p>
-            <p class="how-red">See a doctor soon for numbness that never goes away or a wasted thumb muscle.</p>
+            <dl>
+              <div><dt>Criteria</dt><dd>The CTS-6: numbness in the thumb to ring finger (3.5 points), waking at night (4), thumb muscle weakness (5), Phalen test (5), two-point discrimination (4.5) and Tinel sign (4). A score of 12 or more out of 26 means carpal tunnel is likely.</dd></div>
+              <div><dt>What the camera adds</dt><dd>A thumb reach test: can the thumb tip touch each fingertip?</dd></div>
+              <div class="how-red"><dt>Do not wait</dt><dd>See a doctor soon for numbness that never goes away or a wasted thumb muscle.</dd></div>
+            </dl>
           </article>
         </div>
         <details class="sources">

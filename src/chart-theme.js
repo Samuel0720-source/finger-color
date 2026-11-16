@@ -8,7 +8,7 @@ export const FOCUS = '#0B1F3A'; // the line that matters (middle finger)
 export const OTHER = '#BDB2A0'; // the other fingers, for context only
 export const ALERT = '#B3261E';
 
-Chart.defaults.font.family = "'Instrument Sans Variable', system-ui, sans-serif";
+Chart.defaults.font.family = "'Figtree Variable', system-ui, sans-serif";
 Chart.defaults.font.size = 12;
 Chart.defaults.color = MUTED;
 Chart.defaults.borderColor = GRID;
