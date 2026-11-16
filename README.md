@@ -98,6 +98,9 @@ src/
     actions.js         the fixed list of things the assistant may do in the app
     result-summary.js  the result lines that may be shared, and the on-device explanation
     launcher.js, chat.js, chat.css   the button and the panel (the panel loads on first use)
+  setup-check.js     camera setup tips under the video
+  evidence.js        "What has been tested so far", read from the validation results
+  build.js           the commit this page was built from
   steps.js           the three-step bar (Symptoms, Measure, Result)
   hero-hand.js       the animated hand drawing at the top of the page
   camera.js, hand.js, color.js, plain.js, recovery.js, recorder.js,
@@ -134,6 +137,14 @@ GitHub runs all of these on every push (`.github/workflows/test.yml`).
 Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 
 ## What changed in November 2026
+
+- New design: one step on screen at a time (Symptoms, Measure, Result) and a drawing of the hand points the camera follows.
+- Added the assistant (see above).
+- Camera setup tips under the video: hand found, whole hand in the picture, camera fast enough. Tips only; scoring is unchanged.
+- The page shows its build (commit) in the footer, and it is written into the PDF and the trigger finger run summary, so a measurement can be traced to the code that produced it.
+- "Download run summary (CSV)" after every trigger finger run, scored or not, for the validation files.
+- "What has been tested so far" on the page: the pilot numbers straight from `results.json`, including the rules that are not met.
+- Security headers in `vercel.json` (no framing, camera only for this site, no microphone or location).
 
 - Added the feature table and five-level result for all three conditions, with criteria-based questions.
 - Added Raynaud's color phases, fingers involved, thumb sparing, sharp border and episode mode.

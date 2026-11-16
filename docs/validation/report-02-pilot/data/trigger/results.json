@@ -1,4 +1,11 @@
 {
+  "counts": {
+    "people": 2,
+    "people_with_pairs": 1,
+    "pairs": 16,
+    "runs": 8,
+    "runs_scored": 6
+  },
   "agreement": {
     "n": 16,
     "bias": 1.6875,
@@ -7,7 +14,7 @@
     "loa_high": 18.725131877699436,
     "mean_abs_error": 5.5625
   },
-  "icc": NaN,
+  "icc": null,
   "found": {
     "hits": 9,
     "total": 9,

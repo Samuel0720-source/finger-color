@@ -18,6 +18,9 @@ import { mountGuidedTests } from './tests/cts-guided.js';
 import { createSteps } from './steps.js';
 import { mountHeroHand } from './hero-hand.js';
 import { mountAssistant } from './assistant/launcher.js';
+import { createSetupCheck } from './setup-check.js';
+import { mountEvidence } from './evidence.js';
+import { BUILD } from './build.js';
 
 const CONDITIONS = { raynaud, trigger, carpal };
 const MODES = Object.keys(CONDITIONS);
@@ -61,6 +64,9 @@ const ready = {};
 
 const setStatus = (text) => (statusEl.textContent = text);
 const heroHand = mountHeroHand($('hero-hand'));
+const setupCheck = createSetupCheck($('setup-check'));
+mountEvidence($('evidence'));
+$('build-id').textContent = BUILD;
 // Leaving the Measure step is refused while a timed test runs, so the test is never hidden mid-run.
 const steps = createSteps({
   canLeave: (step) => {
@@ -193,6 +199,7 @@ const panelOptions = {
   },
   onSaved: () => historyPanel.render(),
   fileName: (prefix) => todayName(prefix),
+  build: BUILD,
   getContext: context,
 };
 const colorPanel = createColorPanel({
@@ -264,6 +271,7 @@ async function turnCameraOn() {
   trackingEl.classList.remove('hidden');
   btnCameraStart.disabled = false;
   $('panel-measure').dataset.live = 'true'; // the charts appear once there is something to draw
+  setupCheck.show(true);
   colorPanel.enable();
   triggerPanel.enable();
   reachPanel.enable();
@@ -282,6 +290,7 @@ function turnCameraOff(force = false) {
   octx.clearRect(0, 0, overlay.width, overlay.height);
   stage.classList.remove('is-live');
   stageEmpty.classList.remove('hidden');
+  setupCheck.show(false);
   btnCamera.classList.add('hidden');
   trackingEl.classList.add('hidden');
   colorPanel.disable();
@@ -313,6 +322,7 @@ function loop(now) {
       fpsFrames = 0;
       fpsStart = now;
     }
+    setupCheck.onFrame(handNow, now);
     if (mode === 'raynaud') colorPanel.onFrame(handNow, now, octx);
     else if (mode === 'trigger') triggerPanel.onFrame(handNow, now, octx);
     else reachPanel.onFrame(handNow, now, octx);
@@ -347,6 +357,7 @@ async function downloadReport(m, btn) {
       history: historyForReport(m),
       sources: SOURCES[m],
       fileName: todayName(m + '_report'),
+      build: BUILD,
     });
   } catch (e) {
     setStatus('The PDF could not be created: ' + e.message);

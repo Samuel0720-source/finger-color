@@ -19,7 +19,7 @@ const MUTED = [90, 105, 100];
 // Helvetica in jsPDF only has Latin-1; replace the few characters we use that it lacks.
 const clean = (s) => String(s ?? '').replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-').replace(/≥/g, '>=').replace(/≤/g, '<=');
 
-export function makeDoctorReport({ assessment: r, questions, answers, measurements = [], images = [], history = [], sources = [], fileName }, { save = true } = {}) {
+export function makeDoctorReport({ assessment: r, questions, answers, measurements = [], images = [], history = [], sources = [], fileName, build = '' }, { save = true } = {}) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = 170;
   const X = 20;
@@ -181,7 +181,7 @@ export function makeDoctorReport({ assessment: r, questions, answers, measuremen
     doc.setPage(n);
     doc.setFontSize(8);
     doc.setTextColor(140);
-    doc.text(clean(`finger-color hand check | ${r.name} | page ${n} of ${pages}`), X, 290);
+    doc.text(clean(`finger-color hand check | ${r.name}${build ? ' | app build ' + build : ''} | page ${n} of ${pages}`), X, 290);
   }
   if (save) doc.save(fileName + '.pdf');
   return doc;
