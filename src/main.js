@@ -17,6 +17,7 @@ import { createColorPanel } from './tests/color-panel.js';
 import { mountGuidedTests } from './tests/cts-guided.js';
 import { createSteps } from './steps.js';
 import { mountHeroHand } from './hero-hand.js';
+import { mountAssistant } from './assistant/launcher.js';
 
 const CONDITIONS = { raynaud, trigger, carpal };
 const MODES = Object.keys(CONDITIONS);
@@ -186,7 +187,10 @@ const context = () => ({ hand });
 
 const panelOptions = {
   setStatus,
-  setBusy: (v) => (busy = v),
+  setBusy: (v) => {
+    busy = v;
+    syncTesting();
+  },
   onSaved: () => historyPanel.render(),
   fileName: (prefix) => todayName(prefix),
   getContext: context,
@@ -395,6 +399,49 @@ function todayName(prefix) {
   const p = (n) => String(n).padStart(2, '0');
   return `${prefix}_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
 }
+
+// ---------- Assistant ----------
+
+// While a timed test runs, the "Ask a question" button gets out of the way (see chat.css).
+function syncTesting() {
+  document.body.dataset.testing = String(busy || colorPanel.isBusy());
+}
+document.addEventListener('click', () => setTimeout(syncTesting, 0)); // the color recording starts and stops on button presses
+
+const goTo = (el) => el.scrollIntoView({ block: 'start' });
+function openCheck(m, step) {
+  if (m && m !== mode) setMode(m);
+  if (m && m !== mode) return false; // refused: a test is running
+  if (step && !steps.go(step, { scroll: false })) return false;
+  goTo($('workspace'));
+  return true;
+}
+// Everything the assistant can do in the app. Ids come from src/assistant/actions.js.
+const ASSIST_ACTIONS = {
+  open_raynaud: () => openCheck('raynaud', 'symptoms'),
+  open_trigger: () => openCheck('trigger', 'symptoms'),
+  open_carpal: () => openCheck('carpal', 'symptoms'),
+  go_symptoms: () => openCheck(null, 'symptoms'),
+  go_measure: () => openCheck(null, 'measure'),
+  go_result: () => openCheck(null, 'result'),
+  go_how: () => goTo($('how')),
+  go_history: () => goTo($('history')),
+  go_privacy: () => goTo($('privacy')),
+  go_home: () => window.scrollTo({ top: 0 }),
+};
+mountAssistant({
+  // Only these facts about the page are shared with the assistant. No answers, no video.
+  getContext: () => ({
+    mode,
+    step: steps.current,
+    inCheck: $('workspace').getBoundingClientRect().top < window.innerHeight * 0.6,
+    cameraOn,
+    testRunning: busy || colorPanel.isBusy(),
+    hasResult: Boolean(ready[mode]),
+  }),
+  getAssessment: () => assessment(mode),
+  run: (id) => (Object.hasOwn(ASSIST_ACTIONS, id) ? ASSIST_ACTIONS[id]() : false),
+});
 
 // ---------- Start ----------
 
