@@ -49,7 +49,11 @@ async function result(page, m) {
   };
 }
 
+// The check is three steps with one on screen at a time, so open a step before using what is in it.
+const step = (page, name) => page.click('#tab-' + name);
+
 async function pdf(page, m) {
+  await step(page, 'result');
   const [d] = await Promise.all([page.waitForEvent('download'), page.click(`#result-${m} .report-btn`)]);
   const file = join(dir, d.suggestedFilename());
   await d.saveAs(file);
@@ -61,6 +65,7 @@ async function pdf(page, m) {
 async function raynaudTest() {
   const { browser, page, errors } = await openApp(episode, colorHand, '#raynaud');
   await answer(page, 'raynaud', [['cold', 'yes'], ['white', 'yes'], ['blue', 'unsure'], ['bothHands', 'yes'], ['numb', 'yes'], ['otherTriggers', 'no'], ['otherSites', 'no'], ['photos', 'no'], ['after40', 'no'], ['oneSide', 'no'], ['severePain', 'no'], ['sores', 'no'], ['otherSymptoms', 'no'], ['deadTissue', 'no']]);
+  await step(page, 'measure');
   await page.click('[data-hand="Right"]');
   const t0 = Date.now();
   const at = (s) => page.waitForTimeout(Math.max(0, s * 1000 - (Date.now() - t0)));
@@ -88,6 +93,7 @@ async function raynaudTest() {
 async function triggerTest(hand = triggerHand) {
   const { browser, page, errors } = await openApp(blank, hand, '#trigger');
   await answer(page, 'trigger', [['catching', 'yes'], ['fingers', 'ring'], ['fingers', 'pinky'], ['needHelp', 'no'], ['cantBend', 'no'], ['stuckBent', 'no'], ['morning', 'yes'], ['duration', 'lt6w'], ['pressTender', 'yes'], ['infection', 'no'], ['injury', 'no'], ['diabetes', 'no']]);
+  await step(page, 'measure');
   await page.click('[data-hand="Left"]');
   await page.click('#btn-camera-start');
   await page.waitForTimeout(1500);
@@ -119,6 +125,7 @@ async function carpalTest() {
   const { browser, page, errors } = await openApp(blank, reachHand, '#carpal');
   await answer(page, 'carpal', [['numb', 'yes'], ['numbFingers', 'thumb'], ['numbFingers', 'index'], ['numbFingers', 'middle'], ['night', 'yes'], ['flick', 'yes'], ['thenar', 'no'], ['duration', '3m6m'], ['constant', 'no'], ['acute', 'no'], ['neck', 'no'], ['feet', 'no']]);
   assert.match((await result(page, 'carpal')).score, /7\.5/);
+  await step(page, 'measure');
   await page.click('#phalen-start');
   await page.waitForTimeout(2100);
   await page.click('#phalen-onset');
