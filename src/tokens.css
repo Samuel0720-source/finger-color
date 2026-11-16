@@ -1,18 +1,129 @@
+/* Design tokens: every color, size and timing the page uses is named here once.
+   Navy 60%, cream 30%, coral 10%. Coral is only for the button you should press next. */
 :root {
-  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
-  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.5625rem; --text-2xl: 1.953rem; --text-3xl: 2.441rem;
-  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem); --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
-  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem); --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
-  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
-  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
-  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
-  --color-paper: oklch(23.9% 0.058 257); --color-paper-2: oklch(28.5% 0.066 257); --color-paper-3: oklch(30.8% 0.064 258);
-  --color-ink: oklch(96.6% 0.022 83); --color-ink-2: oklch(83.1% 0.01 253); --color-muted: oklch(83.1% 0.01 253);
-  --color-rule: oklch(36.5% 0.06 258);
-  --color-accent: oklch(73.8% 0.161 32); --color-accent-ink: oklch(23.9% 0.058 257); --color-focus: oklch(96.6% 0.022 83);
-  --font-display: "Instrument Sans Variable", ui-sans-serif, sans-serif; --font-body: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif; --font-outlier: var(--font-body);
-  --radius-card: 4px; --radius-pill: 999px; --rule-hair: 1px; --shadow-card: none;
-  --tracking-display: -0.02em;
+  /* Navy: the page */
+  --navy: oklch(23.9% 0.058 257);
+  --navy-2: oklch(28.5% 0.066 257);
+  --navy-3: oklch(32.5% 0.066 258);
+  --navy-deep: oklch(17.8% 0.032 251);
+  --mist: oklch(84.5% 0.012 253); /* quiet text on navy, 9:1 */
+  --navy-line: oklch(96.6% 0.022 83 / 0.16);
+  --navy-line-strong: oklch(96.6% 0.022 83 / 0.34);
+
+  /* Cream: the sheets you work on */
+  --cream: oklch(96.6% 0.022 83);
+  --cream-2: oklch(92.6% 0.03 84);
+  --white: oklch(99.2% 0.006 83);
+  --cream-ink: var(--navy);
+  --cream-muted: oklch(43% 0.035 258); /* 7:1 on cream */
+  --cream-line: oklch(86.5% 0.035 85);
+  --cream-line-strong: oklch(58% 0.035 83); /* 3:1 on cream, so field edges show */
+
+  /* Coral: the next button */
+  --coral: oklch(73.8% 0.161 32);
+  --coral-hover: oklch(70.6% 0.188 33);
+
+  /* Results and finger states report something real, so they keep their own colors */
+  --lv-incomplete: oklch(52% 0.012 260);
+  --lv-low: oklch(50% 0.11 155);
+  --lv-selfcare: oklch(52% 0.09 160);
+  --lv-routine: oklch(43% 0.12 258);
+  --lv-soon: oklch(48% 0.11 70);
+  --lv-urgent: oklch(50.1% 0.178 29);
+  --lv-low-soft: oklch(94.9% 0.017 159);
+  --lv-soon-soft: oklch(95.7% 0.018 54);
+  --lv-urgent-soft: oklch(94.8% 0.02 25);
+  --ok: oklch(50% 0.11 155);
+  --pale: oklch(54% 0.01 240);
+  --blue: oklch(48% 0.16 265);
+  --red-on-navy: oklch(81.7% 0.103 20);
+  --red-on-cream: oklch(50.1% 0.178 29);
+  --dark: oklch(45% 0.1 55);
+  --live-ok: oklch(80% 0.17 150);
+  --live-warn: oklch(80% 0.15 80);
+  --live-bad: oklch(64% 0.21 27);
+  --live-scrim: oklch(20% 0.02 170 / 0.72);
+  --quality-ink: oklch(38% 0.09 50);
+  --disabled-on-cream: oklch(45% 0.02 88);
+  --disabled-on-navy: oklch(70% 0.015 245);
+
+  /* Type */
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.625rem, 1.2vw + 1.3rem, 2.25rem);
+  --text-3xl: clamp(2rem, 2.4vw + 1.4rem, 3.25rem);
+  --text-hero: clamp(2.6rem, 4.6vw + 1.1rem, 4.75rem);
+
+  /* Space: one scale for every gap */
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --container: 1240px;
+  --section-gap: clamp(64px, 9vw, 128px);
+
+  /* Shape: soft corners, never full pills except tiny status chips */
+  --r-xl: 28px;
+  --r-lg: 20px;
+  --r-md: 14px;
+  --r-sm: 8px;
+  --r-pill: 999px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+
+  --z-sticky: 200;
+  --z-chat: 400;
+  --z-modal: 500;
+
+  /* Roles. On the navy page these point at light-on-dark colors... */
+  --paper: var(--navy-2);
+  --surface: var(--navy);
+  --raised: var(--navy-2);
+  --ink: var(--cream);
+  --muted: var(--mist);
+  --line: var(--navy-line);
+  --line-strong: var(--navy-line-strong);
+  --act: var(--cream);
+  --act-hover: var(--white);
+  --act-soft: var(--navy-3);
+  --red: var(--red-on-navy);
+  --focus: var(--cream);
+  --disabled-ink: var(--disabled-on-navy);
+}
+
+/* ...and on anything cream, the same role names point at dark-on-light colors. */
+.sheet,
+.cond[aria-pressed='true'],
+.steptab[aria-selected='true'],
+.history-grid,
+.sources,
+.skip-link,
+.on-cream {
+  --paper: var(--cream-2);
+  --surface: var(--cream);
+  --raised: var(--white);
+  --ink: var(--cream-ink);
+  --muted: var(--cream-muted);
+  --line: var(--cream-line);
+  --line-strong: var(--cream-line-strong);
+  --act: var(--cream-ink);
+  --act-hover: oklch(31.8% 0.079 258);
+  --act-soft: var(--cream-2);
+  --red: var(--red-on-cream);
+  --focus: var(--cream-ink);
+  --disabled-ink: var(--disabled-on-cream);
+  color: var(--ink);
 }
