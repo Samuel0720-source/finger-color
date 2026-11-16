@@ -1,0 +1,325 @@
+/* The assistant: a cream sheet in the corner, in the same shapes and type as the rest of the page.
+   Coral is used once, on Send, because that is the button to press. */
+
+.assist-launcher {
+  position: fixed;
+  right: max(var(--space-md), env(safe-area-inset-right));
+  bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  z-index: var(--z-chat);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 52px;
+  padding: 0 var(--space-lg) 0 var(--space-md);
+  border: 1.5px solid var(--navy);
+  border-radius: var(--r-pill);
+  color: var(--navy);
+  background: var(--cream);
+  font: 700 var(--text-md) / 1 var(--font-body);
+  cursor: pointer;
+  box-shadow: 0 10px 30px oklch(12% 0.03 255 / 0.45);
+  transition: transform var(--dur-short) var(--ease-out), background-color var(--dur-micro) ease;
+}
+.assist-launcher:hover {
+  background: var(--white);
+  transform: translateY(-2px);
+}
+.assist-launcher:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: 3px;
+}
+.assist-launcher[data-loading='true'] {
+  cursor: progress;
+  opacity: 0.8;
+}
+/* Never sit on top of a running test, and step aside while the panel is open. */
+body[data-testing='true'] .assist-launcher,
+body[data-assist='open'] .assist-launcher {
+  display: none;
+}
+
+.assist-panel {
+  position: fixed;
+  right: max(var(--space-md), env(safe-area-inset-right));
+  bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  z-index: var(--z-chat);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(400px, calc(100vw - 2 * var(--space-md)));
+  height: min(640px, calc(100dvh - 2 * var(--space-md)));
+  border: 1.5px solid var(--navy);
+  border-radius: var(--r-lg);
+  background: var(--cream);
+  box-shadow: 0 24px 60px oklch(12% 0.03 255 / 0.55);
+  overflow: hidden;
+  animation: assist-in var(--dur-short) var(--ease-out);
+}
+.assist-panel.hidden {
+  display: none;
+}
+@keyframes assist-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.assist-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md);
+  color: var(--cream);
+  background: var(--navy);
+}
+.assist-titles {
+  flex: 1;
+  min-width: 0;
+}
+.assist-title {
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  color: var(--cream);
+}
+.assist-sub {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: var(--mist);
+}
+.assist-tool {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--space-xs);
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--cream);
+  background: transparent;
+  font: 600 var(--text-sm) / 1 var(--font-body);
+  cursor: pointer;
+}
+.assist-tool:hover {
+  background: var(--navy-3);
+}
+.assist-tool:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: -3px;
+}
+.assist-close {
+  display: grid;
+  place-items: center;
+}
+
+.assist-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-md);
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+.assist-log:focus-visible {
+  outline-offset: -3px;
+}
+.assist-msg {
+  display: flex;
+  max-width: 100%;
+}
+.assist-user {
+  justify-content: flex-end;
+}
+.assist-bubble {
+  max-width: 88%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--r-md);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.assist-bot .assist-bubble {
+  border: 1px solid var(--cream-line);
+  border-bottom-left-radius: var(--space-2xs);
+  background: var(--white);
+}
+.assist-user .assist-bubble {
+  border-bottom-right-radius: var(--space-2xs);
+  color: var(--cream);
+  background: var(--navy);
+}
+.assist-text {
+  margin: 0;
+  white-space: pre-line; /* keeps the paragraph breaks of a result explanation */
+}
+.assist-tag,
+.assist-sources,
+.assist-fine {
+  margin: var(--space-xs) 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--cream-muted);
+}
+.assist-notice {
+  padding: var(--space-xs) var(--space-sm);
+  border-left: 3px solid var(--cream-line-strong);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--cream-muted);
+}
+.assist-actions,
+.assist-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+.assist-actions {
+  margin-top: var(--space-sm);
+}
+.assist-action,
+.assist-chip {
+  min-height: 44px;
+  padding: var(--space-xs) var(--space-md);
+  border: 1.5px solid var(--navy);
+  border-radius: var(--r-pill);
+  color: var(--navy);
+  background: transparent;
+  font: 600 var(--text-sm) / 1.25 var(--font-body);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) ease;
+}
+.assist-action:hover:not(:disabled),
+.assist-chip:hover {
+  background: var(--cream-2);
+}
+.assist-action:disabled {
+  border-color: var(--cream-line);
+  color: var(--disabled-on-cream);
+  cursor: not-allowed;
+}
+.assist-lines {
+  margin: var(--space-xs) 0 0;
+  padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-lg);
+  border-radius: var(--r-sm);
+  background: var(--cream);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+/* Three dots while the AI answers. */
+.assist-dots {
+  display: inline-block;
+  width: 34px;
+  height: 8px;
+  background: radial-gradient(circle, var(--cream-muted) 3.5px, transparent 4px) 0 50% / 13px 8px repeat-x;
+  animation: assist-dots 1s steps(3) infinite;
+}
+@keyframes assist-dots {
+  0% {
+    clip-path: inset(0 66% 0 0);
+  }
+  33% {
+    clip-path: inset(0 33% 0 0);
+  }
+  66%,
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.assist-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border-top: 1px solid var(--cream-line);
+  background: var(--cream);
+}
+.assist-input {
+  flex: 1;
+  min-height: 48px;
+  max-height: 120px;
+  padding: 12px var(--space-md);
+  border: 1.5px solid var(--cream-line-strong);
+  border-radius: var(--r-md);
+  color: var(--navy);
+  background: var(--white);
+  font: 400 var(--text-md) / 1.4 var(--font-body); /* 16px: iOS does not zoom the page on focus */
+  resize: none;
+}
+.assist-input::placeholder {
+  color: var(--cream-muted);
+}
+.assist-send {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: var(--r-md);
+  color: var(--navy);
+  background: var(--coral);
+  cursor: pointer;
+}
+.assist-send:hover:not(:disabled) {
+  background: var(--coral-hover);
+}
+.assist-send:disabled {
+  color: var(--disabled-on-cream);
+  background: var(--cream-2);
+  cursor: not-allowed;
+}
+
+/* Phone: a sheet across the bottom that leaves the top of the page in view. */
+@media (max-width: 640px) {
+  /* Icon only, so it covers as little of a small screen as possible. Its name stays for screen readers. */
+  .assist-launcher {
+    width: 52px;
+    padding: 0;
+    justify-content: center;
+  }
+  .assist-launcher span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .assist-panel {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: min(78dvh, 640px);
+    border-width: 1.5px 0 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .assist-bubble {
+    max-width: 94%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assist-panel,
+  .assist-dots {
+    animation: none;
+  }
+  .assist-launcher {
+    transition: none;
+  }
+  .assist-log {
+    scroll-behavior: auto;
+  }
+}
+@media print {
+  .assist-launcher,
+  .assist-panel {
+    display: none;
+  }
+}

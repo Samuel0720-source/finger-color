@@ -25,5 +25,8 @@
     "@mediapipe/tasks-vision": "^1.2.0",
     "chart.js": "^4.6.1",
     "jspdf": "^4.2.1"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
