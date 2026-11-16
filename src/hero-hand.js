@@ -117,7 +117,8 @@ function touchPose(target) {
 const REACH_ORDER = ['index', 'middle', 'ring', 'pinky'];
 function carpalScene(t) {
   const step = 1.7;
-  const i = Math.floor((t % (step * 4)) / step);
+  // Rounding can make the division land exactly on 4 at the end of a loop, so keep the index inside the list.
+  const i = Math.min(REACH_ORDER.length - 1, Math.max(0, Math.floor((t % (step * 4)) / step)));
   const x = (t % step) / step;
   const target = REACH_ORDER[i];
   const amount = x < 0.4 ? ease(x / 0.4) : x < 0.72 ? 1 : 1 - ease((x - 0.72) / 0.28);
