@@ -23,10 +23,11 @@ function median(values) {
   return v.length ? v[Math.floor(v.length / 2)] : NaN;
 }
 
-export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, fileName, getContext }) {
+export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, fileName, getContext, build = '' }) {
   const $ = (id) => document.getElementById(id);
   const btnStart = $('trig-start');
   const btnCsv = $('trig-csv');
+  const btnSummary = $('trig-summary');
   const liveEl = $('trig-live');
   const detailEl = $('trig-detail');
 
@@ -47,6 +48,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
   let lastTracked = 0;
   let maxFrameGap = 0;
   let quality = null;
+  let summary = []; // one row per finger of the last run, for the validation files
 
   const chart = new Chart($('trig-chart'), {
     type: 'line',
@@ -63,6 +65,22 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
       plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8 } } },
     },
   });
+
+  // The run summary holds what a validation sheet asks for (scored or not, fps, open-hand angle,
+  // cycles and catches per finger, app build), so nobody has to copy numbers off the screen by hand.
+  // The first four columns are left empty for the person running the study to fill in.
+  function summarize(perFinger, fps) {
+    const base = { participant: '', session: '', run: '', kind: '', build, hand: getContext().hand || '', scored: quality.ok ? 1 : 0, fps: Number.isFinite(fps) ? fps.toFixed(0) : '', max_gap_ms: maxFrameGap.toFixed(0), open_ref_deg: Number.isFinite(openRef.middle) ? openRef.middle.toFixed(0) : '' };
+    const blank = { cycles: '', catches: '', straightest_deg: '', most_bent_deg: '' };
+    summary = FINGERS.map((f) => {
+      const r = perFinger?.[f];
+      return { ...base, finger: f === 'pinky' ? 'little' : f, ...(r ? { cycles: r.cycles, catches: r.catches.length, straightest_deg: r.maxAngle.toFixed(0), most_bent_deg: r.minAngle.toFixed(0) } : { ...blank, cycles: f === 'middle' ? cycles : '' }), not_scored_reason: quality.ok ? '' : quality.reason };
+    });
+    btnSummary.disabled = false;
+  }
+  btnSummary.onclick = () => {
+    if (summary.length) downloadRows(summary, fileName('catching') + '_summary.csv');
+  };
 
   btnStart.onclick = () => (running ? stop() : start());
   btnCsv.onclick = () => {
@@ -90,6 +108,8 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     btnStart.textContent = 'Stop test';
     btnStart.classList.add('btn-recording');
     btnCsv.disabled = true;
+    btnSummary.disabled = true;
+    summary = [];
     detailEl.innerHTML = '';
     setBusy(true);
     setStatus(`Hold your hand open. Then make a fist and open it ${TARGET_CYCLES} times.`);
@@ -109,6 +129,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     btnCsv.disabled = samples.length === 0;
     if (samples.length < 30) {
       quality = { ok: false, reason: 'Not enough tracked frames. Keep your whole hand in view and try again.' };
+      summarize(null, NaN);
       showQuality();
       onResult(null);
       setStatus('Test stopped.');
@@ -119,6 +140,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     if (cycles < TARGET_CYCLES || trackingLost || fps < MIN_FPS || maxFrameGap > MAX_GAP_MS) {
       quality.ok = false;
       quality.reason = `Not scored. The test needs ${TARGET_CYCLES} fist cycles with steady tracking at ${MIN_FPS}+ frames per second and no gap over ${MAX_GAP_MS} ms. This attempt: ${cycles} cycles, ${fps.toFixed(0)} fps, largest gap ${maxFrameGap.toFixed(0)} ms. Use brighter light and close other apps.`;
+      summarize(null, fps);
       showQuality();
       onResult(null);
       setStatus('Test needs another attempt.');
@@ -127,6 +149,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
     const times = samples.map((s) => s.t);
     const perFinger = {};
     for (const f of FINGERS) perFinger[f] = summarizeFinger(times, samples.map((s) => s[f]), cycleLimits(openRef[f]));
+    summarize(perFinger, fps);
     showDetail(perFinger);
     drawFinalChart(times, perFinger);
     const totalCatches = FINGERS.reduce((sum, f) => sum + perFinger[f].catches.length, 0);
@@ -155,7 +178,7 @@ export function createTriggerPanel({ setStatus, setBusy, onSaved, onResult, file
         <thead><tr><th>Finger</th><th>Straightest</th><th>Most bent</th><th>Cycles</th><th>Catches</th></tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
-      <p class="fine-print">Recording quality: ${quality.fps.toFixed(0)} fps, largest gap ${quality.maxFrameGap.toFixed(0)} ms, ${quality.cycles} middle-finger cycles. Your open hand read ${openRef.middle.toFixed(0)}° for the middle finger, so a fist counted below ${limits.closed.toFixed(0)}° and opening above ${limits.open.toFixed(0)}°. A catch is a pause of 150 ms or more in mid-bend (100 to 165°) followed by opening at least 25° within 120 ms. Engineering rule, not a clinical cut-off.</p>`;
+      <p class="fine-print">Recording quality: ${quality.fps.toFixed(0)} fps, largest gap ${quality.maxFrameGap.toFixed(0)} ms, ${quality.cycles} middle-finger cycles. Your open hand read ${openRef.middle.toFixed(0)}° for the middle finger, so a fist counted below ${limits.closed.toFixed(0)}° and opening above ${limits.open.toFixed(0)}°. A catch is a pause of 150 ms or more in mid-bend (100 to 165°) followed by opening at least 25° within 120 ms. Engineering rule, not a clinical cut-off.${build ? ' App build ' + build + '.' : ''}</p>`;
   }
 
   function drawFinalChart(times, perFinger) {

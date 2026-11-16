@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Version | 1.2, 12 Nov 2026 (changes at the end) |
+| Version | 1.3, 15 Nov 2026 (changes at the end) |
 | Author | Samuel Koo |
 | Applies to | Reports 01 (dry run), 02 (pilot) and 03 (full study) |
 
@@ -66,7 +66,7 @@ runs.csv           participant,session,run,scored,fps,light,build
 finger_catches.csv participant,session,run,kind,build,open_ref_deg,finger,cycles,catches
 ```
 
-`position` is `straight`, `45`, `90` or `108` (full bend). `light` is `normal`, `dim` or `bright`. `build` is the app's Git commit. `kind` is `smooth` or `catch`. Every run is written to `runs.csv`, scored or not; only scored runs have catch counts. When possible, save the app's "Raw data for analysis" CSV for every run as `raw/<participant>_run<N>_<smooth|catch>.csv`; `validation/replay-trigger.mjs` replays these through the app's detector.
+`position` is `straight`, `45`, `90` or `108` (full bend). `light` is `normal`, `dim` or `bright`. `build` is the app's Git commit. `kind` is `smooth` or `catch`. Every run is written to `runs.csv`, scored or not; only scored runs have catch counts. When possible, save the app's "Raw data for analysis" CSV for every run as `raw/<participant>_run<N>_<smooth|catch>.csv`; `validation/replay-trigger.mjs` replays these through the app's detector. From 15 Nov 2026 the app also offers "Download run summary (CSV)" after every run, scored or not: it holds the build, fps, open-hand angle, and each finger's cycles and catches, with the first four columns left empty for the participant, session, run and kind. Use it instead of copying numbers from the screen.
 
 ## Analysis
 
@@ -88,6 +88,7 @@ No data point is removed unless the report says which one and why.
 
 | Version | Date | Change | Why |
 | --- | --- | --- | --- |
+| 1.3 | 15 Nov 2026 | The app writes a run summary CSV and shows its build at the bottom of the page; use these as the record. Pass or fail rules unchanged. | Report 02: two runs had no build recorded and per-finger counts were typed from the screen. |
 | 1.2 | 12 Nov 2026 | Record all five fingers' cycles and catches and the open-hand angle (`finger_catches.csv`); add `build` to `runs.csv`; record unscored runs too. Pass or fail rules unchanged. | Pilot P01: the thumb and little finger produced false catches that the middle-finger-only data hid; unscored runs on an older build were left out of the first CSV. |
 | 1.1 | 11 Nov 2026 | Still angles: middle finger only, at least 8 positions, three readings per position. Catch step: full fist first, then pause on the way out. Goniometer type recorded. | Pilot P01: the app shows a live angle for the middle finger only; a half-bend catch was not counted as a fist; the goniometer used reads 180° for straight. |
 | 1.0 | 10 Nov 2026 | First version | |
