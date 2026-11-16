@@ -14,7 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent))
-from stats import agreement, icc_2_1, p95, rate  # noqa: E402
+from stats import agreement, icc_2_1, p95, rate, to_json  # noqa: E402
 
 VISIBLE = 3.0  # a color change of about 3 is the smallest a person can see
 
@@ -119,4 +119,4 @@ if __name__ == "__main__":
         label = args[args.index("--label") + 1] if "--label" in args else ""
         figures(res, args[args.index("--figures") + 1], label)
     keep = {k: v for k, v in res.items() if k != "timed"}
-    (Path(args[0]) / "results.json").write_text(json.dumps(keep, indent=2, default=float))
+    (Path(args[0]) / "results.json").write_text(to_json(keep))

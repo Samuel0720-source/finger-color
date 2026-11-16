@@ -49,6 +49,28 @@ def rate(hits, total):
     return {"hits": int(hits), "total": int(total), "rate": hits / total if total else float("nan")}
 
 
+def to_json(data):
+    """Text for results.json. NaN is not allowed in JSON (browsers refuse the file), so a number
+    that could not be calculated is written as null."""
+    import json
+    import math
+
+    def tidy(x):
+        if isinstance(x, dict):
+            return {k: tidy(v) for k, v in x.items()}
+        if isinstance(x, (list, tuple)):
+            return [tidy(v) for v in x]
+        if isinstance(x, (bool, str)) or x is None:
+            return x
+        if isinstance(x, (int, np.integer)):
+            return int(x)
+        if isinstance(x, (float, np.floating)):
+            return None if math.isnan(x) or math.isinf(x) else float(x)
+        return x
+
+    return json.dumps(tidy(data), indent=2, allow_nan=False) + "\n"
+
+
 def p95(values):
     """95th percentile: 95 out of 100 values are at or below this."""
     return float(np.percentile(np.asarray(values, float), 95))

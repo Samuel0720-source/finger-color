@@ -14,7 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent))
-from stats import agreement, icc_2_1, rate  # noqa: E402
+from stats import agreement, icc_2_1, rate, to_json  # noqa: E402
 
 # Pass or fail rules, copied from the protocol. Change them there first, then here.
 CRITERIA = {
@@ -71,7 +71,11 @@ def analyze(folder):
         a = agreement(rows["app_flexion"], rows["gonio_deg"]) if len(rows) >= 2 else None
         by_condition.append({"condition": label, "pairs": len(rows), "too_small": len(rows) < 5, **(a or {})})
 
-    return {"agreement": agree, "icc": icc, "found": found, "false_alarm": false_alarm, "unscored": unscored,
+    # How much data the numbers rest on. The website shows this next to the results.
+    people = sorted(set(static["participant"]) | set(runs["participant"]))
+    counts = {"people": len(people), "people_with_pairs": int(static["participant"].nunique()), "pairs": int(len(normal)), "runs": int(len(nruns)), "runs_scored": int((nruns["scored"] == 1).sum())}
+
+    return {"counts": counts, "agreement": agree, "icc": icc, "found": found, "false_alarm": false_alarm, "unscored": unscored,
             "checks": {k: {"result": v[0], "pass": None if v[1] is None else bool(v[1]), "rule": CRITERIA[k]} for k, v in checks.items()},
             "by_condition": by_condition, "static": static}
 
@@ -117,4 +121,4 @@ if __name__ == "__main__":
         label = args[args.index("--label") + 1] if "--label" in args else ""
         figures(res, args[args.index("--figures") + 1], label)
     keep = {k: v for k, v in res.items() if k != "static"}
-    (Path(args[0]) / "results.json").write_text(json.dumps(keep, indent=2, default=float))
+    (Path(args[0]) / "results.json").write_text(to_json(keep))

@@ -160,6 +160,7 @@
               <button id="btn-camera" class="btn btn-quiet hidden">Turn off camera</button>
             </div>
             <p id="status" class="status" role="status" aria-live="polite">On a phone, use the back camera and hold the phone above your hand.</p>
+            <div id="setup-check" class="setup-check hidden"></div>
           </div>
 
           <div class="controls">
@@ -248,7 +249,7 @@
           <div class="report-row">
             <button type="button" class="btn btn-secondary" data-report="trigger" disabled>Download PDF report</button>
             <details class="raw-data"><summary>Raw data for analysis (CSV)</summary>
-              <div class="downloads"><button id="trig-csv" class="btn-link" disabled>Download joint angles (CSV)</button></div>
+              <div class="downloads"><button id="trig-csv" class="btn-link" disabled>Download joint angles (CSV)</button><button id="trig-summary" class="btn-link" disabled>Download run summary (CSV)</button></div>
             </details>
           </div>
         </div>
@@ -353,6 +354,7 @@
             </dl>
           </article>
         </div>
+        <section id="evidence" class="evidence on-cream" aria-label="What has been tested so far"></section>
         <details class="sources">
           <summary>Sources and limits</summary>
           <ul>
@@ -362,7 +364,7 @@
             <li>Graham B, et al. The CTS-6. Carpal Tunnel Syndrome 6 calculator. <a href="https://www.mdcalc.com/calc/10631/carpal-tunnel-syndrome-6-cts-6" target="_blank" rel="noopener">MDCalc</a></li>
             <li>Carpal tunnel syndrome referral criteria. NHS Scotland. <a href="https://www.rightdecisions.scot.nhs.uk/borders-ref-help-toolkit/orthopaedic/hand-and-wrist/carpal-tunnel-syndrome" target="_blank" rel="noopener">Right Decisions</a></li>
           </ul>
-          <p>The criteria were written for clinicians examining a patient. Here you answer and test yourself, which is less reliable. Camera features use engineering thresholds checked only on synthetic signals so far, not on patients. The app never calculates a probability of disease.</p>
+          <p>The criteria were written for clinicians examining a patient. Here you answer and test yourself, which is less reliable. Camera features use engineering thresholds checked on synthetic signals and a small pilot with healthy volunteers, not on patients. The app never calculates a probability of disease.</p>
         </details>
       </section>
     </main>
@@ -380,7 +382,7 @@
           <p>A student research project. It does not diagnose any condition or replace a doctor. If you are worried about a symptom, seek medical advice. In an emergency, call 911.</p>
         </div>
       </div>
-      <p class="credit">Built by Samuel Koo, Biomedical Engineering, University of Waterloo.</p>
+      <p class="credit">Built by Samuel Koo, Biomedical Engineering, University of Waterloo. <span class="build">Build <span id="build-id"></span></span></p>
     </footer>
 
     <button type="button" id="assist-launcher" class="assist-launcher" aria-haspopup="dialog" aria-expanded="false" aria-controls="assist-panel">
