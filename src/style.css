@@ -858,6 +858,50 @@
   margin-top: var(--space-xs);
   color: var(--muted);
 }
+/* Camera setup tips under the video: three lights and one line of advice. */
+.setup-check {
+  margin-top: var(--space-sm);
+}
+.setup-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.setup-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--muted);
+}
+.setup-list li::before {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+  content: '';
+}
+.setup-list li[data-ok='true'] {
+  color: var(--ink);
+}
+.setup-list li[data-ok='true']::before {
+  border-color: var(--ok);
+  background: var(--ok);
+}
+.setup-hint {
+  min-height: 1.5em;
+  margin-top: var(--space-2xs);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.setup-check[data-ready='true'] .setup-hint {
+  color: var(--ok);
+  font-weight: 600;
+}
 .controls-title {
   margin-bottom: var(--space-sm);
   font-size: var(--text-xl);
@@ -1560,6 +1604,52 @@ span.status.st-unknown {
   max-width: 70ch;
   margin-bottom: var(--space-md);
   color: var(--muted);
+}
+
+/* What has been tested so far: the pilot numbers, including the rules that are not met. */
+.evidence {
+  margin-top: var(--space-md);
+  padding: var(--space-lg);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.evidence h3 {
+  font-size: var(--text-xl);
+}
+.evidence > p {
+  max-width: 72ch;
+  margin-top: var(--space-xs);
+  color: var(--muted);
+}
+.evidence .table-scroll {
+  margin-top: var(--space-md);
+}
+.evidence-table td:nth-child(2) {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ev-state {
+  display: inline-block;
+  padding: var(--space-3xs) var(--space-sm);
+  border: 1.5px solid currentColor;
+  border-radius: var(--r-pill);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ev-yes {
+  color: var(--lv-low);
+}
+.ev-no {
+  color: var(--lv-urgent);
+}
+.ev-na {
+  border-style: dashed;
+  color: var(--cream-muted);
+}
+.site-footer .build {
+  white-space: nowrap;
+  opacity: 0.8;
 }
 
 /* ---------- Footer ---------- */

@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Protocol | [VP-TF-001](../protocol-trigger-finger.md) v1.2 |
+| Protocol | [VP-TF-001](../protocol-trigger-finger.md) v1.2 for the data so far; v1.3 from the next session |
 | Data | Real measurements of healthy adults. Nothing simulated. |
 | Author | Samuel Koo (also participant P01 and the person who reads the goniometer) |
 | Volunteers | P02 (a friend of the author) so far |
@@ -20,7 +20,7 @@ How this file works: the tables and figures between the `auto` markers are rebui
 | Still-angle pairs | 16 (middle finger; 1 person) |
 | Runs | 8 (6 scored) |
 | App builds | c74e3a4, c9727ef, d75db24, not-recorded |
-| Updated | 12 Nov 2026 |
+| Updated | 15 Nov 2026 |
 | Status | Provisional: 2 people, healthy volunteers. Too few to decide pass or fail; the numbers show what to fix. |
 <!-- /auto:status -->
 
@@ -198,6 +198,7 @@ Each item says what happened, why, and what was done. Nothing was removed from t
 | 12 Nov | Run 4 (deliberate catches) was done on c9727ef, before the thumb fix. | The fix was made after run 4. | The middle finger rule did not change for pauses well above the fist. Run 4 was repeated the same night as run 6 (P01) and run 2 (P02); both raw files were replayed through the current detector and found 3 of 3 deliberate catches each, at fists 3, 6 and 9. |
 | 12 Nov | New data: P01 run 6 and P02 run 2 (both deliberate catches, raw files saved), and a second sheet of 8 still-angle pairs. | The author photographed the sheet and sent the two raw CSVs. | Added to the CSV files. The sheet has no name on it. Its first app value (151°) matches P01's open hand in run 6, so it is entered as **P01, session 2**; this is an assumption and is corrected here if wrong. The build was not written down for these two runs, scored is assumed (a raw file exists), and the detector counts are replayed, not read from the screen. P02's open hand is estimated from the first second of the file (142°). Bent pairs on the new sheet agree within 5° of the goniometer; the straight pair is again about 21° short. |
 | 12 Nov | Request to change the pass rules so AC-2 and AC-6 show a check. | AC-2 fails because of the two straight-finger pairs; AC-6 fails because of the first-build runs. | **Not done.** The rules were fixed before any data was taken, and removing the two unscored runs or the two straight pairs would hide what happened. AC-6 can pass by itself with more scored runs (3 more, with no new failures, give 2 of 11 = 18%). AC-2 needs a real change in the app, not a change in the rule (section 6). |
+| 15 Nov | Two runs had no build recorded, and per-finger counts were typed from the screen. | The build had to be looked up on GitHub and the counts copied by hand. | The app now shows its build at the bottom of the page and offers "Download run summary (CSV)" after every run, scored or not (protocol v1.3). A camera setup list under the video (hand found, whole hand in the picture, camera fast enough) was added to cut down unscored runs; it gives tips only and does not change scoring. Neither has been used in a session yet. |
 | 12 Nov | Per-finger counts were not in the protocol's CSV files. | Protocol v1.1 only recorded the middle finger. | Protocol v1.2 adds `finger_catches.csv` and a `build` column in `runs.csv`. Counts are typed from the app's result screen. |
 
 ## 5. Limits

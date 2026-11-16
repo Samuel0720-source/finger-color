@@ -12,7 +12,7 @@ About 25 minutes, one time. You hold your hand in front of a laptop camera while
 
 ## Setup (Sam)
 
-1. Open finger-color.vercel.app in Chrome, press Cmd+Shift+R to load the newest version, and note the build: the 7-character commit shown on the GitHub page for the main branch.
+1. Open finger-color.vercel.app in Chrome, press Cmd+Shift+R to load the newest version, and note the build: the 7 characters after "Build" at the very bottom of the page.
 2. Plain background, normal room light, laptop camera at hand height.
 3. Write on the sheet: code, date, goniometer type (reads 180° when straight), light.
 
@@ -29,13 +29,13 @@ Camera on, test not started. Volunteer's palm faces the camera, hand 30 to 40 cm
 
 1. Press **Start test**. Hold the hand open until the countdown runs (3 seconds).
 2. Make **10 slow, smooth fists**, opening fully each time.
-3. When the results appear, write: scored or not, fps, and for each finger the **Cycles** and **Catches**. Write the line "Your open hand read ...°". Save the PDF or CSV if it is easy.
+3. When the results appear (or the run is not scored), open **Raw data for analysis (CSV)** and press both **Download joint angles (CSV)** and **Download run summary (CSV)**. The summary file holds scored or not, fps, the open-hand angle, cycles and catches for each finger, and the app build, so these no longer need to be written by hand. Rename the files with the code and run, for example `P03_run1_smooth_angles.csv`.
 
 ## Part 3: deliberate catches (5 minutes)
 
 1. Run the test again.
 2. On fists **3, 6 and 9**: make a **full fist**, open the hand **halfway**, **pause for about half a second**, then snap it open. All other fists are smooth.
-3. Write the same numbers as Part 2, plus the catch lines at the bottom.
+3. Download the same two files as in Part 2.
 
 A catch on the other fingers is normal here, because the whole hand paused. Only the middle finger is scored.
 
@@ -70,8 +70,8 @@ A catch on the other fingers is normal here, because the whole hand paused. Only
 | Smooth run | | | | | | | | |
 | Catch run | | | | | | | | |
 
-If a run is **not scored**, still write it down with the reason shown on screen, and run it once more.
+If a run is **not scored**, still download its run summary (it records the reason), and run it once more. The table above is a backup in case a file is lost.
 
 ## After the session (Sam)
 
-Send Claude a photo of the sheet and the two result screenshots. Claude types the rows into the CSV files, runs the analysis and updates the report. Photos of the screen should not show the volunteer's face or name.
+Send Claude a photo of the sheet and the CSV files, saying which person and run each one is. Claude types the rows into the CSV files, runs the analysis and updates the report. Photos of the screen should not show the volunteer's face or name.
