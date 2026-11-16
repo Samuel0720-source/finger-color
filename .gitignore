@@ -29,3 +29,9 @@ analysis/*_plot.png
 
 # Python cache from running analysis/*.py
 __pycache__/
+
+# Secrets and local Vercel files
+.env
+.env.*
+!.env.example
+.vercel
