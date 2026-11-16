@@ -32,6 +32,29 @@ The summary is generated from the table, for example: *"5 of 7 carpal tunnel fea
 | Trigger finger | Green grades I to IV | Catching (a stop then a snap while opening the fist), whether each finger and the thumb fully straighten and fully bend (largest and smallest joint angle) |
 | Carpal tunnel syndrome | CTS-6 (score of 12 or more of 26 = likely) and NHS urgent signs | Thumb reach (opposition) test: can the thumb touch each fingertip. Phalen, Tinel and two-point tests are guided self-tests. |
 
+## The assistant ("Ask a question")
+
+A chat panel that explains the tests, helps with camera problems, moves you to the right step, and explains a result in plain words, in English or Korean. It is general information, never a diagnosis.
+
+How one question is answered, in order:
+
+1. **Urgent wording** (a black fingertip, sores, a red hot swollen finger, sudden weakness) gets a fixed "get care today" message. No AI is involved.
+2. **Common questions** are answered on the device from a hand-written list (`src/assistant/knowledge.js`), checked against the app and against NIAMS and NHS pages.
+3. **Anything else** goes to `POST /api/chat`, a Vercel serverless function that calls Google Gemini (`gemini-3.5-flash-lite`, free of charge on the Free Tier when checked on 15 Nov 2026).
+4. **If the AI is off or fails** (no key, quota used up, timeout), the built-in list answers instead.
+
+Safety and privacy choices:
+
+- The API key is read only on the server (`GEMINI_API_KEY`). It is never in the page, the build or the repository.
+- The model must answer as `{reply, actions}`. The reply is shown as plain text, and `actions` may only hold ids from a fixed list (`src/assistant/actions.js`) that map to places in the app. No URL or code from the model is ever run.
+- The model is given the rules in `src/assistant/safety.js`: no diagnosis, no medicines or doses, no invented numbers, app facts only from the knowledge list, user text treated as data.
+- A result is **never sent by itself**. "Explain my result" first shows exactly which lines would be used and offers two buttons: explain on this device (nothing sent) or send to the AI.
+- Only six facts about the page are sent with a question: which check, which step, whether the user is in the check, camera on, test running, result available. No answers, video or names.
+- Limits: 500 characters per message, 6 recent messages per request, 6 requests per minute and 40 per day per visitor, 300 per day in total, 12 s timeout. The counters live in memory, so they reset when the function restarts: a guard against bursts, not an exact meter.
+- On the Gemini Free Tier, Google may use what is sent to improve its products. The chat says so and asks people not to type personal details. Conversations are not stored by this app.
+
+**Turn the AI on (free):** create a key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), then on Vercel open the project, Settings, Environment Variables, add `GEMINI_API_KEY` for Production, and redeploy. Do not add a billing account to the Google project if you want it to stay free. `.env.example` lists the optional settings. Without a key everything still works; the assistant just answers from its built-in list.
+
 ## Camera methods
 
 **Finding the hand.** MediaPipe Hand Landmarker returns 21 landmarks per frame, both in image pixels and as 3D points in meters (world landmarks).
@@ -68,9 +91,20 @@ src/
     trigger-panel.js   catching screen (five fingers including the thumb)
     reach-panel.js     thumb reach test
     cts-guided.js      Phalen (timed), Tinel and two-point cards
+  assistant/
+    knowledge.js       hand-written answers (English and Korean) and their sources
+    faq.js             answers common questions on the device, no AI
+    safety.js          urgent-symptom check, and the rules given to the AI
+    actions.js         the fixed list of things the assistant may do in the app
+    result-summary.js  the result lines that may be shared, and the on-device explanation
+    launcher.js, chat.js, chat.css   the button and the panel (the panel loads on first use)
+  steps.js           the three-step bar (Symptoms, Measure, Result)
+  hero-hand.js       the animated hand drawing at the top of the page
   camera.js, hand.js, color.js, plain.js, recovery.js, recorder.js,
   livechart.js, chart-theme.js, angles.js, draw.js, history.js, history-panel.js
-tests/               node --test unit tests (assessments, color analysis, detectors)
+api/chat.js          the serverless endpoint for the assistant (reads GEMINI_API_KEY)
+server/chat-core.js  its logic: input checks, rate limits, prompt, cleaning the model's answer
+tests/               node --test unit tests (assessments, color analysis, detectors, assistant)
 tests/e2e/           browser test of all three conditions with a generated fake camera video
 validation/          synthetic benchmark, Python parity check, 50-person simulated population test
 analysis/            Python re-analysis of exported CSV files
@@ -82,15 +116,18 @@ analysis/            Python re-analysis of exported CSV files
 ```bash
 npm install
 npm run dev         # https://localhost:5173 (self-signed certificate)
-npm test            # unit tests (69)
+npm test            # unit tests
 npm run build
 npm run benchmark   # synthetic detector benchmark
 npm run parity      # Python analysis gives the same recovery time as the app (needs pandas, numpy)
 npm run population  # 50 simulated people: skin types, lights, ages, imperfect answers
-npm run e2e         # real app in Chrome with a fake camera, all three conditions (about 2.5 min)
+npm run e2e         # real app in Chrome with a fake camera, all three conditions and the assistant (about 2.5 min)
+npm run e2e -- assistant   # only the assistant checks (a few seconds)
 ```
 
 GitHub runs all of these on every push (`.github/workflows/test.yml`).
+
+`npm run dev` serves the page only, so the assistant answers from its built-in list there. To try the AI locally, use `npx vercel dev` with a `.env.local` copied from `.env.example`.
 
 **Optional: serve the hand model yourself.** The app downloads the MediaPipe hand model (about 8 MB) from Google. To host it with the site, so it still works if that link changes, download [hand_landmarker.task](https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task) into `public/models/` and change `MODEL_URL` in `src/hand.js` to `'/models/hand_landmarker.task'`. Test with a real hand before pushing.
 
@@ -111,7 +148,7 @@ Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 
 ## Validation
 
-Each camera test has a fixed protocol and three reports: a dry run of the analysis, a 3-person pilot, and a 10-person study. Report 01 (dry run) is done for trigger finger and Raynaud's: the analysis recovered every answer built into simulated data. Reports 02 and 03 will be the first with real measurements. See [`docs/validation/`](docs/validation/README.md).
+Each camera test has a fixed protocol and three reports: a dry run of the analysis, a 3-person pilot, and a 10-person study. Report 01 (dry run) is done for trigger finger and Raynaud's: the analysis recovered every answer built into simulated data. Report 02 (pilot) for trigger finger is in progress with real measurements from two healthy volunteers; it states which pass rules currently fail and why. See [`docs/validation/`](docs/validation/README.md).
 
 ## Limits
 
