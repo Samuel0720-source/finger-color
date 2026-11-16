@@ -1,5 +1,7 @@
-// Font served from this site (no request to Google). Variable width + weight.
-import '@fontsource-variable/instrument-sans/wdth.css';
+// Fonts are served from this site (no request to Google).
+// Headings: Bricolage Grotesque. Text: Figtree, a friendly face that stays clear at small sizes.
+import '@fontsource-variable/bricolage-grotesque/wdth.css';
+import '@fontsource-variable/figtree/index.css';
 import { startCamera, stopCamera, isFrontCamera, tryLockCamera } from './camera.js';
 import { loadHandModel, detectHand } from './hand.js';
 import * as raynaud from './assess/raynaud.js';
@@ -13,6 +15,8 @@ import { createTriggerPanel } from './tests/trigger-panel.js';
 import { createReachPanel } from './tests/reach-panel.js';
 import { createColorPanel } from './tests/color-panel.js';
 import { mountGuidedTests } from './tests/cts-guided.js';
+import { createSteps } from './steps.js';
+import { mountHeroHand } from './hero-hand.js';
 
 const CONDITIONS = { raynaud, trigger, carpal };
 const MODES = Object.keys(CONDITIONS);
@@ -55,6 +59,15 @@ const camera = { raynaud: null, trigger: null, carpal: null };
 const ready = {};
 
 const setStatus = (text) => (statusEl.textContent = text);
+const heroHand = mountHeroHand($('hero-hand'));
+// Leaving the Measure step is refused while a timed test runs, so the test is never hidden mid-run.
+const steps = createSteps({
+  canLeave: (step) => {
+    if (step !== 'measure' || !(busy || colorPanel.isBusy())) return true;
+    setStatus('Finish or stop the current test first.');
+    return false;
+  },
+});
 window.onerror = (msg) => setStatus('Something went wrong: ' + msg);
 window.onunhandledrejection = (e) => setStatus('Something went wrong: ' + (e.reason?.message || e.reason));
 
@@ -66,6 +79,7 @@ for (const m of MODES) {
   forms[m] = mountQuestionnaire($('q-' + m), m, CONDITIONS[m].QUESTIONS, () => {
     if (m === 'carpal') guided.carpal?.sync();
     updateResult(m);
+    updateStepBar();
   });
 }
 guided.carpal = mountGuidedTests($('cts-guided'), {
@@ -89,6 +103,21 @@ function updateResult(m) {
     $('result-announce').textContent = `${CONDITIONS[m].NAME} result: ${LEVELS[r.level].headline}.`;
   }
   card.dataset.level = r.level;
+  if (m === mode) updateStepBar();
+}
+
+// The step bar shows where you are: answers given, whether a measurement is done, and the current result.
+function updateStepBar() {
+  const progress = $('q-' + mode).querySelector('.q-progress')?.textContent || '';
+  const [done] = progress.match(/\d+/) || ['0'];
+  steps.setMeta('symptoms', progress.replace(' answered', ''), Number(done) > 0 ? 'started' : '');
+  const measured = Boolean(camera[mode]);
+  steps.setMeta('measure', measured ? 'Done' : 'Optional', measured ? 'done' : '');
+  const level = document.querySelector(`.cond[data-mode="${mode}"]`).dataset.level || 'incomplete';
+  steps.setMeta('result', level === 'incomplete' ? 'Not yet' : LEVELS[level].tag, level);
+  // Once a camera test is done, the result button is the one to press.
+  $('btn-to-result').classList.toggle('btn-primary', measured);
+  $('btn-to-result').classList.toggle('btn-secondary', !measured);
 }
 
 // ---------- Condition picker ----------
@@ -96,6 +125,14 @@ function updateResult(m) {
 const historyPanel = createHistoryPanel();
 const conds = document.querySelectorAll('.cond');
 conds.forEach((b) => (b.onclick = () => setMode(b.dataset.mode)));
+// The one Start button: go to the first step of the chosen check.
+$('btn-begin').onclick = () => {
+  steps.go('symptoms', { scroll: false });
+  $('workspace').scrollIntoView({ block: 'start' });
+  $('tab-symptoms').focus({ preventScroll: true });
+};
+const TITLE = { raynaud: "Raynaud's", trigger: 'Trigger finger', carpal: 'Carpal tunnel' };
+const START_LABEL = { raynaud: "Start the Raynaud's check", trigger: 'Start the trigger finger check', carpal: 'Start the carpal tunnel check' };
 
 function setMode(next) {
   if (busy || colorPanel.isBusy()) {
@@ -110,6 +147,10 @@ function setMode(next) {
   octx.clearRect(0, 0, overlay.width, overlay.height);
   historyPanel.setMode(mode);
   $('history-pdf').disabled = !ready[mode];
+  $('work-name').textContent = TITLE[mode];
+  $('btn-begin').textContent = START_LABEL[mode];
+  heroHand.setMode(mode);
+  updateStepBar();
 }
 
 // ---------- Hand in view ----------
@@ -218,6 +259,7 @@ async function turnCameraOn() {
   btnCamera.classList.remove('hidden');
   trackingEl.classList.remove('hidden');
   btnCameraStart.disabled = false;
+  $('panel-measure').dataset.live = 'true'; // the charts appear once there is something to draw
   colorPanel.enable();
   triggerPanel.enable();
   reachPanel.enable();
