@@ -224,12 +224,14 @@ export function createColorPanel({ video, setStatus, onResult, onSaved, fileName
     rec.addEvent('reference_noise', String(analysis.noise.middle));
     if (analysis.middle.ok) rec.addEvent('app_recovery_sec', analysis.middle.recoverySec === null ? '' : analysis.middle.recoverySec.toFixed(2));
     showAnalysis(analysis, events);
+    let saved = true;
     if (analysis.involved.length && analysis.middle.ok && !analysis.middle.noChange) {
-      saveSession({ test: 'color', algorithm: 3, result: analysis.middle.recoverySec === null ? null : analysis.middle.recoverySec / 60, context });
+      saved = saveSession({ test: 'color', algorithm: 3, result: analysis.middle.recoverySec === null ? null : analysis.middle.recoverySec / 60, context });
       onSaved();
     }
     onResult(analysis);
-    setStatus(analysis.involved.length ? 'Recording analysed. See the color phases below and your result in step 3.' : 'No clear color change was seen in this recording. Record during an episode to measure one.');
+    const notSaved = saved ? '' : ' It could not be saved in this browser (storage is full or blocked), so download the CSV or the PDF to keep it.';
+    setStatus((analysis.involved.length ? 'Recording analysed. See the color phases below and your result in step 3.' : 'No clear color change was seen in this recording. Record during an episode to measure one.') + notSaved);
   }
 
   function showAnalysis(a, events) {

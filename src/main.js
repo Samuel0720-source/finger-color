@@ -261,6 +261,11 @@ async function turnCameraOn() {
     btnCameraStart.disabled = false;
     return;
   }
+  // The camera may have been unplugged, or the page left, while the model was loading.
+  if (track.readyState !== 'live' || video.srcObject === null) {
+    btnCameraStart.disabled = false;
+    return;
+  }
   overlay.width = video.videoWidth;
   overlay.height = video.videoHeight;
   cameraOn = true;

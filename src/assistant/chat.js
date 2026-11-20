@@ -270,7 +270,11 @@ export function createChat({ app, launcher, fetchImpl = (...a) => fetch(...a) })
     const retry = el('button', 'assist-action', t().retry);
     retry.type = 'button';
     retry.onclick = () => {
+      if (pending) return;
       retry.closest('.assist-msg').remove();
+      // Another answer came after this failure: ask again so the question is the latest turn.
+      const last = turns.at(-1);
+      if (last?.role !== 'user' || last.text !== question) return ask(question, opts);
       respond(question, opts);
     };
     const row = el('div', 'assist-actions');
@@ -294,7 +298,8 @@ export function createChat({ app, launcher, fetchImpl = (...a) => fetch(...a) })
     const done = () => row.querySelectorAll('button').forEach((b) => (b.disabled = true));
     device.onclick = () => {
       done();
-      say(explainLocally(summary, lang), { tag: t().tagDevice, actions: ['go_result'] });
+      // bubble, not say: the user chose "on this device", so this text never joins the turns sent to the AI.
+      bubble('bot', explainLocally(summary, lang), { tag: t().tagDevice, actions: ['go_result'] });
     };
     row.append(device);
     if (ai !== 'off') {

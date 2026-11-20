@@ -34,3 +34,5 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npm run e2e
+      - name: Built site with the Vercel headers loads the real hand model, PDF and assistant (no CSP violations)
+        run: npm run smoke

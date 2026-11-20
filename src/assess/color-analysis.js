@@ -66,6 +66,8 @@ function referenceFrom(rows, baseline) {
 
 export function analyzeColorRecording(rows, events, baseline = null) {
   if (!rows || rows.length === 0) return { ok: false, reason: 'No color data was recorded.' };
+  // Page hidden or camera lost mid-recording: the CSV can still be downloaded, but it is never scored.
+  if (events.some((e) => e.type === 'interrupted')) return { ok: false, interrupted: true, reason: 'The recording was interrupted (the page was hidden or the camera stopped), so it was not scored. Record again.' };
   const ref = referenceFrom(rows, baseline);
   if (!ref) return { ok: false, reason: 'Keep your hand in view for the last 10 seconds so the app can learn your normal color.' };
 
@@ -114,7 +116,7 @@ export function analyzeColorRecording(rows, events, baseline = null) {
     const pale = phase('Paler');
     const blue = phase('Bluer');
     // Red counts only once warming has started (it is the rewarming phase).
-    const red = phase('Redder', tWarm ?? -Infinity);
+    const red = tWarm !== null && phase('Redder', tWarm);
     const involved = peak.score >= PHASE_MIN;
     const border = involved && peak.prox !== null && peak.prox < BORDER_RATIO * peak.score;
     perFinger[f] = { peak: peak.score, pale, blue, red, involved, border, borderMeasured: peak.prox !== null };

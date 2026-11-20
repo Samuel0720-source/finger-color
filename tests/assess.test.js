@@ -275,3 +275,16 @@ test('a hand that reads about 150° when open is not flagged as unable to straig
   const r = trigger.assess(tfNone, camFingers({ thumb: thumbOpen({ maxAngle: 150 }), index: low(), middle: low({ maxAngle: 147 }), ring: low({ maxAngle: 154 }), pinky: low({ maxAngle: 145 }) }));
   assert.deepEqual(r.camera.cannotStraighten, []);
 });
+
+test('Color analysis: an interrupted recording is never scored', () => {
+  const r = analyzeColorRecording(episodeRows(), [...events, { type: 'interrupted', t: '50' }], null);
+  assert.equal(r.ok, false);
+  assert.equal(r.interrupted, true);
+});
+test('Color analysis: with a saved normal color but no warming mark, red is not reported as rewarming', () => {
+  const baseline = { fingers: Object.fromEntries(['thumb', 'index', 'middle', 'ring', 'pinky'].map((f) => [f, { L: 0, a: 0, b: 0, prox: { L: 0, a: 0, b: 0 } }])), noise: 1, noiseByFinger: {} };
+  const r = analyzeColorRecording(episodeRows(), [], baseline);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.red, []);
+  assert.deepEqual(r.pale, ['index', 'middle', 'ring']);
+});

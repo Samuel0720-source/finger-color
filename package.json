@@ -11,7 +11,8 @@
     "benchmark": "node validation/synthetic.mjs",
     "e2e": "node tests/e2e/run.mjs",
     "parity": "node validation/python-parity.mjs",
-    "population": "node validation/population.mjs"
+    "population": "node validation/population.mjs",
+    "smoke": "node tests/e2e/smoke.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-basic-ssl": "^2.3.0",
