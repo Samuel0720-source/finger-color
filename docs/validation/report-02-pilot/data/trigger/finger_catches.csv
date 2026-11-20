@@ -19,3 +19,13 @@ P02,1,1,smooth,d75db24,141,index,10,0
 P02,1,1,smooth,d75db24,141,middle,10,0
 P02,1,1,smooth,d75db24,141,ring,10,0
 P02,1,1,smooth,d75db24,141,little,10,0
+P03,1,1,smooth,caff658,141,thumb,10,3
+P03,1,1,smooth,caff658,141,index,10,0
+P03,1,1,smooth,caff658,141,middle,10,0
+P03,1,1,smooth,caff658,141,ring,10,0
+P03,1,1,smooth,caff658,141,little,10,0
+P03,1,2,catch,caff658,142,thumb,11,3
+P03,1,2,catch,caff658,142,index,7,2
+P03,1,2,catch,caff658,142,middle,10,0
+P03,1,2,catch,caff658,142,ring,12,2
+P03,1,2,catch,caff658,142,little,9,2
