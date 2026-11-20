@@ -1,10 +1,10 @@
 {
   "counts": {
-    "people": 2,
+    "people": 3,
     "people_with_pairs": 2,
     "pairs": 24,
-    "runs": 8,
-    "runs_scored": 6
+    "runs": 10,
+    "runs_scored": 8
   },
   "agreement": {
     "n": 24,
@@ -17,18 +17,18 @@
   "icc": null,
   "found": {
     "hits": 9,
-    "total": 9,
-    "rate": 1.0
+    "total": 12,
+    "rate": 0.75
   },
   "false_alarm": {
     "hits": 0,
-    "total": 51,
+    "total": 68,
     "rate": 0.0
   },
   "unscored": {
     "hits": 2,
-    "total": 8,
-    "rate": 0.25
+    "total": 10,
+    "rate": 0.2
   },
   "checks": {
     "AC-1": {
@@ -47,17 +47,17 @@
       "rule": "ICC 0.75 or higher"
     },
     "AC-4": {
-      "result": "9 of 9 (100%)",
-      "pass": true,
+      "result": "9 of 12 (75%)",
+      "pass": false,
       "rule": "80% or more of deliberate catches found"
     },
     "AC-5": {
-      "result": "0 of 51 (0%)",
+      "result": "0 of 68 (0%)",
       "pass": true,
       "rule": "10% or fewer smooth fists flagged"
     },
     "AC-6": {
-      "result": "2 of 8 (25%)",
+      "result": "2 of 10 (20%)",
       "pass": false,
       "rule": "Fewer than 1 in 5 runs not scored"
     }

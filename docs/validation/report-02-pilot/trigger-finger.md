@@ -15,13 +15,13 @@ How this file works: the tables and figures between the `auto` markers are rebui
 <!-- auto:status -->
 | | |
 | --- | --- |
-| People | 2 (P01, P02) |
-| Person-sessions | 4 |
+| People | 3 (P01, P02, P03) |
+| Person-sessions | 5 |
 | Still-angle pairs | 24 (middle finger; 2 people) |
-| Runs | 8 (6 scored) |
-| App builds | c74e3a4, c9727ef, d75db24, not-recorded |
+| Runs | 10 (8 scored) |
+| App builds | c74e3a4, c9727ef, d75db24, not-recorded, caff658 |
 | Updated | 20 Nov 2026 |
-| Status | Provisional: 2 people, healthy volunteers. Too few to decide pass or fail; the numbers show what to fix. |
+| Status | Provisional: 3 people, healthy volunteers. Too few to decide pass or fail; the numbers show what to fix. |
 <!-- /auto:status -->
 
 ## 2. What was tested
@@ -32,7 +32,7 @@ Whether the finger-color trigger finger test measures how far the middle finger 
 - **Reference:** a 180°-type goniometer on the back of the finger over the middle joint. It reads 180° when the finger is straight, so the bend is 180° minus the reading.
 - **Bend in the app:** 180° minus the app's angle, the same way.
 - **Who read what:** the author read the app and the goniometer for every pair. Volunteers held the positions.
-- **What each person has done (20 Nov):** P01 did all parts, with two sheets of still angles. P02 did one smooth-fist run, one catch run and one sheet of 8 still-angle pairs.
+- **What each person has done (20 Nov):** P01 did all parts, with two sheets of still angles. P02 did one smooth-fist run, one catch run and one sheet of 8 still-angle pairs. P03 did one smooth-fist run and one catch run on build caff658, with raw files and summary files (20 Nov); no still angles yet.
 
 ## 3. Results
 
@@ -44,9 +44,9 @@ Whether the finger-color trigger finger test measures how far the middle finger 
 | AC-1 | Bias within ±5° | Bias +1.0° | PASS |
 | AC-2 | Both 95% limits within ±15° | -14.0° to +15.9° | FAIL |
 | AC-3 | ICC 0.75 or higher | Not assessed: needs 2+ sessions and 2+ people | NOT ASSESSED |
-| AC-4 | 80% or more of deliberate catches found | 9 of 9 (100%) | PASS |
-| AC-5 | 10% or fewer smooth fists flagged | 0 of 51 (0%) | PASS |
-| AC-6 | Fewer than 1 in 5 runs not scored | 2 of 8 (25%) | FAIL |
+| AC-4 | 80% or more of deliberate catches found | 9 of 12 (75%) | FAIL |
+| AC-5 | 10% or fewer smooth fists flagged | 0 of 68 (0%) | PASS |
+| AC-6 | Fewer than 1 in 5 runs not scored | 2 of 10 (20%) | FAIL |
 <!-- /auto:checks -->
 
 AC-3 (repeatability) needs the same people on at least two days. The pilot has one session each, so it is marked not assessed rather than failed. AC-6 counts every run, including those on the first build (see section 4); the table below splits them out.
@@ -64,11 +64,14 @@ AC-3 (repeatability) needs the same people on at least two days. The pilot has o
 | P02 | 1 | yes | 60 | d75db24 |
 | P01 | 6 | yes | 60 | not-recorded |
 | P02 | 2 | yes | 60 | not-recorded |
+| P03 | 1 | yes | 60 | caff658 |
+| P03 | 2 | yes | 59 | caff658 |
 
 - Build c74e3a4: 2 of 2 runs not scored.
 - Build c9727ef: 0 of 2 runs not scored.
 - Build d75db24: 0 of 2 runs not scored.
 - Build not-recorded: 0 of 2 runs not scored.
+- Build caff658: 0 of 2 runs not scored.
 <!-- /auto:runs -->
 
 ### 3.3 Still angles: app against goniometer
@@ -95,6 +98,7 @@ The first figure shows each pair against the line of perfect agreement. The seco
 | --- | --- | --- | --- | --- | --- | --- |
 | P01 | 16 | +1.7° | -1.2° | 4 of 6 | 0 of 34 | 6 of 6 |
 | P02 | 8 | -0.5° | -1.4° | 2 of 2 | 0 of 17 | 3 of 3 |
+| P03 | 0 | none yet | none yet | 2 of 2 | 0 of 17 | 0 of 3 |
 <!-- /auto:people -->
 
 ### 3.5 Catches by finger
@@ -116,6 +120,11 @@ The protocol scores the middle finger only. The app reports all five, so the oth
 | d75db24 | Middle | 2 | 0 | 0 |
 | d75db24 | Ring | 2 | 0 | 0 |
 | d75db24 | Little | 2 | 0 | 0 |
+| caff658 | Thumb | 1 | 3 | 1 |
+| caff658 | Index | 1 | 0 | 0 |
+| caff658 | Middle | 1 | 0 | 0 |
+| caff658 | Ring | 1 | 0 | 0 |
+| caff658 | Little | 1 | 0 | 0 |
 
 **Deliberate catches (the middle finger should show the scripted ones; the other fingers paused with the hand)**
 
@@ -126,6 +135,11 @@ The protocol scores the middle finger only. The app reports all five, so the oth
 | c9727ef | Middle | 1 | 3 | 1 |
 | c9727ef | Ring | 1 | 5 | 1 |
 | c9727ef | Little | 1 | 9 | 1 |
+| caff658 | Thumb | 1 | 3 | 1 |
+| caff658 | Index | 1 | 2 | 1 |
+| caff658 | Middle | 1 | 0 | 0 |
+| caff658 | Ring | 1 | 2 | 1 |
+| caff658 | Little | 1 | 2 | 1 |
 <!-- /auto:fingers -->
 
 ### 3.6 Replaying the raw recordings
@@ -133,7 +147,7 @@ The protocol scores the middle finger only. The app reports all five, so the oth
 Two runs have their raw angle file saved (`data/trigger/raw/`): P01 run 5 and P02 run 1. Everything above for the other runs was typed from the app's result screen. The replay script runs the app's own detector over a raw file, so it is a check on the screen and a way to test ideas on real recordings.
 
 <!-- auto:replay -->
-**Does the replay match the screen?** Catch counts: 10 of 10 finger counts are the same as the app showed. If they match, the raw file holds what the detector saw, and ideas can be tested on it.
+**Does the replay match the screen?** Catch counts: 20 of 20 finger counts are the same as the app showed. If they match, the raw file holds what the detector saw, and ideas can be tested on it.
 
 **Middle-finger cycles counted (10 fists were made)**
 
@@ -143,6 +157,8 @@ Two runs have their raw angle file saved (`data/trigger/raw/`): P01 run 5 and P0
 | P01 | 6 | 151° (estimated) | 9 | 10 |
 | P02 | 1 | 141° | 7 | 10 |
 | P02 | 2 | 142° (estimated) | 3 | 10 |
+| P03 | 1 | 141° | 0 | 10 |
+| P03 | 2 | 142° | 0 | 10 |
 
 "(estimated)" means the screen value was not written down, so the open hand was taken as the middle finger's median in the first second of the file. The fixed lines are what the app used before 12 Nov (c74e3a4). Replaying cannot test the countdown start, because the recording begins after it.
 
@@ -178,8 +194,20 @@ Two runs have their raw angle file saved (`data/trigger/raw/`): P01 run 5 and P0
 | P02 | 2 | catch | Ring | 13.9 s | 110° | 150 ms | 35° in 33 ms | 4 |
 | P02 | 2 | catch | Little | 9.0 s | 119° | 150 ms | 31° in 33 ms | 1 |
 | P02 | 2 | catch | Little | 13.9 s | 123° | 150 ms | 27° in 33 ms | 4 |
+| P03 | 1 | smooth | Thumb | 1.6 s | 124° | 150 ms | 32° in 50 ms | 1 |
+| P03 | 1 | smooth | Thumb | 3.5 s | 123° | 150 ms | 27° in 100 ms | 4 |
+| P03 | 1 | smooth | Thumb | 5.3 s | 112° | 150 ms | 30° in 100 ms | 4 |
+| P03 | 2 | catch | Thumb | 10.8 s | 126° | 150 ms | 26° in 83 ms | 0 |
+| P03 | 2 | catch | Thumb | 14.0 s | 127° | 150 ms | 28° in 100 ms | 4 |
+| P03 | 2 | catch | Thumb | 20.9 s | 124° | 150 ms | 32° in 100 ms | 4 |
+| P03 | 2 | catch | Index | 5.2 s | 147° | 151 ms | 25° in 100 ms | 4 |
+| P03 | 2 | catch | Index | 17.1 s | 147° | 151 ms | 28° in 66 ms | 4 |
+| P03 | 2 | catch | Ring | 5.1 s | 111° | 150 ms | 34° in 67 ms | 4 |
+| P03 | 2 | catch | Ring | 17.1 s | 115° | 150 ms | 28° in 50 ms | 4 |
+| P03 | 2 | catch | Little | 5.1 s | 133° | 151 ms | 28° in 50 ms | 4 |
+| P03 | 2 | catch | Little | 17.1 s | 136° | 151 ms | 28° in 66 ms | 4 |
 
-"Others still closed" counts the other four fingers that had not yet risen 15° from the lowest point of their fist when the pause ended. A rule "ignore a pause while 2 or more others are still closed" was the candidate for the thumb problem. Deliberate middle-finger catches (these should be kept) had 0, 1, 0, 3, 1, 4 others closed; thumb catches in smooth runs (these should be dropped) had 3, 4, 2, 4, 4. The two groups overlap, so this rule would drop real catches. It is a description of these recordings, not a rule in the app.
+"Others still closed" counts the other four fingers that had not yet risen 15° from the lowest point of their fist when the pause ended. A rule "ignore a pause while 2 or more others are still closed" was the candidate for the thumb problem. Deliberate middle-finger catches (these should be kept) had 0, 1, 0, 3, 1, 4 others closed; thumb catches in smooth runs (these should be dropped) had 3, 4, 2, 4, 4, 1, 4, 4. The two groups overlap, so this rule would drop real catches. It is a description of these recordings, not a rule in the app.
 <!-- /auto:replay -->
 
 ## 4. What went wrong, and what changed
@@ -198,6 +226,8 @@ Each item says what happened, why, and what was done. Nothing was removed from t
 | 12 Nov | Run 4 (deliberate catches) was done on c9727ef, before the thumb fix. | The fix was made after run 4. | The middle finger rule did not change for pauses well above the fist. Run 4 was repeated the same night as run 6 (P01) and run 2 (P02); both raw files were replayed through the current detector and found 3 of 3 deliberate catches each, at fists 3, 6 and 9. |
 | 12 Nov | New data: P01 run 6 and P02 run 2 (both deliberate catches, raw files saved), and a second sheet of 8 still-angle pairs. | The author photographed the sheet and sent the two raw CSVs. | Added to the CSV files. The sheet has no name on it. Its first app value (151°) matches P01's open hand in run 6, so it is entered as **P01, session 2**; this is an assumption and is corrected here if wrong. The build was not written down for these two runs, scored is assumed (a raw file exists), and the detector counts are replayed, not read from the screen. P02's open hand is estimated from the first second of the file (142°). Bent pairs on the new sheet agree within 5° of the goniometer; the straight pair is again about 21° short. |
 | 20 Nov | New data: P02's sheet of 8 still-angle pairs (the sheet is labelled P02). | The author typed the sheet into the chat; app value = middle of three readings. | Added as P02, session 2 (a different day from P02's runs). The build was not written down. P02's straight finger read 172° (8° of bend) against 2° on the goniometer, far closer than P01's two straight readings (151° and 152°). P02's pairs alone are within −10.6° to +9.6°. |
+| 20 Nov | P03, catch run: the app found **0 of 3** deliberate middle-finger catches. | Replayed the raw file through the detector (same 0 as the screen) and looked at each pause. P03 made each catch from an **open** hand: close halfway, pause, snap open. The protocol says from a **full fist**. Fist 6 and fist 9: no fist in the 1.5 s before the pause, so the rule added on 12 Nov (a pause must sit 15° above the fist) rejected them. Fist 3: there was a fist before it, but P03's middle finger opens only to about 142°, so a pause at 115° left 27° of room; after smoothing the snap reached 24°, just under the 25° needed. | Counted as missed (AC-4 is now 9 of 12, 75%, FAIL). Not removed: whether the volunteer was shown the full-fist step is not recorded. The app was not changed: tuning the rule on these three pauses would be fitting it to the data. Two questions for Report 03: should a catch from an open hand count, and should the 25° snap scale with how far the person's finger opens? |
+| 20 Nov | P03's open middle finger read 141° to 142°. | Same as P02. | The old fixed lines (150°/120°) would have counted **0 of 10** fists in both P03 runs; the own-open-hand lines count 10 of 10. |
 | 12 Nov | Request to change the pass rules so AC-2 and AC-6 show a check. | AC-2 fails because of the two straight-finger pairs; AC-6 fails because of the first-build runs. | **Not done.** The rules were fixed before any data was taken, and removing the two unscored runs or the two straight pairs would hide what happened. AC-6 can pass by itself with more scored runs (3 more, with no new failures, give 2 of 11 = 18%). AC-2 needs a real change in the app, not a change in the rule (section 6). |
 | 15 Nov | Two runs had no build recorded, and per-finger counts were typed from the screen. | The build had to be looked up on GitHub and the counts copied by hand. | The app now shows its build at the bottom of the page and offers "Download run summary (CSV)" after every run, scored or not (protocol v1.3). A camera setup list under the video (hand found, whole hand in the picture, camera fast enough) was added to cut down unscored runs; it gives tips only and does not change scoring. Neither has been used in a session yet. |
 | 12 Nov | Per-finger counts were not in the protocol's CSV files. | Protocol v1.1 only recorded the middle finger. | Protocol v1.2 adds `finger_catches.csv` and a `build` column in `runs.csv`. Counts are typed from the app's result screen. |
@@ -216,7 +246,10 @@ Each item says what happened, why, and what was done. Nothing was removed from t
 ## 6. Next
 
 - [x] P01: repeat the deliberate-catch run on the current build with its raw CSV (run 6, 12 Nov): 3 of 3 found.
-- [ ] AC-6: 3 more scored runs, from new people, bring it to 2 of 11 (18%). Write the build and the on-screen result for each.
+- [ ] AC-6: now 2 of 10 (20%), which is not "fewer than 1 in 5". One more scored run makes 2 of 11 (18%).
+- [ ] Volunteer guide: show the full-fist catch step (fist, open halfway, pause, snap) before Part 3, and write down that it was shown.
+- [ ] P03: goniometer pairs (8 positions).
+- [ ] Decide, before more data, whether a catch made from an open hand counts, and whether the snap size should depend on how far the person's finger opens. Test any change on people who were not used to design it.
 - [ ] AC-2: decide on a way to read a straight finger better (a side view, or the person's own straight hand as zero). Any fix is designed on some people and tested on others; one person's two straight readings are not enough to build it.
 - [x] P02: goniometer pairs (8 positions), 20 Nov.
 - [ ] Find out why P02's straight finger read 172° on the still sheet but about 142° as the open hand of the fist runs (hand held differently? a different distance?).
@@ -231,13 +264,13 @@ Each item says what happened, why, and what was done. Nothing was removed from t
 
 These are provisional: two people, one of them the author. Numbers are in the tables above and update when data is added.
 
-1. **The fist test now finishes.** On the first build, 2 of 2 runs were not scored. Since then, 6 of 6 were scored (two of them with unrecorded build). The old fixed lines would have counted 7 and 8 of 10 fists for the two hands in smooth runs, and 9 and 3 in the catch runs; the own-open-hand lines count 10 of 10 in all four. P02's hand was not used to design the change.
-2. **The middle finger, which the protocol scores, gave no false catches** in 51 unscripted fists (smooth runs and the non-catch fists of catch runs). The deliberate catches were found 9 of 9: P01 3 on c9727ef, and 3 each for P01 and P02 when the raw recordings were replayed through the current detector. AC-4 and AC-5 pass on this small set.
-3. **The thumb gives false catches in both hands** (2 for P01 and 3 for P02, one smooth run each; P02's catch run adds 2 more). The simple rule I tried, ignoring a pause while 2 or more other fingers are closed, would have dropped 2 of 6 real catches, so it is not used. The thumb is shown in the results and the PDF, so a healthy hand could be told "catching present". This is the main thing to fix before Report 03.
+1. **The fist test now finishes.** On the first build, 2 of 2 runs were not scored. Since then, 8 of 8 were scored (two of them with unrecorded build). Two of three hands read their open middle finger at 141° to 142°. With the old fixed lines P03's runs would have counted 0 of 10 fists; the own-open-hand lines count 10 of 10 in every replayed run. Neither P02's nor P03's hand was used to design the change.
+2. **The middle finger, which the protocol scores, gave no false catches** in 68 unscripted fists (AC-5 passes). **Deliberate catches were found 9 of 12 (AC-4 fails):** 3 of 3 for P01 (twice) and P02, 0 of 3 for P03. P03 made the catches from an open hand instead of a full fist, and P03's finger opens only to about 142°, which leaves little room for a 25° snap (section 4). The detector finds catches that come out of a fist; it can miss catches in hands that do not open far.
+3. **The thumb gives false catches in all three hands** (2 for P01, 3 for P02 and 3 for P03 in one smooth run each). The simple rule I tried, ignoring a pause while 2 or more other fingers are closed, would have dropped 2 of 6 real catches, so it is not used. The thumb is shown in the results and the PDF, so a healthy hand could be told "catching present". This is the main thing to fix before Report 03.
 4. **Bent positions agree with the goniometer in both hands; P01's straight finger does not.** Across 21 bent pairs from two people the bias is −1.3° and the 95% limits are −9.2° to +6.6°, inside ±15°. P02's 8 pairs on their own, straight one included, are within −10.6° to +9.6°, which would pass AC-2. P01's two straight pairs read 23° and 21° more bend than the goniometer, while P02's read 6°. With all 24 pairs the limits are −14.0° to +15.9°, so AC-2 fails by about 1°. The likely cause is the camera reading depth poorly for a straight finger with the palm toward it; P02's result suggests it depends on the hand or how it is held, which is not yet known.
 5. **Not yet known:** repeatability (AC-3), still-angle accuracy beyond two hands, light and skin-tone effects, and whether the app detects trigger finger in people who have it.
 
-What changes before Report 03: a thumb rule that is tested on new recordings, a decision on how to read a straight finger, and 3 more scored runs from new people.
+What changes before Report 03: a thumb rule that is tested on new recordings, a decision on how to read a straight finger, a decision on catches from an open hand and on hands that do not open far, a clearer catch step in the volunteer guide, and one more scored run.
 
 ## Appendix A: every still-angle pair
 
