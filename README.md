@@ -1,6 +1,6 @@
 # finger-color: should you see a doctor about your hands?
 
-**Live app:** https://finger-color.vercel.app
+**Live app:** https://finger-color.vercel.app · **Validation reports:** [`docs/validation/`](docs/validation/README.md) · **Run it:** [below](#run-it)
 
 A browser app that compares a person's hand symptoms with the hallmark features of three common conditions, using published clinical criteria, guided self-tests and a phone camera. It ends with a clear next step (from "unlikely" to "get care today") and a PDF report to bring to an appointment.
 
@@ -45,9 +45,11 @@ flowchart LR
 
 Everything left of the dotted lines runs on the device. The only server code is `/api/chat`.
 
-### Engineering log: an independent second review (November 2026)
+### How changes are reviewed
 
-The code was reviewed by a second AI model from a different provider, with no shared context, looking for production failure paths. Each finding was checked against the code before changing anything. Fixed, each with a test:
+AI coding tools are used here with a review loop: one model writes, a model from a different provider reviews the code with no shared context, and every finding is checked against the code by hand before anything changes. A finding is only closed with a test that fails without the fix. CI then runs every check below on each push.
+
+The November 2026 review looked for production failure paths. Fixed, each with a test:
 
 - After choosing "explain on this device", the explanation could still be sent with the *next* AI question. It now stays on the device; a browser test checks the request body.
 - A recording interrupted by a hidden page was still scored for color phases. It is now never scored.
@@ -226,3 +228,9 @@ Each camera test has a fixed protocol and three reports: a dry run of the analys
 ## Author
 
 Samuel Koo, Biomedical Engineering, University of Waterloo
+
+## License
+
+The code is released under the [MIT License](LICENSE). It comes with no warranty and is not a medical device (see the note at the top).
+
+Included or downloaded third-party parts keep their own licenses: MediaPipe Tasks Vision, its WASM files in `public/wasm/` and the hand model (Apache 2.0, Google); `@google/genai` (Apache 2.0); Chart.js and jsPDF (MIT); Bricolage Grotesque and Figtree fonts (SIL Open Font License 1.1).
