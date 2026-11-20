@@ -35,6 +35,7 @@ Camera on, test not started. Volunteer's palm faces the camera, hand 30 to 40 cm
 
 1. Run the test again.
 2. On fists **3, 6 and 9**: make a **full fist**, open the hand **halfway**, **pause for about half a second**, then snap it open. All other fists are smooth.
+   Show this once before starting: the pause must come **after** a full fist, on the way open. Closing halfway from an open hand and pausing is not the same movement. Tick on the sheet that it was shown.
 3. Download the same two files as in Part 2.
 
 A catch on the other fingers is normal here, because the whole hand paused. Only the middle finger is scored.

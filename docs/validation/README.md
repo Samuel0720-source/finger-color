@@ -5,7 +5,7 @@ Does the camera measure what it claims? Each test has one fixed protocol and thr
 | Report | What it is | Trigger finger | Raynaud's |
 | --- | --- | --- | --- |
 | 01 Dry run | Simulated data with known answers, to check the analysis code | [Done](report-01-dry-run/trigger-finger.md): all answers recovered | [Done](report-01-dry-run/raynaud.md): all answers recovered |
-| 02 Pilot | 3 people, 1 session: test the steps, first real numbers | [In progress](report-02-pilot/trigger-finger.md): 2 people so far, both with still angles; AC-1, 4, 5 pass, AC-2 (by about 1°) and AC-6 fail | Planned |
+| 02 Pilot | 3 people, 1 session: test the steps, first real numbers | [In progress](report-02-pilot/trigger-finger.md): 3 people so far (two with still angles); AC-1 and AC-5 pass; AC-2 (by about 1°), AC-4 (9 of 12) and AC-6 (2 of 10) fail | Planned |
 | 03 Full study | 10 people, 3 sessions, two light conditions | Planned | Planned |
 
 Protocols: [trigger finger (VP-TF-001)](protocol-trigger-finger.md), [Raynaud's (VP-RAY-001)](protocol-raynaud.md).
