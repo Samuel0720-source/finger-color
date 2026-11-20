@@ -1,18 +1,18 @@
 {
   "counts": {
     "people": 2,
-    "people_with_pairs": 1,
-    "pairs": 16,
+    "people_with_pairs": 2,
+    "pairs": 24,
     "runs": 8,
     "runs_scored": 6
   },
   "agreement": {
-    "n": 16,
-    "bias": 1.6875,
-    "sd": 8.692669325356855,
-    "loa_low": -15.350131877699436,
-    "loa_high": 18.725131877699436,
-    "mean_abs_error": 5.5625
+    "n": 24,
+    "bias": 0.9583333333333334,
+    "sd": 7.646989556378531,
+    "loa_low": -14.029766197168588,
+    "loa_high": 15.946432863835255,
+    "mean_abs_error": 5.208333333333333
   },
   "icc": null,
   "found": {
@@ -32,12 +32,12 @@
   },
   "checks": {
     "AC-1": {
-      "result": "Bias +1.7\u00b0",
+      "result": "Bias +1.0\u00b0",
       "pass": true,
       "rule": "Bias within \u00b15\u00b0"
     },
     "AC-2": {
-      "result": "-15.4\u00b0 to +18.7\u00b0",
+      "result": "-14.0\u00b0 to +15.9\u00b0",
       "pass": false,
       "rule": "Both 95% limits within \u00b115\u00b0"
     },
@@ -65,14 +65,14 @@
   "by_condition": [
     {
       "condition": "Normal light",
-      "pairs": 16,
+      "pairs": 24,
       "too_small": false,
-      "n": 16,
-      "bias": 1.6875,
-      "sd": 8.692669325356855,
-      "loa_low": -15.350131877699436,
-      "loa_high": 18.725131877699436,
-      "mean_abs_error": 5.5625
+      "n": 24,
+      "bias": 0.9583333333333334,
+      "sd": 7.646989556378531,
+      "loa_low": -14.029766197168588,
+      "loa_high": 15.946432863835255,
+      "mean_abs_error": 5.208333333333333
     }
   ]
 }
