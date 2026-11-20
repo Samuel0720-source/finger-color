@@ -223,6 +223,13 @@ async function assistantTest() {
   await p2.waitForTimeout(300);
   assert.equal(sent2.length, 1);
   assert.match(clean(await p2.locator('.assist-bot .assist-text').last().textContent()), /not a diagnosis/);
+  // 7b. A later ordinary question must not carry that on-device explanation to the AI.
+  const before = await p2.locator('.assist-bot').count();
+  await p2.fill('#assist-input', 'Does the room temperature matter for this test?');
+  await p2.keyboard.press('Enter');
+  await p2.waitForFunction((n) => document.querySelectorAll('.assist-bot').length > n, before);
+  assert.equal(sent2.length, 2);
+  assert.ok(!sent2[1].messages.some((m) => /not a diagnosis/.test(m.text)), 'the on-device explanation must stay on the device');
   // 8. The action button moves to the Measure step.
   await p2.click('.assist-bot .assist-action >> nth=0');
   assert.equal(await p2.getAttribute('#tab-measure', 'aria-selected'), 'true');

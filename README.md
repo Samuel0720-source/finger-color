@@ -6,6 +6,58 @@ A browser app that compares a person's hand symptoms with the hallmark features 
 
 > Student research project. Not a medical device. It does not diagnose any condition. Camera thresholds are engineering values that have not been validated on patients.
 
+[![Test](https://github.com/Samuel0720-source/finger-color/actions/workflows/test.yml/badge.svg)](https://github.com/Samuel0720-source/finger-color/actions/workflows/test.yml)
+
+<p>
+  <img src="docs/images/home-desktop.jpg" alt="The home page: pick Raynaud's, trigger finger or carpal tunnel, next to a drawing of the 21 hand points the camera follows" width="68%" />
+  <img src="docs/images/home-mobile.jpg" alt="The same page on a phone" width="24%" />
+</p>
+
+## For reviewers: what this project shows
+
+| Area | What was built | Where |
+| --- | --- | --- |
+| Computer vision | Real-time hand tracking (MediaPipe, 21 landmarks) in the browser; joint angles from 3D vectors; catch detection with frame-rate and frame-gap gates | `src/hand.js`, `src/angles.js`, `src/tests/trigger-test.js` |
+| Color science | sRGB → linear RGB → CIE XYZ → CIELAB, palm-relative ΔE, 3-sample median phases, recovery timing | `src/color.js`, `src/assess/color-analysis.js` |
+| Clinical logic | Published criteria turned into code (Raynaud's consensus, Green grades, CTS-6) with a five-level next step | `src/assess/` |
+| Backend and LLM safety | Serverless endpoint with input validation, rate limits, timeouts, a JSON schema for the model, an action allowlist, and urgent-symptom answers that never reach the AI | `api/chat.js`, `server/chat-core.js`, `src/assistant/safety.js` |
+| Privacy by design | Video never leaves the device; a result is sent to the AI only after the user sees exactly which lines and presses "send" | `src/assistant/chat.js` |
+| Security | Content-Security-Policy and other headers, tested on every push against the built site | `vercel.json`, `tests/e2e/smoke.mjs` |
+| Testing | 100 unit tests, a browser test of all three checks with a generated fake camera video, a production smoke test, a synthetic benchmark and a 50-person simulated population | `tests/`, `validation/` |
+| Data analysis | Python re-analysis that must agree with the app (parity check in CI), validation reports with ICC and agreement statistics | `analysis/`, `docs/validation/` |
+| Accessibility | Keyboard-navigable steps, live result announcements, focus management, phone layout | `index.html`, `src/steps.js` |
+
+### How the pieces fit
+
+```mermaid
+flowchart LR
+  cam[Phone or laptop camera] --> mp[MediaPipe hand model<br/>WASM, in the browser]
+  mp --> tests[Camera tests<br/>color / catching / thumb reach]
+  q[Questions] --> assess[Clinical criteria<br/>src/assess]
+  tests --> assess
+  assess --> result[Five-level next step]
+  result --> pdf[PDF for a doctor<br/>jsPDF, on the device]
+  result -. only after consent .-> api["/api/chat<br/>Vercel function"]
+  chat[Assistant] --> faq[Built-in answers<br/>no network]
+  chat -. anything else .-> api
+  api --> gemini[Gemini<br/>JSON schema, allowlisted actions]
+```
+
+Everything left of the dotted lines runs on the device. The only server code is `/api/chat`.
+
+### Engineering log: an independent second review (November 2026)
+
+The code was reviewed by a second AI model from a different provider, with no shared context, looking for production failure paths. Each finding was checked against the code before changing anything. Fixed, each with a test:
+
+- After choosing "explain on this device", the explanation could still be sent with the *next* AI question. It now stays on the device; a browser test checks the request body.
+- A recording interrupted by a hidden page was still scored for color phases. It is now never scored.
+- With a saved normal color but no warming mark, a red phase could be reported as "red after warming". Red now needs the warming mark.
+- If the camera was unplugged while the hand model was loading, the page could show a live camera with no stream.
+- A malformed saved record could stop the history panel from loading; a failed save of a color result was not reported; an old "Try again" button could send the wrong conversation.
+- No Content-Security-Policy. Added, plus a smoke test that fails if the policy blocks anything the app needs (checked by removing one rule on purpose).
+
+Not changed: the chat rate limit lives in memory per server instance, so it guards against bursts but is not an exact meter. A deliberate trade-off (no database), described under the assistant below.
+
 ## How a check works
 
 Every condition follows the same three steps:
@@ -108,7 +160,8 @@ src/
 api/chat.js          the serverless endpoint for the assistant (reads GEMINI_API_KEY)
 server/chat-core.js  its logic: input checks, rate limits, prompt, cleaning the model's answer
 tests/               node --test unit tests (assessments, color analysis, detectors, assistant)
-tests/e2e/           browser test of all three conditions with a generated fake camera video
+tests/e2e/           browser test of all three conditions with a generated fake camera video,
+                     and smoke.mjs: the built site under the real headers
 validation/          synthetic benchmark, Python parity check, 50-person simulated population test
 analysis/            Python re-analysis of exported CSV files
 .github/workflows/   runs every check below on each push
@@ -126,6 +179,7 @@ npm run parity      # Python analysis gives the same recovery time as the app (n
 npm run population  # 50 simulated people: skin types, lights, ages, imperfect answers
 npm run e2e         # real app in Chrome with a fake camera, all three conditions and the assistant (about 2.5 min)
 npm run e2e -- assistant   # only the assistant checks (a few seconds)
+npm run smoke       # after npm run build: the built site with the Vercel headers, real hand model, PDF, no CSP violations
 ```
 
 GitHub runs all of these on every push (`.github/workflows/test.yml`).
@@ -144,7 +198,7 @@ Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 - The page shows its build (commit) in the footer, and it is written into the PDF and the trigger finger run summary, so a measurement can be traced to the code that produced it.
 - "Download run summary (CSV)" after every trigger finger run, scored or not, for the validation files.
 - "What has been tested so far" on the page: the pilot numbers straight from `results.json`, including the rules that are not met.
-- Security headers in `vercel.json` (no framing, camera only for this site, no microphone or location).
+- Security headers in `vercel.json` (no framing, camera only for this site, no microphone or location), and a Content-Security-Policy checked by `npm run smoke`.
 
 - Added the feature table and five-level result for all three conditions, with criteria-based questions.
 - Added Raynaud's color phases, fingers involved, thumb sparing, sharp border and episode mode.

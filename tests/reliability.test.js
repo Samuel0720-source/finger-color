@@ -85,3 +85,4 @@ test('thumb reach records unreached fingertips after skipping',()=>{
   assert.deepEqual(r.reached,{index:true,middle:true,ring:true,pinky:false});
   assert.ok(r.minGap.pinky>.5);
 });
+test('history drops a stored hand that is not Left or Right, so the panel cannot crash on it',()=>{globalThis.localStorage=storage();localStorage.setItem('finger-color-history',JSON.stringify([{test:'color',result:1,savedAt:'2026-10-31',context:{hand:42,reference:'x'}},{test:'color',result:1,savedAt:'2026-10-31',context:{hand:'Left'}}]));const h=loadHistory();assert.equal(h[0].context.hand,'');assert.equal(h[0].context.reference,'x');assert.equal(h[1].context.hand,'Left');});
