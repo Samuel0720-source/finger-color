@@ -5,10 +5,26 @@
 | Protocol | [VP-TF-001](../protocol-trigger-finger.md) v1.2 for the data so far; v1.3 from the next session |
 | Data | Real measurements of healthy adults. Nothing simulated. |
 | Author | Samuel Koo (also participant P01 and the person who reads the goniometer) |
-| Volunteers | P02 (a friend of the author) so far |
-| Result | Draft, provisional. Numbers update from the CSV files; the written parts are dated. |
+| Volunteers | P02 and P03 (friends of the author) |
+| Result | Pilot complete for 3 people (20 Nov 2026). One more catch run is planned; the tables update when it is added. |
 
 How this file works: the tables and figures between the `auto` markers are rebuilt from the CSV files by `analysis/validation/make_report.py`. When a volunteer's data is added, run it again and every number updates. The text around the tables was written on the dates shown and is not touched.
+
+## Summary (20 Nov 2026)
+
+Three healthy adults, 32 goniometer pairs and 10 fist runs. The rules were fixed before any data was taken and have not been changed.
+
+| Question | Answer from the pilot |
+| --- | --- |
+| Does the bend angle match a goniometer? | On average yes (+0.5°, AC-1 passes). The spread is just too wide: limits −14.9° to +15.8° against ±15° (AC-2 fails by under 1°). A straight finger reads too bent in every hand. |
+| Does a smooth fist get flagged as a catch? | Not on the middle finger: 0 of 68 (AC-5 passes). The thumb is flagged in every hand (8 false catches in 3 smooth runs). |
+| Is a deliberate catch found? | 9 of 12 (AC-4 fails). All 3 missed were P03's, made from an open hand instead of a full fist, in a finger that opens only to about 142°. |
+| Does the test finish? | 2 of 10 runs not scored, both on the first build (AC-6 fails at exactly 1 in 5). Since the 12 Nov fix, 8 of 8 scored. |
+| Is it repeatable from day to day? | Not measured yet (AC-3 needs Report 03). |
+
+**What the pilot changed:** the fist lines now follow each person's own open hand (two of three hands read only 141° to 142° when open, and the old lines would have counted 0 of 10 of P03's fists); held fists no longer count as catches on the little finger; the volunteer guide now shows the catch step.
+
+**What Report 03 must decide first:** how to read a straight finger, what to do about the thumb, whether a catch from an open hand counts, and whether the snap size should depend on how far the finger opens. Each change is designed on some people and tested on people who were not used to design it.
 
 ## 1. Where things stand
 
@@ -246,22 +262,25 @@ Each item says what happened, why, and what was done. Nothing was removed from t
 
 ## 6. Next
 
-- [x] P01: repeat the deliberate-catch run on the current build with its raw CSV (run 6, 12 Nov): 3 of 3 found.
-- [ ] AC-6: now 2 of 10 (20%), which is not "fewer than 1 in 5". One more scored run makes 2 of 11 (18%).
-- [ ] Volunteer guide: show the full-fist catch step (fist, open halfway, pause, snap) before Part 3, and write down that it was shown.
-- [x] P03: goniometer pairs (8 positions), 20 Nov.
-- [ ] Decide, before more data, whether a catch made from an open hand counts, and whether the snap size should depend on how far the person's finger opens. Test any change on people who were not used to design it.
-- [ ] AC-2: decide on a way to read a straight finger better (a side view, or the person's own straight hand as zero). Any fix is designed on some people and tested on others; one person's two straight readings are not enough to build it.
-- [x] P02: goniometer pairs (8 positions), 20 Nov.
-- [ ] Find out why P02's straight finger read 172° on the still sheet but about 142° as the open hand of the fist runs (hand held differently? a different distance?).
-- [ ] P02: still angles (8 positions, goniometer) and a deliberate-catch run.
-- [ ] Volunteers P03 and P04: one session each, steps 1 to 3. Guide: [volunteer-guide.md](volunteer-guide.md).
-- [ ] Download the raw CSV ("Raw data for analysis") for **every** run, scored or not, and save it as `raw/<person>_run<N>_<smooth|catch>.csv`.
-- [ ] Test the candidate thumb rule on P03 and P04's recordings, which were not used to design it. Change the app only if it keeps the deliberate middle-finger catches and removes the thumb false catches there.
-- [ ] Add rows to `data/trigger/`, run `node validation/replay-trigger.mjs` and `python analysis/validation/make_report.py`, then update section 7.
-- [ ] Report 03: 10 people, 3 sessions, two light conditions (this is where AC-3 is measured).
+**Left in this pilot**
 
-## 7. Findings so far (P01 and P02, written 12 Nov)
+- [ ] One more scored run (a deliberate-catch run, with the full-fist step shown first). It makes AC-6 2 of 11 (18%).
+
+**Decisions for Report 03 (made before its data is taken)**
+
+- [ ] Straight finger: a side view, or the person's own straight hand as zero. Design on some people, test on others.
+- [ ] Thumb: a rule that removes thumb false catches but keeps real ones. The "others still closed" rule failed on 12 Nov; the next idea is tested on new recordings only. Until then, consider leaving the thumb out of the result.
+- [ ] Catch from an open hand: count it or not, and say why.
+- [ ] Snap size: fixed 25°, or a share of how far the person's finger opens.
+- [ ] Why P02's straight finger read 172° on the still sheet but about 142° as the open hand in the fist runs (pose or distance).
+
+**Report 03 itself**
+
+- [ ] 10 people, 3 sessions each, two light conditions (this is where AC-3 is measured).
+- [ ] For every run: raw CSV and summary CSV, and a result screenshot that shows only the hand.
+- [ ] After each session: add rows to `data/trigger/`, run `node validation/replay-trigger.mjs` and `python analysis/validation/make_report.py`.
+
+## 7. Findings (P01 to P03, written 12 Nov, updated 20 Nov)
 
 These are provisional: two people, one of them the author. Numbers are in the tables above and update when data is added.
 

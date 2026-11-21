@@ -1,8 +1,11 @@
-# Report 02: pilot (in progress)
+# Report 02: pilot
 
 **Trigger finger report:** [trigger-finger.md](trigger-finger.md) (tables and figures rebuild from the CSV files). **For volunteers:** [volunteer-guide.md](volunteer-guide.md). This page is the session log.
 
-Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.2. Raynaud's part not started.
+Protocols: [VP-TF-001](../protocol-trigger-finger.md) v1.2 and [VP-RAY-001](../protocol-raynaud.md) v1.1.
+
+- **Trigger finger:** pilot complete for 3 people (20 Nov). One more catch run planned.
+- **Raynaud's:** not started. Steps for a session: [raynaud-guide.md](raynaud-guide.md).
 
 ## Session log
 
@@ -10,13 +13,13 @@ Protocol: [VP-TF-001](../protocol-trigger-finger.md) v1.2. Raynaud's part not st
 | --- | --- | --- | --- | --- |
 | 11 Nov 2026 | P01 (author) | Still angles, middle finger, 8 positions | live site, commit c74e3a4 | 180°-type goniometer, read by the author. Position 4: app value unreadable on the sheet; the author recalled 122° on 12 Nov and it was added. |
 | 11 Nov 2026 | P01 | Smooth fists and deliberate catches, 2 runs | c74e3a4 | Neither run scored: the countdown did not start on the first tries, then 9 and 7 of 10 fists were counted. Cause and fix below. |
+| 12 Nov 2026 | P01 | Run 3 smooth fists, run 4 catches on fists 3, 6 and 9 | c9727ef | Both scored, 60 fps. Open hand read 146° and 151°. Middle finger: 0 false catches, 3 of 3 deliberate catches found. Thumb and little finger flagged held fists as catches; fixed below. |
 | 12 Nov 2026 | P02 (friend of the author) | Run 1 smooth fists | d75db24 | Scored on the first try, 60 fps, open middle finger read 141°. Middle 0 catches; thumb 3 (false). Raw CSV saved. No still angles or catch run yet. |
 | 12 Nov 2026 | P01 | Run 5 smooth fists, after the thumb fix | d75db24 | Scored, 59 fps, open hand 154°. Middle 0 catches. Thumb 2 (was 6), all other fingers 0. |
 | 12 Nov 2026 | P01, P02 | P01 run 6 and P02 run 2: deliberate catches on fists 3, 6, 9 (raw CSVs); a second sheet of 8 still-angle pairs (entered as P01 session 2) | not recorded | Replay finds 3 of 3 middle-finger catches in each run. Bent pairs within 5° of the goniometer; straight pair 21° short. The thumb rule tested on these runs failed, so it was not added. |
 | 20 Nov 2026 | P02 | 8 still-angle pairs (middle finger) | not recorded | Within −10.6° to +9.6° of the goniometer; the straight finger read 8° of bend against 2°. |
 | 20 Nov 2026 | P03 | Run 1 smooth fists, run 2 deliberate catches (raw and summary CSVs) | caff658 | Both scored, 60 and 59 fps, open middle finger 141° and 142°. Middle: 0 false catches, but 0 of 3 deliberate catches found (made from an open hand; see the report). Thumb: 3 false catches in the smooth run. |
 | 20 Nov 2026 | P03 | 8 still-angle pairs (middle finger) | not recorded | Within −18.2° to +16.2° of the goniometer; straight finger read 9° of bend more. All 32 pairs: −14.9° to +15.8°. |
-| 12 Nov 2026 | P01 | Run 3 smooth fists, run 4 catches on fists 3, 6 and 9 | c9727ef | Both scored, 60 fps. Open hand read 146° and 151°. Middle finger: 0 false catches, 3 of 3 deliberate catches found. Thumb and little finger flagged held fists as catches; fixed below. |
 
 ## What the first session found
 
