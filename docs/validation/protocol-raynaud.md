@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Version | 1.0, 10 Nov 2026 |
+| Version | 1.1, 20 Nov 2026 (1.0: 10 Nov 2026) |
 | Author | Samuel Koo |
 | Applies to | Reports 01 (dry run), 02 (pilot) and 03 (full study) |
 
@@ -51,11 +51,16 @@ Hand flat on a table, palm up toward the camera, 30 to 40 cm away, plain backgro
 
 1. **Normal color.** Rest the hand for 2 minutes, then save the normal color in the app.
 2. **Still hand.** Record for 2 minutes without touching the hand (checks AC-1).
-3. **Press.** Start a recording, wait 20 s, press the middle fingertip firmly with the other thumb for 5 s, then let go and tap "I'm warming up now" at the same moment. Keep still for 30 s.
+3. **Press.** Start a recording, wait 20 s, press the middle fingertip firmly with the other thumb for 5 s, then let go and tap "I'm warming up now" at the same moment. Keep still for 60 s, then press Stop recording. Download both CSV files (color data and events).
 4. **Repeat** step 3 five times on the middle finger and five times on the index finger, with a minute's rest between presses.
 5. **Rate.** Later, two people who have not seen the app's numbers watch the second phone's video and each mark the moment the fingertip looks normal again. If they differ by more than 1 s, a third person rates.
 6. **Repeat** steps 1 to 4 on two more days (3 sessions in total).
 7. **Light.** For 3 people, repeat steps 2 and 3 in dim light and in bright window light.
+
+## Changes in 1.1 (before any pilot data)
+
+- Step 3: keep still **60 s** after letting go, not 30 s. The app does not time a recording with less than 60 s after "I'm warming up now", so with 30 s every press would have been "not scored".
+- Known before data, rules not changed: the app was built for episodes that take minutes. It averages the color over the last 10 seconds and calls the finger recovered when it stays near normal for 30 seconds. A pressed fingertip usually recovers in a few seconds, so the app's times are expected to come out later than the raters' and AC-3 and AC-4 may fail. If they do, Report 02 says so; a short-recovery mode would be a change for Report 03, tested on new people.
 
 ## Data
 
