@@ -159,7 +159,12 @@ Open the Network URL on a phone on the same Wi-Fi to use the back camera.
 
 ## Validation
 
-Each camera test has a fixed protocol and three reports: a dry run of the analysis, a 3-person pilot, and a 10-person study. Report 01 (dry run) is done for trigger finger and Raynaud's: the analysis recovered every answer built into simulated data. Report 02 (pilot) for trigger finger is in progress with real measurements from two healthy volunteers; it states which pass rules currently fail and why. See [`docs/validation/`](docs/validation/README.md).
+Each camera test has a fixed protocol and three reports: a dry run of the analysis, a 3-person pilot, and a 10-person study. The pass rules are written before any data is taken and are never changed afterwards.
+
+- **Report 01 (dry run), trigger finger and Raynaud's:** the analysis recovered every answer built into simulated data.
+- **Report 02 (pilot), trigger finger, 3 people:** bend angle vs. a goniometer averages +0.5° (pass), but the 95% limits are −14.9° to +15.8° against ±15° (fails by under 1°, mainly because a straight finger reads too bent). No false catches in 68 smooth fists (pass); 9 of 12 deliberate catches found (fail: all misses came from one hand that only opens to about 142°). The report lists what each failure changed in the app and what Report 03 must decide first.
+
+See [`docs/validation/`](docs/validation/README.md).
 
 ## Limits
 
