@@ -1,4 +1,4 @@
-# finger-color: should you see a doctor about your hands?
+# Camera Hand-Symptom Checker
 
 **Live app:** https://finger-color.vercel.app
 
