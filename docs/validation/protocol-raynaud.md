@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Version | 1.1, 20 Nov 2026 (1.0: 10 Nov 2026) |
+| Version | 1.2, 24 Nov 2026 (1.1: 20 Nov; 1.0: 10 Nov 2026) |
 | Author | Samuel Koo |
 | Applies to | Reports 01 (dry run), 02 (pilot) and 03 (full study) |
 
@@ -51,11 +51,19 @@ Hand flat on a table, palm up toward the camera, 30 to 40 cm away, plain backgro
 
 1. **Normal color.** Rest the hand for 2 minutes, then save the normal color in the app.
 2. **Still hand.** Record for 2 minutes without touching the hand (checks AC-1).
-3. **Press.** Start a recording, wait 20 s, press the middle fingertip firmly with the other thumb for 5 s, then let go and tap "I'm warming up now" at the same moment. Keep still for 60 s, then press Stop recording. Download both CSV files (color data and events).
-4. **Repeat** step 3 five times on the middle finger and five times on the index finger, with a minute's rest between presses.
+3. **Press.** Start a recording, wait 10 s, press the middle fingertip firmly with the other thumb for 5 s, then let go and tap "I'm warming up now" at the same moment. Keep still for 60 s, then press Stop recording. Download both CSV files (color data and events).
+4. **Repeat** step 3 three times on the middle finger and three times on the index finger. Start the next recording straight away: the 60 s after letting go is the rest.
 5. **Rate.** Later, two people who have not seen the app's numbers watch the second phone's video and each mark the moment the fingertip looks normal again. If they differ by more than 1 s, a third person rates.
 6. **Repeat** steps 1 to 4 on two more days (3 sessions in total).
 7. **Light.** For 3 people, repeat steps 2 and 3 in dim light and in bright window light.
+
+## Changes in 1.2 (24 Nov 2026, before any protocol press was recorded)
+
+To make a session about 15 minutes shorter:
+
+- Wait 10 s before the press instead of 20 s. The normal color is already saved, so the app does not need a longer start.
+- No separate 1-minute rest. The fingertip has recovered well within the 60 s of still recording after each press.
+- 3 presses per finger instead of 5 (6 per person, 18 for three people). This weakens AC-2, AC-4 and AC-6 in the pilot: with 18 presses, one missed or untimed press moves the rate by about 6%. The rules themselves are unchanged.
 
 ## Changes in 1.1 (before any pilot data)
 

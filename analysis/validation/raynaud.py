@@ -35,11 +35,32 @@ def analyze(folder):
 
     still = noise[noise["light"] == "normal"]["color_change"]
     below = rate((still < VISIBLE).sum(), len(still))
+    if presses.empty:
+        # Only the still-hand recording exists so far: report AC-1 and leave the rest open.
+        checks = {"AC-1": (f"{below['rate']:.0%} below 3 (95th percentile {p95(still):.1f})", below["rate"] >= 0.95)}
+        checks.update({k: ("No presses yet", None) for k in ["AC-2", "AC-3", "AC-4", "AC-5", "AC-6"]})
+        return {"still_below_3": below, "still_p95": p95(still), "presses": 0,
+                "checks": {k: {"result": v[0], "pass": v[1] if v[1] is None else bool(v[1]), "rule": CRITERIA[k]} for k, v in checks.items()},
+                "timed": None}
 
     normal = presses[presses["light"] == "normal"].copy()
     seen = rate((normal["peak_change"] > VISIBLE).sum(), len(normal))
     timed = normal.dropna(subset=["app_recovery_s"]).copy()
     untimed = rate(len(normal) - len(timed), len(normal))
+
+    if timed.empty or timed[["rater1_s", "rater2_s"]].isna().any().any():
+        # Presses exist but none can be compared yet (not timed by the app, or no rater times).
+        checks = {
+            "AC-1": (f"{below['rate']:.0%} below 3 (95th percentile {p95(still):.1f})", below["rate"] >= 0.95),
+            "AC-2": (f"{seen['hits']} of {seen['total']} ({seen['rate']:.0%})", seen["rate"] >= 0.90),
+            "AC-3": ("No timed press with rater times yet", None),
+            "AC-4": ("No timed press with rater times yet", None),
+            "AC-5": ("Needs 2+ people and 2+ sessions", None),
+            "AC-6": (f"{untimed['hits']} of {untimed['total']} ({untimed['rate']:.0%})", untimed["rate"] < 0.20),
+        }
+        return {"still_below_3": below, "still_p95": p95(still), "seen": seen, "untimed": untimed, "presses": len(normal),
+                "checks": {k: {"result": v[0], "pass": v[1] if v[1] is None else bool(v[1]), "rule": CRITERIA[k]} for k, v in checks.items()},
+                "timed": None}
 
     # Reference time = the two human raters averaged.
     timed["reference_s"] = (timed["rater1_s"] + timed["rater2_s"]) / 2
@@ -107,7 +128,8 @@ def figures(result, out, label=""):
 def markdown(result):
     lines = ["| ID | Rule | Result | Pass |", "| --- | --- | --- | --- |"]
     for k, c in result["checks"].items():
-        lines.append(f"| {k} | {c['rule']} | {c['result']} | {'PASS' if c['pass'] else 'FAIL'} |")
+        verdict = "NOT YET" if c["pass"] is None else ("PASS" if c["pass"] else "FAIL")
+        lines.append(f"| {k} | {c['rule']} | {c['result']} | {verdict} |")
     return "\n".join(lines)
 
 
@@ -115,7 +137,7 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     res = analyze(args[0])
     print(markdown(res))
-    if "--figures" in args:
+    if "--figures" in args and res["timed"] is not None:
         label = args[args.index("--label") + 1] if "--label" in args else ""
         figures(res, args[args.index("--figures") + 1], label)
     keep = {k: v for k, v in res.items() if k != "timed"}

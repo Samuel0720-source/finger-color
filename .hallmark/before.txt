@@ -1,0 +1,154 @@
+FAIL 7a src/style.css:358 pure #fff: color: #fff (.cond[data-level='urgent']::after) | fix: Tint the base toward the anchor hue
+FAIL 7a src/style.css:517 pure #fff: color: #fff (.seg[aria-pressed='true'], .chip[aria-pressed='true']) | fix: Tint the base toward the anchor hue
+FAIL 7a src/style.css:606 pure #fff: color: #fff (.stage-empty strong) | fix: Tint the base toward the anchor hue
+FAIL 7a src/style.css:630 pure #fff: color: #fff (.timer, .tracking-state) | fix: Tint the base toward the anchor hue
+FAIL 7a src/style.css:739 pure #fff: color: #fff ([data-state='done'] .step) | fix: Tint the base toward the anchor hue
+FAIL 7a src/style.css:1183 pure #fff: color: #fff (.verdict-tag) | fix: Tint the base toward the anchor hue
+FAIL 10a src/style.css:1017 transitioning width on .bar-fill | fix: Animate transform or opacity instead
+FAIL 26a http://127.0.0.1:5180/:1 [1440px] focus ring 1.52:1 against what is behind it on a.skip-link "Skip to the check" | fix: A ring at 3:1 or better against the surface it is drawn over: --color-focus, or a ring colour per band
+FAIL 26a index.html:1 no :focus-visible styling anywhere | fix: A focus ring at 3:1 or better, instant
+FAIL 34 http://127.0.0.1:5180/:1 [375px] a.skip-link runs 999px past the 375 screen, hidden only by the page's clip | fix: Stack it under 60rem: drop the desktop column gap, widths and offsets on the phone
+FAIL 40 http://127.0.0.1:5180/:1 [1280px] computed contrast 1.00:1 < 4.5:1 on a.skip-link "Skip to the check" | fix: Raise the contrast to threshold
+FAIL 40 http://127.0.0.1:5180/:1 [1280px] contrast 3.76:1 against the pixels behind < 4.5:1 on button.btn.btn-secondary "Save normal color" | fix: Raise the contrast to threshold
+FAIL 40 http://127.0.0.1:5180/:1 [1280px] contrast 3.76:1 against the pixels behind < 4.5:1 on button.btn.btn-primary "Start recording" | fix: Raise the contrast to threshold
+FAIL 40 http://127.0.0.1:5180/:1 [1280px] contrast 3.76:1 against the pixels behind < 4.5:1 on button.btn.btn-warm "I'm warming up now" | fix: Raise the contrast to threshold
+FAIL 40 http://127.0.0.1:5180/:1 [1440px] a field's edge is under 3:1 against what surrounds it: input 2.45:1 | fix: Draw the field in --color-muted, or fill it a step off the surface it sits on
+FAIL 41 http://127.0.0.1:5180/:1 [1280px] button text ~ button fill on a.skip-link (1.00:1) | fix: Use accent-ink or paper for the label
+FAIL 48 src/style.css:61 font-family literal "'Instrument Sans Variable', system-…" on body | fix: Lift the value into the token block
+FAIL 48 src/style.css:92 colour literal #f1e6d1 outside tokens (--paper on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:95 colour literal #4d5a6d outside tokens (--muted on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:96 colour literal #e0d4bc outside tokens (--line on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:97 colour literal #a89c86 outside tokens (--line-strong on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:99 colour literal #16325a outside tokens (--act-hover on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:100 colour literal #ece3d1 outside tokens (--act-soft on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:101 colour literal #b3261e outside tokens (--red on .cond, .q-section, .instrumen…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:141 colour literal rgba(251, 243, 228, 0.08) outside tokens (border-bottom on .site-header) | fix: Lift the value into the token block
+FAIL 48 src/style.css:142 colour literal rgba(11, 31, 58, 0.72) outside tokens (background on .site-header) | fix: Lift the value into the token block
+FAIL 48 src/style.css:230 colour literal rgba(233, 230, 223, 0.42) outside tokens (background on .glow-pale) | fix: Lift the value into the token block
+FAIL 48 src/style.css:235 colour literal rgba(61, 111, 214, 0.8) outside tokens (background on .glow-blue) | fix: Lift the value into the token block
+FAIL 48 src/style.css:240 colour literal rgba(168, 50, 58, 0.85) outside tokens (background on .glow-red) | fix: Lift the value into the token block
+FAIL 48 src/style.css:315 colour literal #c3c8ce outside tokens (--muted on .cond[aria-pressed='false']) | fix: Lift the value into the token block
+FAIL 48 src/style.css:316 colour literal rgba(251, 243, 228, 0.1) outside tokens (--paper on .cond[aria-pressed='false']) | fix: Lift the value into the token block
+FAIL 48 src/style.css:317 colour literal rgba(251, 243, 228, 0.18) outside tokens (border-color on .cond[aria-pressed='false']) | fix: Lift the value into the token block
+FAIL 48 src/style.css:318 colour literal rgba(251, 243, 228, 0.05) outside tokens (background on .cond[aria-pressed='false']) | fix: Lift the value into the token block
+FAIL 48 src/style.css:321 colour literal rgba(251, 243, 228, 0.1) outside tokens (background on .cond[aria-pressed='false']:h…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:354 colour literal #e5f2ea outside tokens (background on .cond[data-level='low']::after) | fix: Lift the value into the token block
+FAIL 48 src/style.css:355 colour literal #e5f2ea outside tokens (background on .cond[data-level='selfcare']:…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:357 colour literal #fbeee6 outside tokens (background on .cond[data-level='soon']::aft…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:358 colour literal #fff outside tokens (color on .cond[data-level='urgent']::a…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:488 colour literal #fbe9e7 outside tokens (background on .q-flag) | fix: Lift the value into the token block
+FAIL 48 src/style.css:517 colour literal #fff outside tokens (color on .seg[aria-pressed='true'], .c…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:540 colour literal rgba(0, 0, 0, 0.55) outside tokens (box-shadow on .instrument) | fix: Lift the value into the token block
+FAIL 48 src/style.css:606 colour literal #fff outside tokens (color on .stage-empty strong) | fix: Lift the value into the token block
+FAIL 48 src/style.css:630 colour literal #fff outside tokens (color on .timer, .tracking-state) | fix: Lift the value into the token block
+FAIL 48 src/style.css:631 colour literal rgba(14, 23, 21, 0.72) outside tokens (background on .timer, .tracking-state) | fix: Lift the value into the token block
+FAIL 48 src/style.css:642 colour literal #ef4444 outside tokens (background on .timer::before) | fix: Lift the value into the token block
+FAIL 48 src/style.css:653 colour literal #f59e0b outside tokens (background on .tracking-state::before) | fix: Lift the value into the token block
+FAIL 48 src/style.css:656 colour literal #4ade80 outside tokens (background on .tracking-state[data-ready='t…) | fix: Lift the value into the token block
+FAIL 48 src/style.css:739 colour literal #fff outside tokens (color on [data-state='done'] .step) | fix: Lift the value into the token block
+FAIL 48 src/style.css:803 colour literal #7a7466 outside tokens (color on .btn:disabled) | fix: Lift the value into the token block
+FAIL 48 src/style.css:852 colour literal #8a9692 outside tokens (color on .btn-link:disabled) | fix: Lift the value into the token block
+FAIL 48 src/style.css:1071 colour literal #7a3a0a outside tokens (color on .quality-note) | fix: Lift the value into the token block
+FAIL 48 src/style.css:1072 colour literal #fbeee6 outside tokens (background on .quality-note) | fix: Lift the value into the token block
+FAIL 48 src/style.css:1183 colour literal #fff outside tokens (color on .verdict-tag) | fix: Lift the value into the token block
+FAIL 48 src/style.css:1423 colour literal rgba(251, 243, 228, 0.09) outside tokens (color on .wordmark) | fix: Lift the value into the token block
+FAIL 49a http://127.0.0.1:5180/:1 [320px] control "How it works" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+FAIL 49a http://127.0.0.1:5180/:1 [320px] control "Download color data (CSV)" wraps to 2 lines (button.btn-link) | fix: Shorten the label or set nowrap
+FAIL 49a http://127.0.0.1:5180/:1 [320px] control "Download report for your doctor " wraps to 2 lines (button.btn.btn-primary) | fix: Shorten the label or set nowrap
+FAIL 58 http://127.0.0.1:5180/:1 [1440px] 413 words on one screen (from y=4550) | fix: One idea per screen: cut to about 80 words, make the section an object
+REFLEX 24b src/style.css:149 gap: 10px (off the 4px scale) on .brand | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:160 gap: 22px (off the 4px scale) on .site-nav | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:206 padding: 0 30px (off the 4px scale) on .btn-cta | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:295 padding: 20px 22px 52px (off the 4px scale) on .cond | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:333 margin-top: 6px (off the 4px scale) on .cond em | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:365 padding: 12px 14px 12px (off the 4px scale) on .cond | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:391 gap: clamp(14px, 2vw, 24px) (off the 4px scale) on .block-head | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:418 margin: 10px 0 0 (off the 4px scale) on .block-sub | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:427 gap: 14px (off the 4px scale) on .questions | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:437 padding: 16px 18px 6px (off the 4px scale) on .q-section | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:446 margin-bottom: 6px (off the 4px scale) on .q-section legend | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:454 padding: 10px 12px (off the 4px scale) on .q-note | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:482 padding: 0 7px (off the 4px scale) on .q-flag | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:494 gap: 6px (off the 4px scale) on .seg-group, .chips | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:500 padding: 0 14px (off the 4px scale) on .seg, .chip | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:551 padding: 22px 24px 24px (off the 4px scale) on .controls | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:558 padding: 20px 18px 22px (off the 4px scale) on .controls | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:600 margin-bottom: 6px (off the 4px scale) on .stage-empty svg | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:613 margin-top: 14px (off the 4px scale) on .btn-big | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:626 padding: 3px 11px (off the 4px scale) on .timer, .tracking-state | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:668 gap: 10px (off the 4px scale) on .viewer-bar | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:674 gap: 6px (off the 4px scale) on .hand-pick | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:682 margin: 10px 2px 0 (off the 4px scale) on .status | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:699 gap: 14px (off the 4px scale) on .steps li | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:700 padding-bottom: 18px (off the 4px scale) on .steps li | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:703 padding-top: 18px (off the 4px scale) on .steps li + li | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:713 padding: 0 7px (off the 4px scale) on .optional | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:747 margin: 0 0 14px (off the 4px scale) on .hint | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:756 margin: 10px 0 0 (off the 4px scale) on .hint.small | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:760 margin-top: 14px (off the 4px scale) on .hint.fine | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:774 padding: 11px 14px (off the 4px scale) on .live-readout | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:788 padding: 0 18px (off the 4px scale) on .btn | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:873 margin-top: 22px (off the 4px scale) on .readout | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:880 gap: 6px 20px (off the 4px scale) on .readout-head | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:881 margin: 18px 0 10px (off the 4px scale) on .readout-head | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:894 padding: 14px (off the 4px scale) on .well | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:900 margin-top: 14px (off the 4px scale) on .chart-well | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:901 padding: 16px 16px 10px (off the 4px scale) on .chart-well | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:918 gap: 4px 14px (off the 4px scale) on .phase-legend | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:926 margin-right: 5px (off the 4px scale) on .phase-legend i | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:942 gap: 10px (off the 4px scale) on .finger-grid | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:951 padding: 14px (off the 4px scale) on .finger | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:958 margin-bottom: 10px (off the 4px scale) on .swatches | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:968 margin-left: -10px (off the 4px scale) on .swatch.now | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:976 gap: 6px (off the 4px scale) on .finger-name | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:982 padding: 0 6px (off the 4px scale) on .finger-key | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1036 padding: 9px 10px 9px 0 (off the 4px scale) on .data-table th, .data-table td | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1068 padding: 12px 14px (off the 4px scale) on .quality-note | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1089 padding: 16px 18px (off the 4px scale) on .guided | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1102 gap: 2px 10px (off the 4px scale) on .guided header | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1114 margin: 10px 0 12px (off the 4px scale) on .how-to | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1139 gap: 6px (off the 4px scale) on .answer-row | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1160 padding: 22px 24px (off the 4px scale) on .verdict | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1174 padding: 18px (off the 4px scale) on .verdict | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1179 padding: 2px 10px (off the 4px scale) on .verdict-tag | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1195 margin: 10px 0 0 (off the 4px scale) on .verdict-summary | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1227 margin-top: 22px (off the 4px scale) on .result-grid | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1254 padding: 1px 9px (off the 4px scale) on span.status | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1275 padding-left: 18px (off the 4px scale) on .reasons, .actions-list, .limits | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1281 margin-top: 6px (off the 4px scale) on .reasons li + li, .actions-list li + li, .limits li + li | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1305 padding: 18px (off the 4px scale) on .history-grid | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1364 padding: 14px 18px (off the 4px scale) on .sources | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1375 padding-left: 18px (off the 4px scale) on .sources ul | fix: Use the 4px spacing scale
+REFLEX 24b src/style.css:1467 padding: 14px 14px 4px (off the 4px scale) on .q-section | fix: Use the 4px spacing scale
+REFLEX 26b index.html:1 no :active styling anywhere | fix: All eight states; guard: not a form control, no aria-disabled anywhere
+REFLEX 26b index.html:1 no :disabled styling anywhere | fix: All eight states; guard: not a form control, no aria-disabled anywhere
+REFLEX 26b src/style.css:1 no :active styling anywhere | fix: All eight states; guard: not a form control, no aria-disabled anywhere
+REFLEX 28b index.html:109 video without poster | fix: Add a poster frame; guard: below the fold and not the LCP
+REFLEX 49b http://127.0.0.1:5180/:1 [320px] link "Surgery Open Science / SurgiColl" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+REFLEX 49b http://127.0.0.1:5180/:1 [320px] link "Right Decisions" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+REFLEX 59 http://127.0.0.1:5180/:1 [1440px] smallest gap between sections is 101px (gaps: 333, 104, 104, 104, 128, 101) | fix: 120px or more between sections, by the --section-gap steps
+REFLEX 72 http://127.0.0.1:5180/:1 [1440px] text crowds the edge of its box: div.instrument bottom -26px; details.sources bottom -179px | fix: Pad the box: max(8px, 0.5em) at the sides, max(4px, 0.3em) above and below
+REFLEX 77 http://127.0.0.1:5180/:1 [1440px] 3 thin sections: "Your symptoms" (85% wide, no mass); "Result" (85% wide, no mass); "Measurement history" (85%… | fix: Widen the body to ten of twelve columns and give it mass: a visual 300px tall or more, a set of three across, rows, or a statement (layout.md § 4 and § 5)
+REFLEX 81 http://127.0.0.1:5180/:1 [1440px] 3 empty pictures: span.glow-pale 562x608, a gradient with nothing in it; span.glow-blue 593x623, a gradient wi… | fix: Put the picture in: the user's image, a library photograph (theme.mjs photos) or the product built at full fidelity; the wash is only a loading colour (imagery.md § 3)
+WARN 3 src/style.css:1162 side stripe border-left: 6px solid var(--lv) on .verdict | fix: Hairline all round, none, or an accent square
+WARN 40 src/style.css:355 4.33:1 < 4.5:1 on .cond[data-level='selfcare']::after | fix: Raise the contrast to threshold
+WARN 40 src/style.css:356 1.66:1 < 4.5:1 on .cond[data-level='routine']::after | fix: Raise the contrast to threshold
+WARN 40 src/style.css:517 1.10:1 < 4.5:1 on .seg[aria-pressed='true'], .chip[aria-pressed='true'] | fix: Raise the contrast to threshold
+WARN 40 src/style.css:803 3.55:1 < 4.5:1 on .btn:disabled | fix: Raise the contrast to threshold
+WARN 41 src/style.css:440 dark surface (L 24%) on .q-section sets no text colour | fix: Swap text to paper in the same rule
+WARN 41 src/style.css:517 button text ~ button fill on .seg[aria-pressed='true'], .chip[aria-pressed='true'] (dL 0.034) | fix: Use accent-ink or paper for the label
+WARN 49 index.html:61 long clickable label "Raynaud's Fingers turn white or blu…" without nowrap | fix: Shorten the label or set nowrap
+WARN 49 index.html:66 long clickable label "Trigger finger A finger clicks, cat…" without nowrap | fix: Shorten the label or set nowrap
+WARN 49 index.html:71 long clickable label "Carpal tunnel Numb or tingling fing…" without nowrap | fix: Shorten the label or set nowrap
+WARN 49 index.html:208 long clickable label "Download color data (CSV)" without nowrap | fix: Shorten the label or set nowrap
+WARN 49 index.html:220 long clickable label "Download joint angles (CSV)" without nowrap | fix: Shorten the label or set nowrap
+WARN 58 index.html:1 1082 visible words on the page (450 at most) | fix: Cut copy: one idea per screen, sections become objects
+WARN 58 index.html:36 h1 runs 8 words ("Should you see a doctor about your hand…") | fix: Seven words or fewer, 50 characters or fewer
+WARN 58 index.html:39 hero paragraph runs 47 words | fix: One sentence, twelve words or fewer
+WARN F1 index.html:6 straight quote in prose x9 (first: check for Raynaud's, trigger fin) | fix: Use typographic quotes: “ ” ’
+WARN F3 src/style.css:76 no text-wrap: balance on any display head (8 head rule(s), e.g. h1, h2, h3, h4) | fix: Add text-wrap: balance to h1/h2-level heads
+WARN F7 src/style.css:347 the pill radius on 7 non-control selectors (.cond, .q-flag, .seg, .timer) | fix: Pills are for controls; boxes and media take the card radius
+WARN F15 src/style.css:1 4 different column gaps across multi-column sections (24px, 28px, 32px, 40px) | fix: One column gap for every multi-column section
+WARN F19 http://127.0.0.1:5180/:1 [1440px] 4 font weights in running use (400, 500, 600, 700) | fix: Three weights at most, display and body together, picked as extremes
+WARN F24 src/style.css:540 a hairline border under a wide soft shadow on .instrument | fix: Commit to one: a defined edge, or elevation by shadow
+WARN F26 http://127.0.0.1:5180/:1 [375px] h3 "Answer the questions to get a re" ends on a stub | fix: text-wrap: balance on heads and pretty on body copy, or rewrite the line; a <br> goes only between phrases and is checked at 375
