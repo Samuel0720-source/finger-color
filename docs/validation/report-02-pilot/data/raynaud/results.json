@@ -1,0 +1,51 @@
+{
+  "still_below_3": {
+    "hits": 71,
+    "total": 155,
+    "rate": 0.45806451612903226
+  },
+  "still_p95": 11.524999999999999,
+  "seen": {
+    "hits": 5,
+    "total": 5,
+    "rate": 1.0
+  },
+  "untimed": {
+    "hits": 5,
+    "total": 5,
+    "rate": 1.0
+  },
+  "presses": 5,
+  "checks": {
+    "AC-1": {
+      "result": "46% below 3 (95th percentile 11.5)",
+      "pass": false,
+      "rule": "Still hand: 95% of samples below 3"
+    },
+    "AC-2": {
+      "result": "5 of 5 (100%)",
+      "pass": true,
+      "rule": "90% or more presses seen (peak above 3)"
+    },
+    "AC-3": {
+      "result": "No timed press with rater times yet",
+      "pass": null,
+      "rule": "Recovery bias within \u00b11 s"
+    },
+    "AC-4": {
+      "result": "No timed press with rater times yet",
+      "pass": null,
+      "rule": "Both 95% limits within \u00b13 s"
+    },
+    "AC-5": {
+      "result": "Needs 2+ people and 2+ sessions",
+      "pass": null,
+      "rule": "ICC 0.6 or higher"
+    },
+    "AC-6": {
+      "result": "5 of 5 (100%)",
+      "pass": false,
+      "rule": "Fewer than 1 in 5 presses not timed"
+    }
+  }
+}

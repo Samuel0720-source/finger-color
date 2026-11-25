@@ -75,4 +75,4 @@ If a run is **not scored**, still download its run summary (it records the reaso
 
 ## After the session (Sam)
 
-Send Claude a photo of the sheet and the CSV files, saying which person and run each one is. Claude types the rows into the CSV files, runs the analysis and updates the report. Photos of the screen should not show the volunteer's face or name.
+Send the author a photo of the sheet and the CSV files, saying which person and run each one is. The author types the rows into the CSV files, runs the analysis and updates the report. Photos of the screen should not show the volunteer's face or name.

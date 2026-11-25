@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>finger-color Pilot Validation Report 2026</title>
+<style>
+  @page { size: 11in 8.5in; margin: 0; }
+  :root { --navy:#0b1f3a; --cream:#f6efe4; --coral:#ff7f66; --ink:#14213a; --muted:#6b7280; --line:#d9d2c5; --paper:#fffdf9; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter, "Helvetica Neue", Arial, sans-serif; font-size:10.5pt; line-height:1.5; }
+  .page { width:11in; height:8.5in; position:relative; overflow:hidden; page-break-after:always; padding:0.85in 0.75in 0.7in; background:var(--paper); }
+  .page:last-child { page-break-after:auto; }
+  h1,h2,h3 { font-family:"Inter Display", Inter, sans-serif; color:var(--navy); margin:0; line-height:1.1; }
+  h2 { font-size:24pt; font-weight:600; margin-bottom:.18in; }
+  h3 { font-size:12pt; font-weight:600; margin:.14in 0 .06in; }
+  p { margin:0 0 .09in; }
+  .lede { font-size:12pt; color:var(--ink); max-width:6.6in; }
+  .muted { color:var(--muted); }
+  .small { font-size:8.5pt; }
+  /* running header and footer */
+  .nav { position:absolute; top:.32in; left:.75in; right:.75in; display:flex; justify-content:space-between; font-size:8pt; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:.08in; }
+  .nav span.on { color:var(--navy); font-weight:600; }
+  .nav .tabs span { margin-left:.22in; }
+  .foot { position:absolute; bottom:.3in; left:.75in; right:.75in; display:flex; justify-content:space-between; font-size:8pt; color:var(--muted); }
+  /* cover */
+  .cover { background:var(--navy); color:var(--cream); padding:0; }
+  .cover .band { position:absolute; left:0; top:0; bottom:0; width:3.6in; background:var(--coral); }
+  .cover .inner { position:absolute; left:4.2in; top:1.1in; right:.8in; }
+  .cover h1 { color:var(--cream); font-size:44pt; font-weight:600; letter-spacing:-.01em; }
+  .cover .year { font-size:64pt; font-family:"Inter Display"; font-weight:200; color:var(--cream); margin-top:.25in; }
+  .cover .sub { margin-top:.3in; font-size:13pt; color:#c9d3e3; max-width:5.4in; }
+  .cover .by { position:absolute; left:4.2in; bottom:.8in; font-size:10pt; color:#c9d3e3; }
+  .cover .mark { position:absolute; left:.6in; bottom:.8in; color:var(--navy); font-family:"Inter Display"; font-size:20pt; font-weight:600; }
+  /* contents */
+  .toc { display:grid; grid-template-columns:repeat(3,1fr); gap:.35in; margin-top:.2in; }
+  .toc h3 { border-top:3px solid var(--navy); padding-top:.08in; }
+  .toc div.row { display:flex; justify-content:space-between; border-bottom:1px solid var(--line); padding:.05in 0; font-size:10pt; }
+  /* divider */
+  .divider { background:var(--cream); }
+  .divider .num { font-family:"Inter Display"; font-size:120pt; font-weight:200; color:var(--coral); line-height:1; margin-top:.6in; }
+  .divider h1 { font-size:50pt; font-weight:600; margin-top:.1in; }
+  .divider .what { position:absolute; right:.75in; bottom:1in; width:3.6in; font-size:10pt; }
+  .divider .what div { border-bottom:1px solid var(--line); padding:.06in 0; display:flex; justify-content:space-between; }
+  /* letter */
+  .cols2 { column-count:2; column-gap:.45in; }
+  .cols2 p { break-inside:avoid-column; }
+  .sign { margin-top:.12in; font-family:"Inter Display"; font-size:13pt; color:var(--navy); }
+  /* KPI tiles */
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:.16in; }
+  .kpi { background:var(--cream); border-radius:4px; padding:.16in .18in; min-height:1.38in; }
+  .kpi .lab { font-size:8.5pt; color:var(--muted); }
+  .kpi .val { font-family:"Inter Display"; font-size:30pt; font-weight:300; color:var(--navy); line-height:1.1; margin:.04in 0; }
+  .kpi .val small { font-size:12pt; font-weight:500; }
+  .kpi .note { font-size:8.5pt; }
+  .kpi.alert .val { color:#c2412d; }
+  .kpi.dark { background:var(--navy); color:var(--cream); }
+  .kpi.dark .val, .kpi.dark .lab { color:var(--cream); }
+  .sec-lab { font-size:9pt; font-weight:600; color:var(--navy); margin:.08in 0; border-bottom:2px solid var(--navy); padding-bottom:.03in; }
+  /* layout helpers */
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.4in; }
+  .grid-l { display:grid; grid-template-columns:1.15fr 1fr; gap:.35in; align-items:start; }
+  figure { margin:0; }
+  figure img { width:100%; display:block; }
+  figcaption { font-size:8.5pt; color:var(--muted); margin-top:.04in; }
+  .shot img { border:1px solid var(--line); border-radius:4px; }
+  table { border-collapse:collapse; width:100%; font-size:9pt; }
+  th { text-align:left; font-weight:600; color:var(--navy); border-bottom:2px solid var(--navy); padding:.04in .06in; }
+  td { border-bottom:1px solid var(--line); padding:.045in .06in; vertical-align:top; }
+  td:first-child { white-space:nowrap; }
+  .tag { white-space:nowrap; display:inline-block; padding:0 .08in; border-radius:10px; font-size:8pt; font-weight:600; }
+  .tag.pass { background:#dcefe1; color:#1f6b3a; }
+  .tag.fail { background:#fde1dc; color:#a3311f; }
+  .tag.notyet { background:#ece8e0; color:#555; }
+  .item { font-size:9pt; color:var(--coral); font-weight:600; letter-spacing:.02em; }
+  ul { margin:.02in 0 .1in; padding-left:.2in; }
+  li { margin-bottom:.04in; }
+  .callout { border-left:3px solid var(--coral); padding:.04in .14in; background:#fff6f2; margin:.08in 0; }
+</style>
+</head>
+<body>
+
+<!-- 1. Cover -->
+<section class="page cover">
+  <div class="band"></div>
+  <div class="mark">finger-color</div>
+  <div class="inner">
+    <h1>Pilot Validation Report</h1>
+    <div class="year">2026</div>
+    <p class="sub">How well a phone or laptop camera measures the hand, checked against a goniometer, a stopwatch and the clinical rules we set before the first measurement.</p>
+  </div>
+  <div class="by">Samuel Koo · Biomedical Engineering, University of Waterloo · 24 November 2026</div>
+</section>
+
+<!-- 2. Contents -->
+<section class="page">
+  <div class="nav"><span>finger-color Pilot Validation Report 2026</span><span class="tabs"><span class="on">Contents</span><span>Product</span><span>Results</span><span>Governance</span></span></div>
+  <h2>Contents</h2>
+  <div class="toc">
+    <div>
+      <h3>Overview</h3>
+      <div class="row"><span>Letter from the author</span><span>3</span></div>
+      <div class="row"><span>The pilot at a glance</span><span>4</span></div>
+    </div>
+    <div>
+      <h3>Part I · The product</h3>
+      <div class="row"><span>Item 1. What the app does</span><span>6</span></div>
+      <div class="row"><span>Item 1A. Limits and risks</span><span>7</span></div>
+      <h3>Part II · Results</h3>
+      <div class="row"><span>Item 7. Trigger finger: angles</span><span>9</span></div>
+      <div class="row"><span>Item 7. Trigger finger: catches</span><span>10</span></div>
+      <div class="row"><span>Item 7. Raynaud's: color</span><span>11</span></div>
+      <div class="row"><span>Item 8. Scorecard</span><span>12</span></div>
+    </div>
+    <div>
+      <h3>Part III · Governance</h3>
+      <div class="row"><span>Item 9. How the study was run</span><span>13</span></div>
+      <div class="row"><span>Item 10. What comes next</span><span>14</span></div>
+      <div class="row"><span>Item 15. Data and reproduction</span><span>14</span></div>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:.4in;max-width:7in">All data in this report are real measurements of healthy adult volunteers, taken with the live app. Nothing was simulated, and no measurement was removed. The app is not a medical device and this report makes no claim that it diagnoses any condition.</p>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>2</span></div>
+</section>
+
+<!-- 3. Letter -->
+<section class="page">
+  <div class="nav"><span>Overview</span><span class="tabs"><span class="on">Letter</span><span>At a glance</span></span></div>
+  <h2>Letter from the author</h2>
+  <div class="cols2">
+    <p>I started finger-color with a simple question: can the camera that is already on a laptop tell someone whether their hand symptoms are worth showing to a doctor? Raynaud's, trigger finger and carpal tunnel are common, they are easy to describe badly in a short appointment, and each has a visible sign that a camera might catch.</p>
+    <p>Building the app was the easy half. The harder half was finding out whether its numbers can be trusted. So before measuring anyone, I wrote down what "good enough" means: the bend angle within ±5° on average, every single reading within ±15°, at least 80% of deliberate catches found, and so on. Those rules are printed on page 12 and have not been changed since.</p>
+    <p>This pilot measured 3 people for trigger finger and began the Raynaud's color test on one. Some rules passed and some did not. The middle finger never raised a false alarm in 0 of 68 smooth fists, and the angle is right on average (+0.5°). But a fully straight finger reads too bent, the thumb raises false catches, and one volunteer's catches were missed entirely.</p>
+    <p>I am reporting the failures as clearly as the passes, because they are the most useful part. Two of them led to real fixes already: fists are now counted from each person's own open hand, which turned 0 of 10 counted fists into 10 of 10 for one volunteer, and held fists no longer count as catches on the little finger. The rest are listed as decisions to make before the next study.</p>
+    <p>Thank you to the friends who sat still for 25 minutes while I read a goniometer off their fingers.</p>
+    <div class="sign">Samuel Koo</div>
+    <div class="small muted">Author, and participant P01 / R01</div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>3</span></div>
+</section>
+
+<!-- 4. At a glance -->
+<section class="page">
+  <div class="nav"><span>Overview</span><span class="tabs"><span>Letter</span><span class="on">At a glance</span></span></div>
+  <h2>The pilot at a glance</h2>
+  <div class="sec-lab">Trigger finger · 3 people</div>
+  <div class="kpis">
+    <div class="kpi dark"><div class="lab">Still-angle pairs measured</div><div class="val">32</div><div class="note">Middle finger, app against goniometer</div></div>
+    <div class="kpi"><div class="lab">Average angle difference</div><div class="val">+0.5°</div><div class="note">Target within ±5° · Pass</div></div>
+    <div class="kpi alert"><div class="lab">95% of readings within</div><div class="val">-14.9° <small>to</small> +15.8°</div><div class="note">Target ±15° · Fails by under 1°</div></div>
+    <div class="kpi"><div class="lab">False catches, middle finger</div><div class="val">0 of 68</div><div class="note">Smooth fists · Pass</div></div>
+    <div class="kpi alert"><div class="lab">Deliberate catches found</div><div class="val">9 of 12</div><div class="note">Target 80% · 75% · Fail</div></div>
+    <div class="kpi"><div class="lab">Fist runs scored</div><div class="val">8 <small>of</small> 10</div><div class="note">8 of 8 since the 12 Nov fix</div></div>
+    <div class="kpi"><div class="lab">Bent positions only</div><div class="val">-1.6°</div><div class="note">Limits -11.9° to +8.8° (28 pairs)</div></div>
+    <div class="kpi alert"><div class="lab">Thumb false catches</div><div class="val">14</div><div class="note">In 4 smooth runs, all three hands</div></div>
+  </div>
+  <div class="sec-lab" style="margin-top:.2in">Raynaud's color · 1 person so far</div>
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Presses recorded</div><div class="val">6</div><div class="note">3 index, 3 middle (5 analysed)</div></div>
+    <div class="kpi"><div class="lab">Presses seen by the camera</div><div class="val">5 of 5</div><div class="note">Target 90% · Pass</div></div>
+    <div class="kpi alert"><div class="lab">Presses not timed</div><div class="val">5 of 5</div><div class="note">Recordings too short, or line too strict</div></div>
+    <div class="kpi alert"><div class="lab">Still hand below visible change</div><div class="val">46%</div><div class="note">Target 95% · 157 s recorded · Fail</div></div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>4</span></div>
+</section>
+
+<!-- 5. Part I divider -->
+<section class="page divider">
+  <div class="num">I</div>
+  <h1>The product</h1>
+  <p class="lede" style="margin-top:.2in">A browser app that measures the hand with the camera and compares the result with published clinical criteria.</p>
+  <div class="what">
+    <div><span>Item 1. What the app does</span><span>6</span></div>
+    <div><span>Item 1A. Limits and risks</span><span>7</span></div>
+  </div>
+</section>
+
+<!-- 6. Item 1 -->
+<section class="page">
+  <div class="nav"><span>Part I · The product</span><span class="tabs"><span class="on">Item 1</span><span>Item 1A</span></span></div>
+  <div class="item">ITEM 1</div>
+  <h2>What the app does</h2>
+  <div class="grid-l">
+    <div>
+      <p class="lede">finger-color runs in the browser. The video never leaves the device: hand tracking (MediaPipe, 21 points per frame) and all measurements happen locally.</p>
+      <h3>Three checks</h3>
+      <ul>
+        <li><strong>Raynaud's:</strong> reads the color of each fingertip against the person's saved normal color, and times how long the color takes to return.</li>
+        <li><strong>Trigger finger:</strong> measures the angle at the middle joint of each finger during 10 fists, and flags a catch: a pause in mid-bend followed by a quick snap open.</li>
+        <li><strong>Carpal tunnel:</strong> checks whether the thumb tip reaches each fingertip.</li>
+      </ul>
+      <h3>What the person gets</h3>
+      <p>A short questionnaire plus the camera measurements are compared with each condition's clinical criteria. The result is one of a few plain next steps, a PDF to bring to a doctor, and the raw data as CSV files.</p>
+      <h3>How it is built</h3>
+      <p class="small">Vite and plain JavaScript; MediaPipe Hands in WebAssembly; Chart.js and jsPDF; Python (pandas, matplotlib) for validation; 97 automated tests and a browser test with a simulated hand on every change; deployed on Vercel.</p>
+    </div>
+    <div>
+      <figure class="shot"><img src="img/app-home.png" alt="Home screen of the app"><figcaption>Home screen: pick a condition, answer, measure.</figcaption></figure>
+      <figure class="shot" style="margin-top:.14in"><img src="img/app-result.png" alt="Result screen of the trigger finger check" style="height:2.3in;object-fit:cover;object-position:top"><figcaption>Result screen: each clinical feature marked present, absent or not checked.</figcaption></figure>
+    </div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>6</span></div>
+</section>
+
+<!-- 7. Item 1A -->
+<section class="page">
+  <div class="nav"><span>Part I · The product</span><span class="tabs"><span>Item 1</span><span class="on">Item 1A</span></span></div>
+  <div class="item">ITEM 1A</div>
+  <h2>Limits and risks</h2>
+  <div class="grid2">
+    <div>
+      <h3>Who was measured</h3>
+      <p>Three healthy adults for trigger finger and one for Raynaud's, all friends of the author or the author himself. None has the conditions the app screens for, so this pilot cannot say whether the app detects them. It can only say how accurately it measures.</p>
+      <h3>One camera, one room</h3>
+      <p>All sessions used one laptop camera in normal indoor light. Light, distance and skin tone may change the results and have not been tested yet.</p>
+      <h3>The reference is a person</h3>
+      <p>The author read both the app and the goniometer for every pair. A goniometer read by hand is itself off by a few degrees.</p>
+    </div>
+    <div>
+      <h3>Known measurement problems</h3>
+      <ul>
+        <li><strong>Straight finger:</strong> with the palm toward the camera, a fully straight finger read +6° to +23° too bent in the 4 straight pairs.</li>
+        <li><strong>Thumb:</strong> the thumb raises false catches in every hand tested. It is still shown in the result.</li>
+        <li><strong>Hands that do not open far:</strong> two of three hands opened only to about 142°, which leaves little room for the 25° snap a catch needs.</li>
+        <li><strong>Color in a changing scene:</strong> during a still recording, all five fingers jumped together twice, which points to light or camera exposure, not skin.</li>
+      </ul>
+      <div class="callout small">The app is not a medical device. It does not diagnose. Its result is a suggestion about whether to see a doctor, and it says so on every screen and in every PDF.</div>
+    </div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>7</span></div>
+</section>
+
+<!-- 8. Part II divider -->
+<section class="page divider">
+  <div class="num">II</div>
+  <h1>Results</h1>
+  <p class="lede" style="margin-top:.2in">Every number below is rebuilt from the CSV files by a script. Rules were fixed before data was taken.</p>
+  <div class="what">
+    <div><span>Item 7. Trigger finger: angles</span><span>9</span></div>
+    <div><span>Item 7. Trigger finger: catches</span><span>10</span></div>
+    <div><span>Item 7. Raynaud's: color</span><span>11</span></div>
+    <div><span>Item 8. Scorecard</span><span>12</span></div>
+  </div>
+</section>
+
+<!-- 9. Angles -->
+<section class="page">
+  <div class="nav"><span>Part II · Results</span><span class="tabs"><span class="on">Angles</span><span>Catches</span><span>Color</span><span>Scorecard</span></span></div>
+  <div class="item">ITEM 7 · TRIGGER FINGER</div>
+  <h2>The bend angle is right on average</h2>
+  <div class="grid2">
+    <figure><img src="img/f1-angles.png" alt="App bend against goniometer bend"><figcaption>Each point is one held position. The line is perfect agreement. Circled: fully straight finger.</figcaption></figure>
+    <figure><img src="img/f2-bland-altman.png" alt="Bland-Altman plot"><figcaption>Difference against size (Bland-Altman). Solid line: average difference; dashed: 95% limits.</figcaption></figure>
+  </div>
+  <table style="margin-top:.12in">
+    <tr><th>Set</th><th>Pairs</th><th>Average difference</th><th>95% limits</th><th>Average size of error</th></tr>
+    <tr><td>All positions</td><td>32</td><td>+0.5°</td><td>-14.9° to +15.8°</td><td>5.9°</td></tr>
+    <tr><td>Bent positions only</td><td>28</td><td>-1.6°</td><td>-11.9° to +8.8°</td><td>–</td></tr>
+    <tr><td>Fully straight only</td><td>4</td><td colspan="3">App read +6° to +23° more bend than the goniometer</td></tr>
+  </table>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>9</span></div>
+</section>
+
+<!-- 10. Catches -->
+<section class="page">
+  <div class="nav"><span>Part II · Results</span><span class="tabs"><span>Angles</span><span class="on">Catches</span><span>Color</span><span>Scorecard</span></span></div>
+  <div class="item">ITEM 7 · TRIGGER FINGER</div>
+  <h2>Counting fists and finding catches</h2>
+  <figure><img style="height:2.05in;object-fit:contain" src="img/f4-trace.png" alt="Middle finger angle during a deliberate-catch run"><figcaption>P01, run 6: 10 fists. On fists 3, 6 and 9 the hand paused half-open and snapped; the detector marked each one (shaded).</figcaption></figure>
+  <div class="grid-l" style="margin-top:.12in">
+    <figure><img style="height:2.45in;object-fit:contain;object-position:left" src="img/f3-cycles.png" alt="Fists counted with the old and new rule"><figcaption>Fists counted in each replayed recording. The old rule needed the finger above 150°; the current rule uses each person's own open hand.</figcaption></figure>
+    <div>
+      <h3>What the runs showed</h3>
+      <ul class="small">
+        <li>The middle finger raised <strong>no false catch</strong> in 0 of 68 unscripted fists.</li>
+        <li>Deliberate catches were found <strong>9 of 12</strong>: all of P01's and P02's, none of P03's. P03 made the pause from an open hand instead of from a full fist, in a finger that opens only to about 142°.</li>
+        <li>The thumb raised 14 false catches across 4 smooth runs.</li>
+        <li>2 of 10 runs were not scored, both on the first build. Every run since the fix was scored.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>10</span></div>
+</section>
+
+<!-- 11. Raynaud's -->
+<section class="page">
+  <div class="nav"><span>Part II · Results</span><span class="tabs"><span>Angles</span><span>Catches</span><span class="on">Color</span><span>Scorecard</span></span></div>
+  <div class="item">ITEM 7 · RAYNAUD'S</div>
+  <h2>The camera sees a pale fingertip, but cannot time it yet</h2>
+  <figure><img style="height:2.05in;object-fit:contain" src="img/f5-still.png" alt="Color change during a still hand"><figcaption>Still hand, 157 s. Change should stay near 0. Every finger jumps at the same moments, which points to the scene, not the skin.</figcaption></figure>
+  <div class="grid-l" style="margin-top:.12in">
+    <figure><img style="height:2.45in;object-fit:contain;object-position:left" src="img/f6-press.png" alt="Middle fingertip during a press"><figcaption>Middle press 3: the press is obvious, but after letting go the color hovers between 1 and 3, never under the 1.7 recovery line for 30 s.</figcaption></figure>
+    <div>
+      <h3>Why no press was timed</h3>
+      <ul class="small">
+        <li>Four recordings were stopped 55 to 59 s after letting go; the app needs 60 s and does not say when that point is reached.</li>
+        <li>One ran 68 s, but the recovery line (1.7, from the few seconds used to save the normal color) is stricter than the real noise of a still hand in this room.</li>
+        <li>Middle press 1: color file not yet added.</li>
+      </ul>
+      <p class="small"><strong>Still hand:</strong> 46% of samples below 3 (95th percentile 11.5). <strong>Presses seen:</strong> 5 of 5. <strong>Not timed:</strong> 5 of 5.</p>
+    </div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>11</span></div>
+</section>
+
+<!-- 12. Scorecard -->
+<section class="page">
+  <div class="nav"><span>Part II · Results</span><span class="tabs"><span>Angles</span><span>Catches</span><span>Color</span><span class="on">Scorecard</span></span></div>
+  <div class="item">ITEM 8</div>
+  <h2>Scorecard against the rules set in advance</h2>
+  <div class="grid2">
+    <div>
+      <h3>Trigger finger (protocol VP-TF-001)</h3>
+      <table><tr><th>ID</th><th>Rule</th><th>Result</th><th></th></tr><tr><td>AC-1</td><td>Bias within ±5°</td><td>Bias +0.5°</td><td><span class="tag pass">Pass</span></td></tr><tr><td>AC-2</td><td>Both 95% limits within ±15°</td><td>-14.9° to +15.8°</td><td><span class="tag fail">Fail</span></td></tr><tr><td>AC-3</td><td>ICC 0.75 or higher</td><td>Not assessed: needs 2+ sessions and 2+ people</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-4</td><td>80% or more of deliberate catches found</td><td>9 of 12 (75%)</td><td><span class="tag fail">Fail</span></td></tr><tr><td>AC-5</td><td>10% or fewer smooth fists flagged</td><td>0 of 68 (0%)</td><td><span class="tag pass">Pass</span></td></tr><tr><td>AC-6</td><td>Fewer than 1 in 5 runs not scored</td><td>2 of 10 (20%)</td><td><span class="tag fail">Fail</span></td></tr></table>
+    </div>
+    <div>
+      <h3>Raynaud's (protocol VP-RAY-001)</h3>
+      <table><tr><th>ID</th><th>Rule</th><th>Result</th><th></th></tr><tr><td>AC-1</td><td>Still hand: 95% of samples below 3</td><td>46% below 3 (95th percentile 11.5)</td><td><span class="tag fail">Fail</span></td></tr><tr><td>AC-2</td><td>90% or more presses seen (peak above 3)</td><td>5 of 5 (100%)</td><td><span class="tag pass">Pass</span></td></tr><tr><td>AC-3</td><td>Recovery bias within ±1 s</td><td>No timed press with rater times yet</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-4</td><td>Both 95% limits within ±3 s</td><td>No timed press with rater times yet</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-5</td><td>ICC 0.6 or higher</td><td>Needs 2+ people and 2+ sessions</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-6</td><td>Fewer than 1 in 5 presses not timed</td><td>5 of 5 (100%)</td><td><span class="tag fail">Fail</span></td></tr></table>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:.18in">"Not yet" means the data needed for that rule does not exist yet (for example, repeatability needs the same people on three different days). A pilot with three people is too small to declare the app accurate or not; it shows what to fix before the full study.</p>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>12</span></div>
+</section>
+
+<!-- 13. Governance -->
+<section class="page">
+  <div class="nav"><span>Part III · Governance</span><span class="tabs"><span class="on">Item 9</span><span>Item 10</span><span>Item 15</span></span></div>
+  <div class="item">ITEM 9</div>
+  <h2>How the study was run</h2>
+  <div class="grid2">
+    <div>
+      <h3>Rules first, data second</h3>
+      <p>Each test has a written protocol with pass or fail rules fixed before any measurement. Protocols are versioned; a change is allowed only before the data it affects is taken, and the reason is recorded.</p>
+      <h3>Nothing removed, nothing invented</h3>
+      <p>Every run is kept, including the ones that failed or were done the wrong way. Practice recordings outside the protocol are kept in the raw folder and labelled. No number was typed in that was not measured.</p>
+      <h3>Privacy</h3>
+      <p>Volunteers are adults who read a one-page description and agreed before starting, are known only by a code (P01, R01) and can stop at any time. No video or face is stored.</p>
+    </div>
+    <div>
+      <h3>Changes made because of the pilot</h3>
+      <table>
+        <tr><th>Found</th><th>Change</th></tr>
+        <tr><td>Countdown never started for hands that open below 150°</td><td>Lines follow each person's own open hand</td></tr>
+        <tr><td>Held fists counted as catches</td><td>A pause must sit 15° above the fist</td></tr>
+        <tr><td>A thumb rule designed on 5 events</td><td>Tested on new recordings; it dropped real catches, so it was not used</td></tr>
+        <tr><td>Raynaud's presses needed 60 s, protocol said 30 s</td><td>Protocol v1.1, before any data</td></tr>
+        <tr><td>Session too long for volunteers</td><td>Protocol v1.2: 3 presses per finger, no extra rest</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>13</span></div>
+</section>
+
+<!-- 14. Outlook and exhibits -->
+<section class="page">
+  <div class="nav"><span>Part III · Governance</span><span class="tabs"><span>Item 9</span><span class="on">Items 10 and 15</span></span></div>
+  <div class="grid2">
+    <div>
+      <div class="item">ITEM 10</div>
+      <h2>What comes next</h2>
+      <ul>
+        <li>Decide how to read a straight finger (side view, or each person's straight hand as zero), designed on some people and tested on others.</li>
+        <li>A thumb rule that removes false catches without dropping real ones, or leave the thumb out of the result.</li>
+        <li>Raynaud's: a 60-second countdown after "I'm warming up now", and a recovery line based on a real still recording.</li>
+        <li>Full study: 10 people, 3 days each, two light conditions; this is where repeatability is measured.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="item">ITEM 15</div>
+      <h2>Data and reproduction</h2>
+      <table class="small">
+        <tr><th>File</th><th>Contents</th></tr>
+        <tr><td>data/trigger/static_angles.csv</td><td>32 app and goniometer pairs</td></tr>
+        <tr><td>data/trigger/runs.csv, fists.csv, finger_catches.csv</td><td>10 fist runs, per fist and per finger</td></tr>
+        <tr><td>data/trigger/raw/</td><td>Angle recordings, replayed through the detector</td></tr>
+        <tr><td>data/raynaud/noise.csv, presses.csv</td><td>Still hand and press summaries</td></tr>
+        <tr><td>data/raynaud/raw/</td><td>The app's own color and event files</td></tr>
+      </table>
+      <p class="small" style="margin-top:.1in">To rebuild every number and figure in this report:</p>
+      <p class="small" style="font-family:'DejaVu Sans Mono',monospace;background:var(--cream);padding:.08in;">python analysis/validation/make_report.py docs/validation/report-02-pilot<br>python analysis/validation/raynaud.py docs/validation/report-02-pilot/data/raynaud<br>python analysis/validation/make_pilot_book.py docs/validation/report-02-pilot</p>
+    </div>
+  </div>
+  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>14</span></div>
+</section>
+
+</body>
+</html>

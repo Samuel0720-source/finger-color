@@ -1,11 +1,13 @@
 # Report 02: pilot
 
+**Full report (PDF):** [pilot-report-2026.pdf](pilot-report-2026.pdf), rebuilt from the data by `analysis/validation/make_pilot_book.py` and `validation/print-book.mjs`.
+
 **Trigger finger report:** [trigger-finger.md](trigger-finger.md) (tables and figures rebuild from the CSV files). **For volunteers:** [volunteer-guide.md](volunteer-guide.md). This page is the session log.
 
-Protocols: [VP-TF-001](../protocol-trigger-finger.md) v1.2 and [VP-RAY-001](../protocol-raynaud.md) v1.1.
+Protocols: [VP-TF-001](../protocol-trigger-finger.md) v1.2 and [VP-RAY-001](../protocol-raynaud.md) v1.2.
 
 - **Trigger finger:** pilot complete for 3 people (20 Nov). One more catch run planned.
-- **Raynaud's:** not started. Steps for a session: [raynaud-guide.md](raynaud-guide.md).
+- **Raynaud's:** started 24 Nov ([raynaud.md](raynaud.md)): R01 still hand and all 6 presses recorded; none timed yet. Steps: [raynaud-guide.md](raynaud-guide.md).
 
 ## Session log
 
@@ -20,6 +22,9 @@ Protocols: [VP-TF-001](../protocol-trigger-finger.md) v1.2 and [VP-RAY-001](../p
 | 20 Nov 2026 | P02 | 8 still-angle pairs (middle finger) | not recorded | Within −10.6° to +9.6° of the goniometer; the straight finger read 8° of bend against 2°. |
 | 20 Nov 2026 | P03 | Run 1 smooth fists, run 2 deliberate catches (raw and summary CSVs) | caff658 | Both scored, 60 and 59 fps, open middle finger 141° and 142°. Middle: 0 false catches, but 0 of 3 deliberate catches found (made from an open hand; see the report). Thumb: 3 false catches in the smooth run. |
 | 20 Nov 2026 | P03 | 8 still-angle pairs (middle finger) | not recorded | Within −18.2° to +16.2° of the goniometer; straight finger read 9° of bend more. All 32 pairs: −14.9° to +15.8°. |
+| 24 Nov 2026 | R01 (author) | Raynaud's: normal color saved, 157 s still hand, 3 practice thumb presses | not recorded | Still hand: 46% of middle-finger samples below 3 (AC-1 fails); all fingers jump together at 100 s and 143 s, so the scene changed. Thumb presses outside the protocol and stopped too early to be timed; kept, not counted. |
+| 24 Nov 2026 | R01 | Raynaud's: 3 index presses (protocol v1.2) | not recorded | All 3 seen (peak 11 to 26). None timed: each stopped 58 to 59 s after warming was marked; the app needs 60 s. |
+| 24 Nov 2026 | R01 | Raynaud's: 3 middle presses | not recorded | Middle 2: stopped at 55 s, not timed. Middle 3: 68 s but never back within the 1.7 noise line, not timed. Middle 1: color data file still to come. |
 
 ## What the first session found
 
