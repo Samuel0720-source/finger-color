@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>finger-color Pilot Validation Report 2026</title>
+<title>Camera Hand-Symptom Checker Pilot Validation Report 2026</title>
 <style>
   @page { size: 11in 8.5in; margin: 0; }
   :root { --navy:#0b1f3a; --cream:#f6efe4; --coral:#ff7f66; --ink:#14213a; --muted:#6b7280; --line:#d9d2c5; --paper:#fffdf9; }
@@ -30,7 +30,7 @@
   .cover .year { font-size:64pt; font-family:"Inter Display"; font-weight:200; color:var(--cream); margin-top:.25in; }
   .cover .sub { margin-top:.3in; font-size:13pt; color:#c9d3e3; max-width:5.4in; }
   .cover .by { position:absolute; left:4.2in; bottom:.8in; font-size:10pt; color:#c9d3e3; }
-  .cover .mark { position:absolute; left:.6in; bottom:.8in; color:var(--navy); font-family:"Inter Display"; font-size:20pt; font-weight:600; }
+  .cover .mark { position:absolute; left:.6in; width:2.5in; bottom:.8in; line-height:1.15; color:var(--navy); font-family:"Inter Display"; font-size:20pt; font-weight:600; }
   /* contents */
   .toc { display:grid; grid-template-columns:repeat(3,1fr); gap:.35in; margin-top:.2in; }
   .toc h3 { border-top:3px solid var(--navy); padding-top:.08in; }
@@ -82,7 +82,7 @@
 <!-- 1. Cover -->
 <section class="page cover">
   <div class="band"></div>
-  <div class="mark">finger-color</div>
+  <div class="mark">Camera Hand-Symptom Checker</div>
   <div class="inner">
     <h1>Pilot Validation Report</h1>
     <div class="year">2026</div>
@@ -93,7 +93,7 @@
 
 <!-- 2. Contents -->
 <section class="page">
-  <div class="nav"><span>finger-color Pilot Validation Report 2026</span><span class="tabs"><span class="on">Contents</span><span>Product</span><span>Results</span><span>Governance</span></span></div>
+  <div class="nav"><span>Camera Hand-Symptom Checker Pilot Validation Report 2026</span><span class="tabs"><span class="on">Contents</span><span>Product</span><span>Results</span><span>Governance</span></span></div>
   <h2>Contents</h2>
   <div class="toc">
     <div>
@@ -119,7 +119,7 @@
     </div>
   </div>
   <p class="small muted" style="margin-top:.4in;max-width:7in">All data in this report are real measurements of healthy adult volunteers, taken with the live app. Nothing was simulated, and no measurement was removed. The app is not a medical device and this report makes no claim that it diagnoses any condition.</p>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>2</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>2</span></div>
 </section>
 
 <!-- 3. Letter -->
@@ -127,7 +127,7 @@
   <div class="nav"><span>Overview</span><span class="tabs"><span class="on">Letter</span><span>At a glance</span></span></div>
   <h2>Letter from the author</h2>
   <div class="cols2">
-    <p>I started finger-color with a simple question: can the camera that is already on a laptop tell someone whether their hand symptoms are worth showing to a doctor? Raynaud's, trigger finger and carpal tunnel are common, they are easy to describe badly in a short appointment, and each has a visible sign that a camera might catch.</p>
+    <p>I started the Camera Hand-Symptom Checker with a simple question: can the camera that is already on a laptop tell someone whether their hand symptoms are worth showing to a doctor? Raynaud's, trigger finger and carpal tunnel are common, they are easy to describe badly in a short appointment, and each has a visible sign that a camera might catch.</p>
     <p>Building the app was the easy half. The harder half was finding out whether its numbers can be trusted. So before measuring anyone, I wrote down what "good enough" means: the bend angle within ±5° on average, every single reading within ±15°, at least 80% of deliberate catches found, and so on. Those rules are printed on page 12 and have not been changed since.</p>
     <p>This pilot measured {{people}} people for trigger finger and began the Raynaud's color test on one. Some rules passed and some did not. The middle finger never raised a false alarm in {{fa}} smooth fists, and the angle is right on average ({{bias}}). But a fully straight finger reads too bent, the thumb raises false catches, and one volunteer's catches were missed entirely.</p>
     <p>I am reporting the failures as clearly as the passes, because they are the most useful part. Two of them led to real fixes already: fists are now counted from each person's own open hand, which turned 0 of 10 counted fists into 10 of 10 for one volunteer, and held fists no longer count as catches on the little finger. The rest are listed as decisions to make before the next study.</p>
@@ -135,7 +135,7 @@
     <div class="sign">Samuel Koo</div>
     <div class="small muted">Author, and participant P01 / R01</div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>3</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>3</span></div>
 </section>
 
 <!-- 4. At a glance -->
@@ -160,7 +160,7 @@
     <div class="kpi alert"><div class="lab">Presses not timed</div><div class="val">{{untimed}}</div><div class="note">Recordings too short, or line too strict</div></div>
     <div class="kpi alert"><div class="lab">Still hand below visible change</div><div class="val">{{still_below}}</div><div class="note">Target 95% · {{still_s}} s recorded · Fail</div></div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>4</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>4</span></div>
 </section>
 
 <!-- 5. Part I divider -->
@@ -181,7 +181,7 @@
   <h2>What the app does</h2>
   <div class="grid-l">
     <div>
-      <p class="lede">finger-color runs in the browser. The video never leaves the device: hand tracking (MediaPipe, 21 points per frame) and all measurements happen locally.</p>
+      <p class="lede">The Camera Hand-Symptom Checker runs in the browser (live at Camera Hand-Symptom Checker.vercel.app). The video never leaves the device: hand tracking (MediaPipe, 21 points per frame) and all measurements happen locally.</p>
       <h3>Three checks</h3>
       <ul>
         <li><strong>Raynaud's:</strong> reads the color of each fingertip against the person's saved normal color, and times how long the color takes to return.</li>
@@ -198,7 +198,7 @@
       <figure class="shot" style="margin-top:.14in"><img src="img/app-result.png" alt="Result screen of the trigger finger check" style="height:2.3in;object-fit:cover;object-position:top"><figcaption>Result screen: each clinical feature marked present, absent or not checked.</figcaption></figure>
     </div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>6</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>6</span></div>
 </section>
 
 <!-- 7. Item 1A -->
@@ -226,7 +226,7 @@
       <div class="callout small">The app is not a medical device. It does not diagnose. Its result is a suggestion about whether to see a doctor, and it says so on every screen and in every PDF.</div>
     </div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>7</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>7</span></div>
 </section>
 
 <!-- 8. Part II divider -->
@@ -257,7 +257,7 @@
     <tr><td>Bent positions only</td><td>{{nbent}}</td><td>{{bbias}}</td><td>{{blo}} to {{bhi}}</td><td>–</td></tr>
     <tr><td>Fully straight only</td><td>{{nstraight}}</td><td colspan="3">App read {{smin}} to {{smax}} more bend than the goniometer</td></tr>
   </table>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>9</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>9</span></div>
 </section>
 
 <!-- 10. Catches -->
@@ -278,7 +278,7 @@
       </ul>
     </div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>10</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>10</span></div>
 </section>
 
 <!-- 11. Raynaud's -->
@@ -299,7 +299,7 @@
       <p class="small"><strong>Still hand:</strong> {{still_below}} of samples below 3 (95th percentile {{still_p95}}). <strong>Presses seen:</strong> {{seen}}. <strong>Not timed:</strong> {{untimed}}.</p>
     </div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>11</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>11</span></div>
 </section>
 
 <!-- 12. Scorecard -->
@@ -318,7 +318,7 @@
     </div>
   </div>
   <p class="small muted" style="margin-top:.18in">"Not yet" means the data needed for that rule does not exist yet (for example, repeatability needs the same people on three different days). A pilot with three people is too small to declare the app accurate or not; it shows what to fix before the full study.</p>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>12</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>12</span></div>
 </section>
 
 <!-- 13. Governance -->
@@ -347,7 +347,7 @@
       </table>
     </div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>13</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>13</span></div>
 </section>
 
 <!-- 14. Outlook and exhibits -->
@@ -379,7 +379,7 @@
       <p class="small" style="font-family:'DejaVu Sans Mono',monospace;background:var(--cream);padding:.08in;">python analysis/validation/make_report.py docs/validation/report-02-pilot<br>python analysis/validation/raynaud.py docs/validation/report-02-pilot/data/raynaud<br>python analysis/validation/make_pilot_book.py docs/validation/report-02-pilot</p>
     </div>
   </div>
-  <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>14</span></div>
+  <div class="foot"><span>Camera Hand-Symptom Checker · Pilot Validation Report 2026</span><span>14</span></div>
 </section>
 
 </body>
