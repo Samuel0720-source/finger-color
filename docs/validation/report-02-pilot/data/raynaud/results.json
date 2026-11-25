@@ -6,16 +6,16 @@
   },
   "still_p95": 11.524999999999999,
   "seen": {
-    "hits": 5,
-    "total": 5,
+    "hits": 6,
+    "total": 6,
     "rate": 1.0
   },
   "untimed": {
-    "hits": 5,
-    "total": 5,
+    "hits": 6,
+    "total": 6,
     "rate": 1.0
   },
-  "presses": 5,
+  "presses": 6,
   "checks": {
     "AC-1": {
       "result": "46% below 3 (95th percentile 11.5)",
@@ -23,7 +23,7 @@
       "rule": "Still hand: 95% of samples below 3"
     },
     "AC-2": {
-      "result": "5 of 5 (100%)",
+      "result": "6 of 6 (100%)",
       "pass": true,
       "rule": "90% or more presses seen (peak above 3)"
     },
@@ -43,7 +43,7 @@
       "rule": "ICC 0.6 or higher"
     },
     "AC-6": {
-      "result": "5 of 5 (100%)",
+      "result": "6 of 6 (100%)",
       "pass": false,
       "rule": "Fewer than 1 in 5 presses not timed"
     }

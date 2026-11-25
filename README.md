@@ -164,7 +164,7 @@ Each camera test has a fixed protocol and three reports: a dry run of the analys
 - **Report 01 (dry run), trigger finger and Raynaud's:** the analysis recovered every answer built into simulated data.
 - **Report 02 (pilot), trigger finger, 3 people:** bend angle vs. a goniometer averages +0.5° (pass), but the 95% limits are −14.9° to +15.8° against ±15° (fails by under 1°, mainly because a straight finger reads too bent). No false catches in 68 smooth fists (pass); 9 of 12 deliberate catches found (fail: all misses came from one hand that only opens to about 142°). The report lists what each failure changed in the app and what Report 03 must decide first.
 
-- **Report 02 (pilot), Raynaud's, started:** one person so far. A pressed, pale fingertip was seen in 5 of 5 presses (pass), but none was timed yet (recordings stopped before the 60 s the app needs, and the recovery line is stricter than the camera's real noise), and a still hand stayed below a visible change only 46% of the time (fail).
+- **Report 02 (pilot), Raynaud's, started:** one person so far. A pressed, pale fingertip was seen in 6 of 6 presses (pass), but none was timed yet (recordings stopped before the 60 s the app needs, and the recovery line is stricter than the camera's real noise), and a still hand stayed below a visible change only 46% of the time (fail).
 
 The whole pilot in one document: [pilot-report-2026.pdf](docs/validation/report-02-pilot/pilot-report-2026.pdf). See [`docs/validation/`](docs/validation/README.md).
 

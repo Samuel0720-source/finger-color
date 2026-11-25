@@ -88,7 +88,7 @@
     <div class="year">2026</div>
     <p class="sub">How well a phone or laptop camera measures the hand, checked against a goniometer, a stopwatch and the clinical rules we set before the first measurement.</p>
   </div>
-  <div class="by">Samuel Koo · Biomedical Engineering, University of Waterloo · 24 November 2026</div>
+  <div class="by">Samuel Koo · Biomedical Engineering, University of Waterloo · 25 November 2026</div>
 </section>
 
 <!-- 2. Contents -->
@@ -155,9 +155,9 @@
   </div>
   <div class="sec-lab" style="margin-top:.2in">Raynaud's color · 1 person so far</div>
   <div class="kpis">
-    <div class="kpi"><div class="lab">Presses recorded</div><div class="val">6</div><div class="note">3 index, 3 middle (5 analysed)</div></div>
-    <div class="kpi"><div class="lab">Presses seen by the camera</div><div class="val">5 of 5</div><div class="note">Target 90% · Pass</div></div>
-    <div class="kpi alert"><div class="lab">Presses not timed</div><div class="val">5 of 5</div><div class="note">Recordings too short, or line too strict</div></div>
+    <div class="kpi"><div class="lab">Presses recorded</div><div class="val">6</div><div class="note">3 index, 3 middle, all analysed</div></div>
+    <div class="kpi"><div class="lab">Presses seen by the camera</div><div class="val">6 of 6</div><div class="note">Target 90% · Pass</div></div>
+    <div class="kpi alert"><div class="lab">Presses not timed</div><div class="val">6 of 6</div><div class="note">Recordings too short, or line too strict</div></div>
     <div class="kpi alert"><div class="lab">Still hand below visible change</div><div class="val">46%</div><div class="note">Target 95% · 157 s recorded · Fail</div></div>
   </div>
   <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>4</span></div>
@@ -292,11 +292,10 @@
     <div>
       <h3>Why no press was timed</h3>
       <ul class="small">
-        <li>Four recordings were stopped 55 to 59 s after letting go; the app needs 60 s and does not say when that point is reached.</li>
+        <li>Five recordings were stopped 55 to 59 s after letting go; the app needs 60 s and does not say when that point is reached.</li>
         <li>One ran 68 s, but the recovery line (1.7, from the few seconds used to save the normal color) is stricter than the real noise of a still hand in this room.</li>
-        <li>Middle press 1: color file not yet added.</li>
       </ul>
-      <p class="small"><strong>Still hand:</strong> 46% of samples below 3 (95th percentile 11.5). <strong>Presses seen:</strong> 5 of 5. <strong>Not timed:</strong> 5 of 5.</p>
+      <p class="small"><strong>Still hand:</strong> 46% of samples below 3 (95th percentile 11.5). <strong>Presses seen:</strong> 6 of 6. <strong>Not timed:</strong> 6 of 6.</p>
     </div>
   </div>
   <div class="foot"><span>finger-color · Pilot Validation Report 2026</span><span>11</span></div>
@@ -314,7 +313,7 @@
     </div>
     <div>
       <h3>Raynaud's (protocol VP-RAY-001)</h3>
-      <table><tr><th>ID</th><th>Rule</th><th>Result</th><th></th></tr><tr><td>AC-1</td><td>Still hand: 95% of samples below 3</td><td>46% below 3 (95th percentile 11.5)</td><td><span class="tag fail">Fail</span></td></tr><tr><td>AC-2</td><td>90% or more presses seen (peak above 3)</td><td>5 of 5 (100%)</td><td><span class="tag pass">Pass</span></td></tr><tr><td>AC-3</td><td>Recovery bias within ±1 s</td><td>No timed press with rater times yet</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-4</td><td>Both 95% limits within ±3 s</td><td>No timed press with rater times yet</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-5</td><td>ICC 0.6 or higher</td><td>Needs 2+ people and 2+ sessions</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-6</td><td>Fewer than 1 in 5 presses not timed</td><td>5 of 5 (100%)</td><td><span class="tag fail">Fail</span></td></tr></table>
+      <table><tr><th>ID</th><th>Rule</th><th>Result</th><th></th></tr><tr><td>AC-1</td><td>Still hand: 95% of samples below 3</td><td>46% below 3 (95th percentile 11.5)</td><td><span class="tag fail">Fail</span></td></tr><tr><td>AC-2</td><td>90% or more presses seen (peak above 3)</td><td>6 of 6 (100%)</td><td><span class="tag pass">Pass</span></td></tr><tr><td>AC-3</td><td>Recovery bias within ±1 s</td><td>No timed press with rater times yet</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-4</td><td>Both 95% limits within ±3 s</td><td>No timed press with rater times yet</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-5</td><td>ICC 0.6 or higher</td><td>Needs 2+ people and 2+ sessions</td><td><span class="tag notyet">Not yet</span></td></tr><tr><td>AC-6</td><td>Fewer than 1 in 5 presses not timed</td><td>6 of 6 (100%)</td><td><span class="tag fail">Fail</span></td></tr></table>
     </div>
   </div>
   <p class="small muted" style="margin-top:.18in">"Not yet" means the data needed for that rule does not exist yet (for example, repeatability needs the same people on three different days). A pilot with three people is too small to declare the app accurate or not; it shows what to fix before the full study.</p>

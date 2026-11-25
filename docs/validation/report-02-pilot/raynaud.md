@@ -5,7 +5,7 @@
 | Protocol | [VP-RAY-001](../protocol-raynaud.md) v1.2 (from 24 Nov: 3 presses per finger, 10 s wait, no extra rest) |
 | Data | Real recordings of a healthy adult. Nothing simulated. |
 | Author | Samuel Koo (also participant R01) |
-| Result | Started 24 Nov 2026. One person: still hand, 3 index and 3 middle presses (one data file still to be added). Raters still to come. |
+| Result | Started 24 Nov 2026. One person: still hand, 3 index and 3 middle presses. Raters still to come. |
 
 Session steps: [raynaud-guide.md](raynaud-guide.md). Data: `data/raynaud/` (`noise.csv`, `presses.csv`, and the app's own files in `raw/`).
 
@@ -15,7 +15,7 @@ Session steps: [raynaud-guide.md](raynaud-guide.md). Data: `data/raynaud/` (`noi
 | --- | --- |
 | People | 1 (R01, the author) |
 | Still-hand recordings | 1 (157 s) |
-| Protocol presses (middle or index) | 6 of 6 recorded; 5 analysed (middle press 1: color data file not yet received) |
+| Protocol presses (middle or index) | 6 of 6 recorded and analysed |
 | Practice presses (thumb, outside the protocol) | 3 |
 | Rater times | none yet |
 
@@ -24,10 +24,10 @@ Session steps: [raynaud-guide.md](raynaud-guide.md). Data: `data/raynaud/` (`noi
 | ID | Rule | Result | Pass |
 | --- | --- | --- | --- |
 | AC-1 | Still hand: 95% of samples below 3 | 46% below 3 (95th percentile 11.5), middle finger | FAIL |
-| AC-2 | 90% or more presses seen (peak above 3) | 5 of 5 | PASS |
+| AC-2 | 90% or more presses seen (peak above 3) | 6 of 6 | PASS |
 | AC-3, AC-4 | Recovery time against raters | No press timed yet, no rater times yet | Not yet |
 | AC-5 | Repeatability | Needs 2+ people and 2+ sessions | Not yet |
-| AC-6 | Fewer than 1 in 5 presses not timed | 5 of 5 not timed | FAIL |
+| AC-6 | Fewer than 1 in 5 presses not timed | 6 of 6 not timed | FAIL |
 
 Rerun with `python analysis/validation/raynaud.py docs/validation/report-02-pilot/data/raynaud`.
 
@@ -38,11 +38,11 @@ Rerun with `python analysis/validation/raynaud.py docs/validation/report-02-pilo
 | Index 1 | 18.6 | 59.0 s | Not timed: needs 60 s |
 | Index 2 | 11.4 | 58.9 s | Not timed: needs 60 s |
 | Index 3 | 26.4 | 58.2 s | Not timed: needs 60 s |
-| Middle 1 | not yet | 60 s or more (events file) | Color data file not yet received |
+| Middle 1 | 33.5 | 59.3 s | Not timed: needs 60 s |
 | Middle 2 | 25.2 | 55.0 s | Not timed: needs 60 s |
 | Middle 3 | 21.6 | 68.4 s | Not timed: the color never stayed within the noise level (1.7) for 30 s |
 
-Every press was seen clearly. Four recordings were stopped before the 60 s the app needs. Middle press 3 ran long enough, but the app still gave no time: after letting go, the middle finger stayed between about 1 and 3, never below the saved noise level of 1.7 for 30 s in a row. The still-hand recording already showed changes above 1.7 with nothing happening, so this recovery line is stricter than the camera's own noise. The other fingers also jumped during each press (thumb up to 18.8, little finger up to 20.4), probably because the pressing hand moved into view or shaded the hand. "Peak above 3" in the pressed finger alone therefore says the change was seen, not that it was only in that finger.
+Every press was seen clearly. Five recordings were stopped before the 60 s the app needs. Middle press 3 ran long enough, but the app still gave no time: after letting go, the middle finger stayed between about 1 and 3, never below the saved noise level of 1.7 for 30 s in a row. The still-hand recording already showed changes above 1.7 with nothing happening, so this recovery line is stricter than the camera's own noise. The other fingers also jumped during each press (thumb up to 18.8, little finger up to 20.4), probably because the pressing hand moved into view or shaded the hand. "Peak above 3" in the pressed finger alone therefore says the change was seen, not that it was only in that finger.
 
 ## 3. What the still-hand recording shows
 
@@ -69,7 +69,7 @@ The change jumps at about 100 s and 143 s in **all five fingers at once**, and e
 ## 5. Next
 
 - [x] R01: 3 index presses (24 Nov), none timed.
-- [x] R01: 3 middle presses (24 Nov). Middle 1 color data file still to be added.
+- [x] R01: 3 middle presses (24 Nov).
 - [ ] Second still-hand recording with the hand position marked and the light fixed.
 - [ ] Two raters for each press, from the phone video, before they see the app's numbers.
 - [ ] R02 and R03.

@@ -155,7 +155,7 @@
   </div>
   <div class="sec-lab" style="margin-top:.2in">Raynaud's color · 1 person so far</div>
   <div class="kpis">
-    <div class="kpi"><div class="lab">Presses recorded</div><div class="val">6</div><div class="note">3 index, 3 middle ({{npress}} analysed)</div></div>
+    <div class="kpi"><div class="lab">Presses recorded</div><div class="val">6</div><div class="note">3 index, 3 middle, all analysed</div></div>
     <div class="kpi"><div class="lab">Presses seen by the camera</div><div class="val">{{seen}}</div><div class="note">Target 90% · Pass</div></div>
     <div class="kpi alert"><div class="lab">Presses not timed</div><div class="val">{{untimed}}</div><div class="note">Recordings too short, or line too strict</div></div>
     <div class="kpi alert"><div class="lab">Still hand below visible change</div><div class="val">{{still_below}}</div><div class="note">Target 95% · {{still_s}} s recorded · Fail</div></div>
@@ -292,9 +292,8 @@
     <div>
       <h3>Why no press was timed</h3>
       <ul class="small">
-        <li>Four recordings were stopped 55 to 59 s after letting go; the app needs 60 s and does not say when that point is reached.</li>
+        <li>Five recordings were stopped 55 to 59 s after letting go; the app needs 60 s and does not say when that point is reached.</li>
         <li>One ran 68 s, but the recovery line (1.7, from the few seconds used to save the normal color) is stricter than the real noise of a still hand in this room.</li>
-        <li>Middle press 1: color file not yet added.</li>
       </ul>
       <p class="small"><strong>Still hand:</strong> {{still_below}} of samples below 3 (95th percentile {{still_p95}}). <strong>Presses seen:</strong> {{seen}}. <strong>Not timed:</strong> {{untimed}}.</p>
     </div>

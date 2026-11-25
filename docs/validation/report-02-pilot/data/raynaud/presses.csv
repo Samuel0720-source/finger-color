@@ -2,5 +2,6 @@ participant,session,finger,press,peak_change,app_recovery_s,rater1_s,rater2_s,li
 R01,1,index,1,18.64,,,,normal,not_recorded
 R01,1,index,2,11.40,,,,normal,not_recorded
 R01,1,index,3,26.45,,,,normal,not_recorded
+R01,1,middle,1,33.51,,,,normal,not_recorded
 R01,1,middle,2,25.24,,,,normal,not_recorded
 R01,1,middle,3,21.59,,,,normal,not_recorded
